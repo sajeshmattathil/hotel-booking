@@ -1,0 +1,19 @@
+<%- include('header') -%>
+
+<div class="wrapper">
+    <div class="title-text">
+      <div class="title login">Submit your OTP</div>
+    </div>
+    <div class="form-container">
+      <div class="form-inner">
+        <div class="otp-container ">
+          <form action="/otp-submit" method="post">
+            <input class="otp-input" name="otp"  type="text" maxlength="" />
+            <button class=" btn-layer" type="submit" >Submit</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <%-include('footer')-%>

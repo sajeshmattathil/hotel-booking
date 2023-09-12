@@ -1,0 +1,38 @@
+<%- include('header') -%>
+
+<div class="wrapper">
+    <div class="title-text">
+      <div class="title signup">Signup Form</div>
+    </div>
+    <div class="form-container">
+     
+      <div class="form-inner">
+         <form action="/signup-submit" class="signup" method="post">
+          <div class="field">
+            <input type="text" placeholder="First Name" name="first_name" required>
+          </div>
+          <div class="field">
+            <input type="text" placeholder="Last Name" name="last_name" required>
+          </div>
+          <div class="field">
+            <input type="text" placeholder="Email Address" name="email" required>
+          </div>
+          <div class="field">
+            <input type="" placeholder="Mobile Number" name="mobile" required>
+          </div>
+          <div class="field">
+            <input type="password" placeholder="Password" name="password" required>
+          </div>
+          <div class="field">
+            <input type="password" placeholder="Confirm password" name="confirm" required>
+          </div>
+          <div class="field btn">
+            <div class="btn-layer"></div>
+            <input type="submit" value="Signup">
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <%-include('footer')-%>
