@@ -18,7 +18,7 @@ app.set('view engine','ejs')
 
 app.use('/static', express.static(path.join(__dirname, '../Front end/public')));
 app.set('views', path.join(__dirname, '../Front end/views'));
-
+console.log(path.join(__dirname, '../Front end/public/himages'));
 
 
 app.use(session({

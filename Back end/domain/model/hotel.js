@@ -31,6 +31,10 @@ const hotelSchema=new mongoose.Schema({
     nearTouristDestination:{
         type:String,
         required:true
+    },
+    imagesOfHotel:{
+        type:Array,
+        required:true
     }
     ,
     isActive:{
@@ -41,7 +45,6 @@ const hotelSchema=new mongoose.Schema({
         type:Boolean,
         default:false
     }
-
 
 })
 

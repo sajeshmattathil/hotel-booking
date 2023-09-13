@@ -26,9 +26,11 @@ const hotelRequests = (req, res) => {
 }
 
 const hotelRequestView = async (req, res) => {
-
+try{
   const items = await adminService.findRequests(req)
+  console.log(items);
   res.render('admin-requests', { items: items })
+}catch(error){console.log(error);}
 }
 
 const requestApprove = async (req, res) => {
