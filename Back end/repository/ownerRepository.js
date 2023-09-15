@@ -27,12 +27,21 @@ const FindHotelByName = async (hotel_name) => {
         console.log(error);
     }
 }
+const findHotelsWithIncompleteDetails= async ()=>{
+    try {
+        return await hotel.find({ status: "inactive" }).lean()
+         
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 
 module.exports = {
     findOwnerByEmail,
     findOwnerNameByEmail,
-    FindHotelByName
+    FindHotelByName,
+    findHotelsWithIncompleteDetails
 
 }

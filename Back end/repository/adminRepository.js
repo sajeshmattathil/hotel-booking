@@ -19,6 +19,8 @@ const findAdminNameByEmail=async (email)=>{
     }
 }
 
+
+
 const findHotelApprovalRequests=async ()=>{
     try {
         return await hotels.find({isApproved:false},{hotel_name:1,owner_id:1,email:1})
@@ -27,10 +29,20 @@ const findHotelApprovalRequests=async ()=>{
     }
 }
 
+const findHotelAndApprove=async (email)=>{
+    try {
+        const filter = { email: email };
+        const update = { $set: { isApproved: true } };
+             return await hotels.updateOne(filter, update)
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 module.exports={
     findAdminByEmail,
     findAdminNameByEmail,
-    findHotelApprovalRequests
+    findHotelApprovalRequests,
+    findHotelAndApprove
 }

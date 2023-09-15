@@ -2,7 +2,7 @@ const mongoose=require('mongoose')
 const{_id}=require('./newHotel')
 
 const roomSchema=new mongoose.Schema({
-   hotel_id:_id,
+   
    
     roomType:{
         type:String,
@@ -15,7 +15,31 @@ const roomSchema=new mongoose.Schema({
     roomCount:{
         type:Number,
         required:true
-    }
+    },
+    amnities:{
+        type:Array,
+        default:[]
+    },
+    availableRooms:{
+        type:Number,
+        required:true
+    },
+    imagesOfRoom:{
+        type:Array,
+        required:true
+    },
+    isAvailable:{
+        type:Boolean,
+        required:true
+    },
+    hotel: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Hotel',
+      },
+      owner: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Owner',
+      }
 
 })
 

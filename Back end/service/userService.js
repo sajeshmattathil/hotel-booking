@@ -45,6 +45,7 @@ const auth = async (req) => {
 const generateOtpAndSend = (req) => {
     const otp = generatedOtp()
     req.session.otp = otp
+
     const userData = req.session.userFormData
     const email = userData.email
     console.log(otp, 'otp');
@@ -56,6 +57,7 @@ const otpAuth = async (req) => {
     console.log(req.body.otp);
     console.log(genOtp);
     if (req.body.otp === genOtp) {
+        delete req.session.otp
         return { status: 200 }
     } else {
         return { status: 400 }
@@ -66,7 +68,7 @@ const otpAuth = async (req) => {
 const userAuthentication = async (userData) => {
     console.log(userData);
     try {
-        const existingUserData = await userRepository.findUserByEmail(email);
+        const existingUserData = await userRepository.findUserByEmail(userData.email);
 
         if (existingUserData) {
             console.log('User with this email already exists');
@@ -83,7 +85,7 @@ const userAuthentication = async (userData) => {
             password: hashPassword
         });
         newUser.save()
-
+delete req.session.userFormData
         if (newUser) {
             return { status: 200 }
         } else {

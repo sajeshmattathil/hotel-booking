@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs')
 const adminRepository = require('../repository/adminRepository')
-const hotels=require('../domain/model/hotel')
+const Category=require('../domain/model/category')
 
 const auth = async (req) => {
      const { email, password } = req.body
@@ -32,30 +32,50 @@ const adminUsername = async (email) => {
      return name
 }
 
+const saveNewCategory = (req) => {
+     try {
+          
+          const name=req.body.category
+          if(!name) {
+               const msg="Something went wrong"
+               return {status:400,message:msg}
+          }
+          const newCategory = new Category({
+               name:name
+          })
+          newCategory.save()
+          const msg="Category added sucessfully"
+          return {status:200,message:msg}
+     } catch (error) { console.log(error.message)
+          const msg="Something went wrong"
+          return {status:400,message:msg}
+          ; }
+}
 
 const findRequests = async () => {
-try{
-     const requestDatas = await adminRepository.findHotelApprovalRequests()
-     console.log(requestDatas);
-     if(requestDatas) return requestDatas
-     else console.log('requestDatas not found');
+     try {
+          const requestDatas = await adminRepository.findHotelApprovalRequests()
+          console.log(requestDatas);
+          if (requestDatas) return requestDatas
+          else console.log('requestDatas not found');
 
-}catch(error){console.log(error);}
+     } catch (error) { console.log(error); }
 }
 
 const approve = async (req) => {
-
+     try{
      const email = req.params.email
-     const filter = { email: email };
-     const update = { $set: { isApproved: true } };
+     const requestDatas = await adminRepository.findHotelAndApprove(email)
+     if (requestDatas) {
+          const msg="Request approved"
+          return { status: 200 ,msg:msg }
+     }
+     else {
+          const msg = 'Something went wrong'
+          return { status: 400, msg: msg }
+     }
+     }catch(error){console.log(error);}
 
-     await hotels.updateOne(filter, update)
-          .then(() => {
-               return { status: 200 }
-          })
-          .catch(error => {
-               console.log(error);
-          });
 }
 
 
@@ -65,6 +85,7 @@ const approve = async (req) => {
 module.exports = {
      auth,
      adminUsername,
+     saveNewCategory,
      findRequests,
      approve
 }

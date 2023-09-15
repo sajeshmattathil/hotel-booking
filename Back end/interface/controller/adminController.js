@@ -20,22 +20,45 @@ const adminHome = async (req, res) => {
 
 }
 
+const categoryManagement = (req, res) => {
+  res.redirect('/admin/categoryManagementPage')
+}
+const categoryManagementPage = (req, res) => {
+  const msg = req.query.msg
+  res.render('admin-forms', { msg: msg })
+}
+const saveCategory = async (req, res) => {
+  try{
+  const response = await adminService.saveNewCategory(req)
+  console.log(response);
+  if(response.status === 200)  res.redirect(`/admin/categoryManagementPage?msg=${response.message}`)
+  if(response.status === 400)  res.redirect(`/admin/categoryManagementPage?msg=${response.message}`)
+
+
+  }catch(error){console.log(error);}
+
+}
 const hotelRequests = (req, res) => {
   res.redirect('/admin/aproveHotelList')
 
 }
 
 const hotelRequestView = async (req, res) => {
-try{
-  const items = await adminService.findRequests(req)
-  console.log(items);
-  res.render('admin-requests', { items: items })
-}catch(error){console.log(error);}
+  try {
+    const items = await adminService.findRequests(req)
+    console.log(items);
+    const msg = req.query.msg
+    res.render('admin-requests', { items: items, msg: msg })
+  } catch (error) { console.log(error); }
 }
 
 const requestApprove = async (req, res) => {
-  const response = await adminService.approve(req)
-  if (response === 200) res.redirect('/admin/aproveHotelList')
+  try {
+    const response = await adminService.approve(req)
+    if (response === 200) res.redirect(`/admin/aproveHotelList?msg=${response.msg}`)
+    if (response === 400) res.redirect(`/admin/aproveHotelList?msg=${response.msg}`)
+
+  } catch (error) { console.log(error); }
 
 }
 
@@ -43,6 +66,9 @@ module.exports = {
   adminLogin,
   adminAuthentication,
   adminHome,
+  categoryManagement,
+  categoryManagementPage,
+  saveCategory,
   hotelRequests,
   hotelRequestView,
   requestApprove

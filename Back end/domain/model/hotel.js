@@ -1,10 +1,13 @@
 const mongoose=require('mongoose')
-const{email}=require('./owner')
 
 const hotelSchema=new mongoose.Schema({
     owner_id:{
         type:String,
         required:true
+    },
+    star_rating:{
+        type:Number,
+        require:true
     },
     
     hotel_name:{
@@ -44,7 +47,11 @@ const hotelSchema=new mongoose.Schema({
     isApproved:{
         type:Boolean,
         default:false
-    }
+    },
+    status:{
+        type:String,
+        default:'inactive'
+      }
 
 })
 
