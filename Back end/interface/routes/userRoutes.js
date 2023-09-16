@@ -2,6 +2,7 @@ const express=require('express')
 const router=express.Router()
 const controller=require('../controller/userController')
 
+router.get('/',controller.userHome)
 router.get('/login',controller.userLogin)
 router.post('/login-submit',controller.userLoginHome)
 router.get('/login/home',controller.userLoginHomeView)

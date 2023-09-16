@@ -47,7 +47,7 @@ const generateOtpAndSend = (req) => {
     req.session.otp = otp
 
     const userData = req.session.userFormData
-    const email = userData.email
+    const {email} = userData
     console.log(otp, 'otp');
     sendMail(email, otp)
 }
@@ -68,7 +68,9 @@ const otpAuth = async (req) => {
 const userAuthentication = async (userData) => {
     console.log(userData);
     try {
-        const existingUserData = await userRepository.findUserByEmail(userData.email);
+        const { first_name, last_name, email, mobile, password, confirm } = userData;
+
+        const existingUserData = await userRepository.findUserByEmail(email);
 
         if (existingUserData) {
             console.log('User with this email already exists');
@@ -85,7 +87,7 @@ const userAuthentication = async (userData) => {
             password: hashPassword
         });
         newUser.save()
-delete req.session.userFormData
+//delete req.session.userFormData
         if (newUser) {
             return { status: 200 }
         } else {
@@ -101,7 +103,7 @@ const verifyUser = async (userData) => {
 
     try {
         const { first_name, last_name, email, mobile, password, confirm } = userData;
-
+console.log(userData);
         if (!first_name || !last_name || !email || !mobile || !password || !confirm) {
             console.log('Fill in empty fields');
             const msg = 'Fill in empty fields'
@@ -115,11 +117,16 @@ const verifyUser = async (userData) => {
             return { status: 400, msg: msg };
         }
         const user = await userRepository.findUserByEmail(email)
+        console.log(user);
         if (user) {
-
+console.log(77777);
             const msg = 'User already exists'
             return { status: 200, msg: msg }
+        }else {
+            const msg = ''
+            return { status: 202, msg: msg }
         }
+
     } catch (error) { console.log(error); }
 }
 

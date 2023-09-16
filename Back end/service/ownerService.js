@@ -1,5 +1,6 @@
 const ownerRepository = require('../repository/ownerRepository')
 const hotel = require('../domain/model/hotel')
+const room = require('../domain/model/room')
 const bcrypt = require('bcryptjs')
 
 const auth = async (req) => {
@@ -83,25 +84,67 @@ const authHotel = async (req) => {
 }
 
 
-const hotelsWithIncompleteDetails= async (req,res)=>{
-     try{
-     const data= await ownerRepository.findHotelsWithIncompleteDetails()
-     console.log(data);
-     if(data.length === 0){
-          let msg = 'No details available'
-          return { status: 400, message: msg }
-     }  
-     // status 200          
-     return data
-     }catch(err){console.log(err);}
+const hotelsWithIncompleteDetails = async (req, res) => {
+     try {
+          const data = await ownerRepository.findHotelsWithIncompleteDetails()
+          console.log(data);
+          if (data.length === 0) {
+               let msg = 'No details available'
+               return { status: 400, message: msg }
+          }
+          // status 200          
+          return data
+     } catch (err) { console.log(err); }
 }
 
+const authenticateRoomDetails = async (req) => {
+     try {
+          const hotel_id = req.session.hotel_id
+
+          const image = req.files.map(file => file.filename);
+          const {roomType,roomSpace, price, roomCount, amnities, availableRooms} = req.body
+console.log(req.body);
+          if ( roomSpace || !price || !roomCount || !amnities || !availableRooms) {
+               console.log("fill empty fields");
+               let message = 'fill empty fields'
+               return { status: 400,message }
+          }
 
 
+          const newRoom = new room({
+               roomType:roomType,
+               price,
+               roomCount,
+               amnities,
+               availableRooms,
+               imagesOfRoom: image,
+               hotel: hotel_id
+          })
+          newRoom.save().catch((err)=>{console.log(err);})
+          const message = "New room saved sucessfully"
+          return { status: 200, message }
+     } catch (error) { console.log(error); }
+}
+
+const findCategories= async ()=>{
+     try{
+ const category= await ownerRepository.findCategories()
+ return category
+     }catch(err){console.log(err);}
+}
+const findSubCategories= async ()=>{
+     try{
+ const category= await ownerRepository.findSubCategories()
+ return category
+     }catch(err){console.log(err);}
+}
 module.exports = {
      auth,
      ownerUsername,
      authHotel,
      hotelsWithIncompleteDetails,
-    
+     authenticateRoomDetails,
+     findCategories,
+     findSubCategories
+
 }

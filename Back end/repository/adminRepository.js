@@ -1,5 +1,7 @@
 const Admin = require('../domain/model/Admin')
 const hotels=require('../domain/model/hotel')
+const category=require('../domain/model/category')
+const subcategory=require('../domain/model/subCategory')
 
 
 
@@ -38,11 +40,31 @@ const findHotelAndApprove=async (email)=>{
         console.log(error);
     }
 }
+const findCategoryByName= async (name)=>{
+    try {
+        
+             return await category.findOne({name:name})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
+const findSubCategoryByName= async (name)=>{
+    try {
+        
+             return await subcategory.findOne({name:name})
+    } catch (error) {
+        console.log(error);
+    }
+}
+
 
 
 module.exports={
     findAdminByEmail,
     findAdminNameByEmail,
     findHotelApprovalRequests,
-    findHotelAndApprove
+    findHotelAndApprove,
+    findCategoryByName,
+    findSubCategoryByName
 }

@@ -1,6 +1,7 @@
 const bcrypt = require('bcryptjs')
 const adminRepository = require('../repository/adminRepository')
 const Category=require('../domain/model/category')
+const subCategory=require('../domain/model/subCategory')
 
 const auth = async (req) => {
      const { email, password } = req.body
@@ -32,7 +33,7 @@ const adminUsername = async (email) => {
      return name
 }
 
-const saveNewCategory = (req) => {
+const saveNewCategory = async (req) => {
      try {
           
           const name=req.body.category
@@ -40,17 +41,48 @@ const saveNewCategory = (req) => {
                const msg="Something went wrong"
                return {status:400,message:msg}
           }
+
+          const checkExistingCategory= await adminRepository.findCategoryByName(name)
+          if(!checkExistingCategory){
           const newCategory = new Category({
                name:name
           })
+
           newCategory.save()
           const msg="Category added sucessfully"
           return {status:200,message:msg}
+     }
      } catch (error) { console.log(error.message)
           const msg="Something went wrong"
           return {status:400,message:msg}
           ; }
 }
+
+const saveNewSubCategory = async (req) => {
+     try {
+          
+          const name=req.body.subcategory
+          if(!name) {
+               const msg="Something went wrong"
+               return {status:400,message:msg}
+          }
+          const checkExistingSubCategory= await adminRepository.findSubCategoryByName(name)
+          if(!checkExistingSubCategory){
+
+          const newSubCategory = new subCategory({
+               name:name
+          })
+          newSubCategory.save()
+          const msg="Sub-Category added sucessfully"
+          return {status:200,message:msg}
+     }
+     } catch (error) { console.log(error.message)
+          const msg="Something went wrong"
+          return {status:400,message:msg}
+          ; }
+} 
+
+
 
 const findRequests = async () => {
      try {
@@ -86,6 +118,7 @@ module.exports = {
      auth,
      adminUsername,
      saveNewCategory,
+     saveNewSubCategory,
      findRequests,
      approve
 }

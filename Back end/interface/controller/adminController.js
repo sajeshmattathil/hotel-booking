@@ -24,20 +24,36 @@ const categoryManagement = (req, res) => {
   res.redirect('/admin/categoryManagementPage')
 }
 const categoryManagementPage = (req, res) => {
-  const msg = req.query.msg
-  res.render('admin-forms', { msg: msg })
+  const msg1 = req.query.msg1
+  const msg2 = req.query.msg2
+  res.render('admin-forms', { msg1, msg2 })
 }
 const saveCategory = async (req, res) => {
   try{
   const response = await adminService.saveNewCategory(req)
   console.log(response);
-  if(response.status === 200)  res.redirect(`/admin/categoryManagementPage?msg=${response.message}`)
-  if(response.status === 400)  res.redirect(`/admin/categoryManagementPage?msg=${response.message}`)
+  if(response.status === 200)  res.redirect(`/admin/categoryManagementPage?msg1=${response.message}`)
+  if(response.status === 400)  res.redirect(`/admin/categoryManagementPage?msg1=${response.message}`)
 
 
   }catch(error){console.log(error);}
 
 }
+
+const saveSubCategory=async (req, res) => {
+  try{
+  const response = await adminService.saveNewSubCategory(req)
+  console.log(response);
+  if(response.status === 200)  res.redirect(`/admin/categoryManagementPage?msg2=${response.message}`)
+  if(response.status === 400)  res.redirect(`/admin/categoryManagementPage?msg2=${response.message}`)
+
+
+  }catch(error){console.log(error);}
+
+}
+
+
+
 const hotelRequests = (req, res) => {
   res.redirect('/admin/aproveHotelList')
 
@@ -55,8 +71,8 @@ const hotelRequestView = async (req, res) => {
 const requestApprove = async (req, res) => {
   try {
     const response = await adminService.approve(req)
-    if (response === 200) res.redirect(`/admin/aproveHotelList?msg=${response.msg}`)
-    if (response === 400) res.redirect(`/admin/aproveHotelList?msg=${response.msg}`)
+    if (response.status === 200) res.redirect(`/admin/aproveHotelList?msg=${response.msg}`)
+    if (response.status === 400) res.redirect(`/admin/aproveHotelList?msg=${response.msg}`)
 
   } catch (error) { console.log(error); }
 
@@ -69,6 +85,7 @@ module.exports = {
   categoryManagement,
   categoryManagementPage,
   saveCategory,
+  saveSubCategory,
   hotelRequests,
   hotelRequestView,
   requestApprove

@@ -1,30 +1,20 @@
 const mongoose = require('mongoose');
 
-const roomSchema = new mongoose.Schema({
+
  
-  roomType: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  isAvailable: {
-    type: Boolean,
-    default: true,
-  },
-  maxOccupancy: {
-    type: Number,
-    required: true,
-  },
-  amenities: [String],
-  parentCategory: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Hotel',
-  },
-});
+  const subCategorySchema = new mongoose.Schema({
+    name: {
+      type: String,
+      required: true,
+    },
+    status:{
+      type:String,
+      default:'active'
+    }
+  
+  });
+  
 
-const Room = mongoose.model('Room', roomSchema);
+const subCategory = mongoose.model('subCategory', subCategorySchema);
 
-module.exports = Room;
+module.exports = subCategory;

@@ -1,7 +1,7 @@
 const Owner = require('../domain/model/owner')
 const hotel = require('../domain/model/hotel')
-
-
+const category=require('../domain/model/category')
+const subcategory=require('../domain/model/subCategory')
 
 const findOwnerByEmail = async (email) => {
     try {
@@ -35,6 +35,22 @@ const findHotelsWithIncompleteDetails= async ()=>{
         console.log(error);
     }
 }
+const findCategories= async ()=>{
+    try {
+        return await category.find({})
+         
+    } catch (error) {
+        console.log(error);
+    }
+}
+const findSubCategories= async ()=>{
+    try {
+        return await subcategory.find({})
+         
+    } catch (error) {
+        console.log(error);
+    }
+}
 
 
 
@@ -42,6 +58,8 @@ module.exports = {
     findOwnerByEmail,
     findOwnerNameByEmail,
     FindHotelByName,
-    findHotelsWithIncompleteDetails
+    findHotelsWithIncompleteDetails,
+    findCategories,
+    findSubCategories
 
 }

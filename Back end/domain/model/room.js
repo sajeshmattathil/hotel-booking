@@ -1,10 +1,18 @@
 const mongoose=require('mongoose')
-const{_id}=require('./newHotel')
+
 
 const roomSchema=new mongoose.Schema({
    
-   
+
     roomType:{
+        type:String,
+        required:true
+    },
+    roomSpace:{
+        type:String,
+        required:true
+    },
+    description:{
         type:String,
         required:true
     },
@@ -18,7 +26,7 @@ const roomSchema=new mongoose.Schema({
     },
     amnities:{
         type:Array,
-        default:[]
+        required:true
     },
     availableRooms:{
         type:Number,
@@ -30,16 +38,13 @@ const roomSchema=new mongoose.Schema({
     },
     isAvailable:{
         type:Boolean,
-        required:true
+        default:false
     },
     hotel: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Hotel',
       },
-      owner: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Owner',
-      }
+     
 
 })
 

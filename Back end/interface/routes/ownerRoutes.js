@@ -7,14 +7,12 @@ const upload = require('../../middleware/uploadImages')
 router.get('/', ownerController.ownerlogin)
 router.post('/ownerlogin', ownerController.ownerAuthCheck)
 router.get('/home', ownerController.ownerHome)
-router.get('/hotelsManagement',ownerController.hotelsManagement)
-router.get('/hotelsManagementPage',ownerController.hotelsManagementPage)
-router.get('/addRoomDetails:_id',ownerController.addRoomDetails)
-router.get('/roomForm',auth.ownerAuthCheck,ownerController.roomForm)
-router.post('/add-hotel', upload.array('images', 5), ownerController.addNewHotel)
-// Sidebar options
-router.get('/forms', ownerController.ownerForms)
-
-
+router.get('/hotelsManagement', auth.ownerAuthCheck, ownerController.hotelsManagement)
+router.get('/hotelsManagementPage', auth.ownerAuthCheck, ownerController.hotelsManagementPage)
+router.post('/add-hotel', auth.ownerAuthCheck, upload.array('images', 3), ownerController.addNewHotel)
+router.get('/addRoomDetails/:_id', auth.ownerAuthCheck, ownerController.addRoomDetails)
+router.get('/roomForm', auth.ownerAuthCheck, ownerController.roomForm)
+router.post('/roomForm-submit', auth.ownerAuthCheck,upload.array('images', 3), ownerController.roomAuthentication)
+router.get('/forms', auth.ownerAuthCheck, ownerController.ownerForms)
 
 module.exports = router

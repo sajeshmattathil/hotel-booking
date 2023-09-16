@@ -11,6 +11,10 @@ router.get('/',admincontroller.adminLogin)
  router.get('/category-management',admincontroller.categoryManagement)
  router.get('/categoryManagementPage',admincontroller.categoryManagementPage)
  router.post('/add-category',admincontroller.saveCategory)
+
+ 
+ router.post('/add-subcategory',admincontroller.saveSubCategory)
+
 router.get('/approval-requests',auth.adminAuthCheck,admincontroller.hotelRequests)
 router.get('/aproveHotelList',admincontroller.hotelRequestView)
 router.get('/approve/:email',auth.adminAuthCheck,admincontroller.requestApprove)

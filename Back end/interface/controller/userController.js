@@ -1,5 +1,10 @@
-const { error } = require('console')
+
 const userService = require('../../service/userService')
+
+const userHome=(req,res)=>{
+    res.render('user/index')
+}
+
 
 const userLogin = (req, res) => {
     const msg=req.query.msg
@@ -11,6 +16,7 @@ const otpVerification = async (req, res) => {
     const userData = req.session.userFormData
 
     const response = await userService.verifyUser(userData)
+    console.log(response);
     if (response.status === 200 || response.status === 400) res.redirect(`/signUp?msg=${response.msg}`)
     else res.redirect('/otpPage')
 
@@ -61,6 +67,7 @@ const userRegisterPage = (req, res) => {
     res.render('user-signup',{msg:msg})
 }
 module.exports = {
+    userHome,
     userLogin,
     userRegister,
     userRegisterView,
