@@ -3,6 +3,7 @@ const userRepository = require('../repository/userRepository')
 const User = require('../domain/model/user')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
+const jwt=require('../middleware/jwt')
 
 const findHotels = async (req, res) => {
     try {
@@ -100,6 +101,7 @@ const userAuthentication = async (userData) => {
             password: hashPassword
         });
         newUser.save()
+         jwt.generateToken()
         //delete req.session.userFormData
         if (newUser) {
             return { status: 200 }

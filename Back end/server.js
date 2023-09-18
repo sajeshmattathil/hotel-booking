@@ -1,7 +1,9 @@
+require('dotenv').config();
 const db = require('./config/dbconnect')
 db()
 const express = require('express')
 const app = express()
+const cookieParser = require('cookie-parser');
 const ejs = require('ejs')
 const nocache = require('nocache')
 const session = require('express-session')
@@ -12,6 +14,7 @@ const adminRouter = require('./interface/routes/adminRoutes')
 const ownerRouter = require('./interface/routes/ownerRoutes')
 
 app.use(express.json())
+app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs')
 
