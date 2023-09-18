@@ -4,6 +4,20 @@ const userService = require('../../service/userService')
 const userHome=(req,res)=>{
     res.render('user/index')
 }
+const userhotelsList= async (req,res)=>{
+    const hotels= await userService.findHotels()
+    if(hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+    else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+
+}
+const userhotelsListPage = async (req,res)=>{
+    const hotels= await userService.findHotels()
+    const msg=req.query.msg
+    console.log(hotels[0].imagesOfHotel[0]);
+    res.render('user/hotels',{hotels,msg})
+}
+
+
 
 
 const userLogin = (req, res) => {
@@ -68,6 +82,8 @@ const userRegisterPage = (req, res) => {
 }
 module.exports = {
     userHome,
+    userhotelsList,
+    userhotelsListPage,
     userLogin,
     userRegister,
     userRegisterView,
@@ -77,5 +93,6 @@ module.exports = {
     otpAuthentication,
     userLoginHome,
     userLoginHomeView,
+
 
 }

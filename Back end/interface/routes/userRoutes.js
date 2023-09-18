@@ -3,6 +3,8 @@ const router=express.Router()
 const controller=require('../controller/userController')
 
 router.get('/',controller.userHome)
+router.post('/hotels',controller.userhotelsList)
+router.get('/hotelsPage',controller.userhotelsListPage)
 router.get('/login',controller.userLogin)
 router.post('/login-submit',controller.userLoginHome)
 router.get('/login/home',controller.userLoginHomeView)

@@ -38,7 +38,7 @@ const roomSchema=new mongoose.Schema({
     },
     isAvailable:{
         type:Boolean,
-        default:false
+        default:true
     },
     hotel: {
         type: mongoose.Schema.Types.ObjectId,

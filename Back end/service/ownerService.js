@@ -46,9 +46,9 @@ const authHotel = async (req) => {
      try {
           const image = req.files.map(file => file.filename);
 
-          const { owner_id, hotel_name, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
+          const { owner_id, hotel_name,star_rating,description, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
 
-          if (!owner_id || !hotel_name || !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
+          if (!owner_id || !hotel_name||!star_rating ||!description|| !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
                console.log("fill empty fields");
                let msg = 'fill empty fields'
                return { status: 400, msg: msg }
@@ -65,6 +65,8 @@ const authHotel = async (req) => {
                const newHotel = new hotel({
                     owner_id,
                     hotel_name,
+                    star_rating,
+                    description,
                     email,
                     address,
                     city,
@@ -100,11 +102,11 @@ const hotelsWithIncompleteDetails = async (req, res) => {
 const authenticateRoomDetails = async (req) => {
      try {
           const hotel_id = req.session.hotel_id
-
+          console.log(hotel_id);
           const image = req.files.map(file => file.filename);
-          const {roomType,roomSpace, price, roomCount, amnities, availableRooms} = req.body
+          const {roomType,roomSpace,description, price, roomCount, amnities, availableRooms} = req.body
 console.log(req.body);
-          if ( roomSpace || !price || !roomCount || !amnities || !availableRooms) {
+          if (!roomType || !roomSpace || !description||!price || !roomCount || !amnities || !availableRooms) {
                console.log("fill empty fields");
                let message = 'fill empty fields'
                return { status: 400,message }
@@ -112,7 +114,9 @@ console.log(req.body);
 
 
           const newRoom = new room({
-               roomType:roomType,
+               roomType,
+               roomSpace,
+               description,
                price,
                roomCount,
                amnities,

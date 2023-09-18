@@ -4,6 +4,19 @@ const User = require('../domain/model/user')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
 
+const findHotels = async (req, res) => {
+    try {
+        const hotelsData = await userRepository.findAllHotels()
+        console.log(hotelsData);
+        if (!hotelsData) {
+            const msg = "Something went wrong"
+            return { status: 400, msg }
+        }
+
+        return hotelsData
+    } catch (err) { console.log(err); }
+}
+
 
 const auth = async (req) => {
     try {
@@ -47,7 +60,7 @@ const generateOtpAndSend = (req) => {
     req.session.otp = otp
 
     const userData = req.session.userFormData
-    const {email} = userData
+    const { email } = userData
     console.log(otp, 'otp');
     sendMail(email, otp)
 }
@@ -87,7 +100,7 @@ const userAuthentication = async (userData) => {
             password: hashPassword
         });
         newUser.save()
-//delete req.session.userFormData
+        //delete req.session.userFormData
         if (newUser) {
             return { status: 200 }
         } else {
@@ -103,7 +116,7 @@ const verifyUser = async (userData) => {
 
     try {
         const { first_name, last_name, email, mobile, password, confirm } = userData;
-console.log(userData);
+        console.log(userData);
         if (!first_name || !last_name || !email || !mobile || !password || !confirm) {
             console.log('Fill in empty fields');
             const msg = 'Fill in empty fields'
@@ -119,10 +132,10 @@ console.log(userData);
         const user = await userRepository.findUserByEmail(email)
         console.log(user);
         if (user) {
-console.log(77777);
+            console.log(77777);
             const msg = 'User already exists'
             return { status: 200, msg: msg }
-        }else {
+        } else {
             const msg = ''
             return { status: 202, msg: msg }
         }
@@ -136,5 +149,6 @@ module.exports = {
     verifyUser,
     generateOtpAndSend,
     auth,
-    otpAuth
+    otpAuth,
+    findHotels
 }

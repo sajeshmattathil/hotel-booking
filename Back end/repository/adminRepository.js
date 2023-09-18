@@ -33,17 +33,15 @@ const findHotelApprovalRequests=async ()=>{
 
 const findHotelAndApprove=async (email)=>{
     try {
-        const filter = { email: email };
-        const update = { $set: { isApproved: true } };
-             return await hotels.updateOne(filter, update)
+        console.log(email);
+        return await hotels.updateOne({email:email},{ $set: { isApproved: true } })
     } catch (error) {
         console.log(error);
     }
 }
 const findCategoryByName= async (name)=>{
     try {
-        
-             return await category.findOne({name:name})
+        return await category.findOne({name:name})
     } catch (error) {
         console.log(error);
     }
