@@ -11,7 +11,7 @@ const findUserByEmail=async (email)=>{
 
 const findAllHotels= async ()=>{
     try {
-        return await hotels.find({})
+        return await hotels.find({isApproved:true})
     } catch (error) {
         console.log(error);
     }

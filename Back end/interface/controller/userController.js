@@ -2,7 +2,8 @@
 const userService = require('../../service/userService')
 
 const userHome=(req,res)=>{
-    res.render('user/index')
+    //res.render('user/index')
+    res.render('user/userManagement')
 }
 const userhotelsList= async (req,res)=>{
     const hotels= await userService.findHotels()
@@ -36,8 +37,9 @@ const otpVerification = async (req, res) => {
 
 }
 const otpPage = (req, res) => {
-    userService.generateOtpAndSend(req)
-    res.render('otp')
+    if(!(req.session.otp))userService.generateOtpAndSend(req)  
+    const msg=req.query.msg
+    res.render('otp',{msg})
 }
 
 const otpAuthentication = async (req, res) => {
@@ -63,11 +65,11 @@ const userLoginHomeView = (req, res) => {
 const userRegister = async (req, res) => {
     const userData = req.session.userFormData
     try {
-        let response = await userService.userAuthentication(userData)
+        let response = await userService.userAuthentication(req)
 
         if (response.status === 200) res.redirect('/login')
-        if (response.status === 400) res.redirect('/signup')
-        if (response.status === 500) res.redirect('/otpPage')
+        if (response.status === 400) res.redirect(`/signup?msg=${response.msg}`)
+        if (response.status === 500) res.redirect(`/otpPage?msg=${response.msg}`)
 
     } catch (error) { console.log(error); }
 

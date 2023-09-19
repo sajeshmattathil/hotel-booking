@@ -3,7 +3,6 @@ const userRepository = require('../repository/userRepository')
 const User = require('../domain/model/user')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
-const jwt=require('../middleware/jwt')
 
 const findHotels = async (req, res) => {
     try {
@@ -74,12 +73,14 @@ const otpAuth = async (req) => {
         delete req.session.otp
         return { status: 200 }
     } else {
-        return { status: 400 }
+        const msg='Entered OTP is wrong'
+        return { status: 400 ,msg}
     }
 }
 
 
-const userAuthentication = async (userData) => {
+const userAuthentication = async (req) => {
+    const userData=req.session.userFormData
     console.log(userData);
     try {
         const { first_name, last_name, email, mobile, password, confirm } = userData;
@@ -88,7 +89,8 @@ const userAuthentication = async (userData) => {
 
         if (existingUserData) {
             console.log('User with this email already exists');
-            return { status: 400 };
+            const msg="User with this email already exists"
+            return { status: 400,msg };
         }
 
         const hashPassword = await bcrypt.hash(password, 10)
@@ -101,17 +103,18 @@ const userAuthentication = async (userData) => {
             password: hashPassword
         });
         newUser.save()
-         jwt.generateToken()
-        //delete req.session.userFormData
+        delete req.session.userFormData
         if (newUser) {
             return { status: 200 }
         } else {
-            return { status: 400 };
+            const msg="Something went wrong"
+            return { status: 400,msg };
         }
 
     } catch (error) {
         console.log(error);
-        return { status: 500 };
+        const msg="Some internal error"
+        return { status: 500,msg };
     }
 }
 const verifyUser = async (userData) => {
@@ -134,7 +137,6 @@ const verifyUser = async (userData) => {
         const user = await userRepository.findUserByEmail(email)
         console.log(user);
         if (user) {
-            console.log(77777);
             const msg = 'User already exists'
             return { status: 200, msg: msg }
         } else {
