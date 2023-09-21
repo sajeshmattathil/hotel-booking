@@ -15,5 +15,9 @@ router.get('/otpPage',controller.otpPage)
 router.post('/otp-submit',controller.otpAuthentication)
 router.get('/register',controller.userRegister)
 
+router.get('/userManagement',controller.userManagement)
+router.get('/userManagementPage',controller.userManagementPage)
+router.get('/manageYourProfile',controller.manageYourProfile)
+router.get('/manageYourProfilePage',controller.manageYourProfilePage)
 
 module.exports=router

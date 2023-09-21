@@ -147,6 +147,20 @@ const verifyUser = async (userData) => {
     } catch (error) { console.log(error); }
 }
 
+const userDetails= async (req)=>{
+try{
+    const email=req.session.user
+    console.log(email);
+    const userData= await userRepository.findUserByEmail(email)
+    console.log(userData);
+    if(userData)return userData
+    else{
+        const msg='Something went wrong'
+        return {status:400,msg}
+    }
+
+}catch(err){console.log(err);}
+}
 
 module.exports = {
     userAuthentication,
@@ -154,5 +168,6 @@ module.exports = {
     generateOtpAndSend,
     auth,
     otpAuth,
-    findHotels
+    findHotels,
+    userDetails
 }

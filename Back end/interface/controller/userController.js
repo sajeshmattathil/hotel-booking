@@ -2,8 +2,8 @@
 const userService = require('../../service/userService')
 
 const userHome=(req,res)=>{
-    //res.render('user/index')
-    res.render('user/userManagement')
+    res.render('user/index')
+  //  res.render('user/userManagement')
 }
 const userhotelsList= async (req,res)=>{
     const hotels= await userService.findHotels()
@@ -13,9 +13,10 @@ const userhotelsList= async (req,res)=>{
 }
 const userhotelsListPage = async (req,res)=>{
     const hotels= await userService.findHotels()
+    const userName=''
     const msg=req.query.msg
     console.log(hotels[0].imagesOfHotel[0]);
-    res.render('user/hotels',{hotels,msg})
+    res.render('user/hotels',{hotels,msg,userName})
 }
 
 
@@ -59,7 +60,9 @@ const userLoginHome = async (req, res) => {
 
 }
 const userLoginHomeView = (req, res) => {
-    res.render('userHome')
+    try{
+        res.render('user/index')
+    }catch(err){console.log(err);}
 }
 
 const userRegister = async (req, res) => {
@@ -82,6 +85,26 @@ const userRegisterPage = (req, res) => {
     const msg = req.query.msg
     res.render('user-signup',{msg:msg})
 }
+
+const userManagement=(req,res)=>{
+res.redirect('/manageYourProfilePage')
+}
+
+const userManagementPage=(req,res)=>{
+res.render('user/userManagement')
+}
+
+const manageYourProfile=(req,res)=>{
+    res.redirect('/manageYourProfilePage')
+}
+const manageYourProfilePage= async (req,res)=>{
+    const user= await userService.userDetails(req)
+    console.log(user);
+    if(user.status === 400) res.redirect(`/manageYourProfilePage?msg=${user.msg}`)
+    const msg=req.query.msg
+    res.render('user/userProfile',{user,msg})
+}
+
 module.exports = {
     userHome,
     userhotelsList,
@@ -95,6 +118,10 @@ module.exports = {
     otpAuthentication,
     userLoginHome,
     userLoginHomeView,
+    userManagement,
+    userManagementPage,
+    manageYourProfile,
+    manageYourProfilePage
 
 
 }
