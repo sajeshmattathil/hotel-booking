@@ -19,9 +19,6 @@ const userhotelsListPage = async (req,res)=>{
     res.render('user/hotels',{hotels,msg,userName})
 }
 
-
-
-
 const userLogin = (req, res) => {
     const msg=req.query.msg
     res.render('user-login',{msg:msg})
@@ -104,7 +101,69 @@ const manageYourProfilePage= async (req,res)=>{
     const msg=req.query.msg
     res.render('user/userProfile',{user,msg})
 }
+const editUserName= async (req,res)=>{
+    try{
+    const response= await userService.saveEditedUserName(req)
+    console.log(response.status +">>>>>");
+    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
+    }catch(err){console.log(err);}
+}
+const editUserEmail= async (req,res)=>{
+    try{
+    const response= await userService.saveEditedUserEmail(req)
+    console.log(response.status +">>>>>");
+    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+
+    }catch(err){console.log(err);}
+}
+const editUserMobile= async (req,res)=>{
+    try{
+    const response= await userService.saveEditedUserMobile(req)
+    console.log(response.status +">>>>>");
+    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+
+    }catch(err){console.log(err);}
+}
+
+const editUserGender= async (req,res)=>{
+    try{
+    const response= await userService.saveEditedUserGender(req)
+    console.log(response.status +">>>>>");
+    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+
+    }catch(err){console.log(err);}
+}
+
+const editUserAddress= async (req,res)=>{
+    try{
+    const response= await userService.saveEditedUserAddress(req)
+    console.log(response.status +">>>>>");
+    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+
+    }catch(err){console.log(err);}
+}
+
+const sendOtpToEmail = (req, res) => {
+    if(!(req.session.otp))userService.generateOtpAndSendToVerifyEmail(req)  
+   
+}
+
+const editUserPassword= async (req,res)=>{
+    try{
+    const response= await userService.saveEditedUserPassword(req)
+    console.log(response.status +">>>>>");
+    if(response.status === 400) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+
+    }catch(err){console.log(err);}
+}
 module.exports = {
     userHome,
     userhotelsList,
@@ -121,7 +180,13 @@ module.exports = {
     userManagement,
     userManagementPage,
     manageYourProfile,
-    manageYourProfilePage
-
+    manageYourProfilePage,
+    editUserName,
+    editUserEmail,
+    editUserMobile,
+    editUserGender,
+    editUserAddress,
+    sendOtpToEmail,
+    editUserPassword
 
 }

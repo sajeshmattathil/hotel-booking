@@ -17,6 +17,15 @@ const userSchema=new mongoose.Schema({
         type:Number,
         required:true
     },
+    gender:{
+        type:String,
+        default:"Select your gender"
+    },
+    addressDetails: {
+        address: String,
+        city: String,
+        pin: String
+      },
     password:{
         type:String,
         required:true

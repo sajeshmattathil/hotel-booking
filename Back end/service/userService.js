@@ -161,7 +161,124 @@ try{
 
 }catch(err){console.log(err);}
 }
+const saveEditedUserName= async (req)=>{
+    try{
+        
+    const updateData= await userRepository.findAndEditName(req)
+    if( updateData ){
+        const msg = "Name edited"
+        return { status: 200, msg }
+   
+    } else{
+        const msg = "Something went wrong"
+        return { status: 500, msg }
+   
+    }
+    }catch(err){console.log(err);}
+}
+const saveEditedUserEmail= async (req)=>{
+    try{
+        
+    const updateData= await userRepository.findAndEditEmail(req)
+    if( updateData ){
+        const msg = "Email edited"
+        return { status: 200, msg }
+   
+    } else{
+        const msg = "Something went wrong"
+        return { status: 500, msg }
+   
+    }
+    }catch(err){console.log(err);}
+}
 
+const saveEditedUserMobile= async (req)=>{
+    try{
+        
+    const updateData= await userRepository.findAndEditMobile(req)
+    if( updateData ){
+        const msg = "Phone number edited"
+        return { status: 200, msg }
+   
+    } else{
+        const msg = "Something went wrong"
+        return { status: 500, msg }
+   
+    }
+    }catch(err){console.log(err);}
+}
+
+const saveEditedUserGender= async (req)=>{
+    try{
+        
+    const updateData= await userRepository.findAndEditGender(req)
+    if( updateData ){
+        const msg = "Gender added"
+        return { status: 200, msg }
+   
+    } else{
+        const msg = "Something went wrong"
+        return { status: 500, msg }
+   
+    }
+    }catch(err){console.log(err);}
+}
+
+const saveEditedUserAddress= async (req)=>{
+    try{
+        
+    const updateData= await userRepository.findAndEditAddress(req)
+    if( updateData ){
+        const msg = "Address added"
+        return { status: 200, msg }
+   
+    } else{
+        const msg = "Something went wrong"
+        return { status: 500, msg }
+   
+    }
+    }catch(err){console.log(err);}
+}
+
+const generateOtpAndSendToVerifyEmail = (req) => {
+    const otp = generatedOtp()
+    req.session.otp = otp
+    console.log(req.session.otp +"@@@####");
+
+    const email = req.session.user
+    console.log(otp, 'otp');
+    sendMail(email, otp)
+}
+
+const saveEditedUserPassword= async (req)=>{
+    try{
+        console.log(req);
+        const genOtp = req.session.otp
+        console.log(req.body.otp +'#####');
+        console.log(genOtp +"@@@@2");
+        if (req.body.otp === genOtp) {
+            
+
+            const updateData= await userRepository.findAndEditPassword(req)
+            if( updateData ){
+                const msg = "New password added"
+                delete req.session.otp
+                return { status: 200, msg }
+           
+            } else{
+                const msg = "Something went wrong"
+                return { status: 500, msg }
+           
+            }
+
+        } else {
+            const msg='Entered OTP is wrong'
+            return { status: 400 ,msg}
+        }
+        
+   
+    }catch(err){console.log(err);}
+}
 module.exports = {
     userAuthentication,
     verifyUser,
@@ -169,5 +286,12 @@ module.exports = {
     auth,
     otpAuth,
     findHotels,
-    userDetails
+    userDetails,
+    saveEditedUserName,
+    saveEditedUserEmail,
+    saveEditedUserMobile,
+    saveEditedUserGender,
+    saveEditedUserAddress,
+    generateOtpAndSendToVerifyEmail,
+    saveEditedUserPassword
 }
