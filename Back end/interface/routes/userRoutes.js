@@ -24,11 +24,16 @@ router.post('/edit-userEmail',controller.editUserEmail)
 router.post('/edit-userMobile',controller.editUserMobile)
 router.post('/edit-userGender',controller.editUserGender)
 router.post('/edit-userAddress',controller.editUserAddress)
-router.get('/sendOtpToEmail',controller.sendOtpToEmail)
+// router.get('/sendOtpToEmail',controller.sendOtpToEmail)
 router.post('/edit-userPassword',controller.editUserPassword)
-
-
-
-
+router.get('/forgotPassword',controller.forgotPassword)
+router.get('/forgotEmailPage',controller.forgotEmailPage)
+router.post('/email-submit',controller.emailSubmit)
+router.get('/otpVerificationPage',controller.otpVerificationPage)
+router.post('/otpForgot-submit',controller.otpForgotSubmit)
+router.get('/newPassword',controller.newPassword)
+router.post('/newPassword-submit',controller.newPasswordSubmit)
+router.get('/hotelDetails/:_id',controller.hotelDetails)
+router.get('/hotelDetailsPage',controller.hotelDetailsPage)
 
 module.exports=router

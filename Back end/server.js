@@ -26,7 +26,8 @@ app.set('views', path.join(__dirname, '../Front end/views'));
 app.use(session({
     secret: uuidv4(),
     resave: false,
-    saveUninitialized: true
+    saveUninitialized: true,
+    cookie:{maxAge:600000}
 }))
 app.use(nocache())
 app.use('/', userRouter)

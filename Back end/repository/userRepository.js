@@ -1,5 +1,6 @@
 const User=require('../domain/model/user')
 const hotels=require('../domain/model/hotel')
+const bcrypt=require('bcryptjs')
 
 const findUserByEmail=async (email)=>{
     try {
@@ -73,7 +74,19 @@ const findAndEditPassword= async (req)=>{
         console.log(email+"<<<<<<>>>>>>");
 
         const {password}=req.body
-        return await User.updateOne({email:email},{$set:{password:password}})
+        console.log(password);
+        const hashPassword = await bcrypt.hash(password, 10)
+        return await User.updateOne({email:email},{$set:{password:hashPassword}})
+    }catch(err){console.log(err);}
+}
+
+const findAndChangePassword= async (req)=>{
+    try{
+        const email=req.session.email
+        const {password}=req.body
+        const hashPassword = await bcrypt.hash(password, 10)
+
+        return await User.updateOne({email:email},{$set:{password:hashPassword}})
     }catch(err){console.log(err);}
 }
 module.exports={
@@ -84,5 +97,6 @@ module.exports={
     findAndEditMobile,
     findAndEditGender,
     findAndEditAddress,
-    findAndEditPassword
+    findAndEditPassword,
+    findAndChangePassword
 }

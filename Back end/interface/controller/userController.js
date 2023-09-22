@@ -1,4 +1,3 @@
-
 const userService = require('../../service/userService')
 
 const userHome=(req,res)=>{
@@ -15,7 +14,6 @@ const userhotelsListPage = async (req,res)=>{
     const hotels= await userService.findHotels()
     const userName=''
     const msg=req.query.msg
-    console.log(hotels[0].imagesOfHotel[0]);
     res.render('user/hotels',{hotels,msg,userName})
 }
 
@@ -29,7 +27,6 @@ const otpVerification = async (req, res) => {
     const userData = req.session.userFormData
 
     const response = await userService.verifyUser(userData)
-    console.log(response);
     if (response.status === 200 || response.status === 400) res.redirect(`/signUp?msg=${response.msg}`)
     else res.redirect('/otpPage')
 
@@ -149,10 +146,11 @@ const editUserAddress= async (req,res)=>{
     }catch(err){console.log(err);}
 }
 
-const sendOtpToEmail = (req, res) => {
-    if(!(req.session.otp))userService.generateOtpAndSendToVerifyEmail(req)  
+// const sendOtpToEmail = (req, res) => {
+    
+//     if(!(req.session.otp))userService.generateOtpAndSendToVerifyEmail(req)  
    
-}
+// }
 
 const editUserPassword= async (req,res)=>{
     try{
@@ -164,6 +162,57 @@ const editUserPassword= async (req,res)=>{
 
     }catch(err){console.log(err);}
 }
+
+const forgotPassword=(req,res)=>{
+  res.redirect('/forgotEmailPage')
+}
+
+const forgotEmailPage=(req,res)=>{
+    const msg=req.query.msg
+    res.render('forgotEmailPage',{msg})
+}
+
+const emailSubmit=(req,res)=>{
+if(!(req.session.otp))userService.generateOtpAndSendForForgot(req)  
+ res.redirect('/otpVerificationPage')
+}
+
+const otpVerificationPage=(req,res)=>{
+    const msg=req.query.msg
+    res.render('otpForgot',{msg})
+}
+
+const otpForgotSubmit= async (req,res)=>{
+ const response= await userService.authAndSavePassword(req)
+ if(response.status === 200) res.redirect(`/newPassword?msg=${response.msg}`)
+ if(response.status === 400) res.redirect(`/otpVerificationPage?msg=${response.msg}`)
+
+}
+
+const newPassword=(req,res)=>{
+    res.render('newPasswordPage')
+}
+
+const newPasswordSubmit= async (req,res)=>{
+    try{
+  const response= await userService.changePassord(req)
+  if(response.status === 200)res.redirect(`/login?msg=${response.msg}`)
+  if(response.status === 400)res.redirect(`/newPassword?msg=${response.msg}`)
+  if(response.status === 500)res.redirect(`/newPassword?msg=${response.msg}`)
+
+    }catch(err){console.log(err);}
+}
+
+const hotelDetails=(req,res)=>{
+    const id=req.params._id
+    console.log(454545);
+ res.redirect('/hotelDetailsPage')
+}
+
+const hotelDetailsPage=(req,res)=>{
+    res.render('user/hotelDetails')
+}
+
 module.exports = {
     userHome,
     userhotelsList,
@@ -186,7 +235,16 @@ module.exports = {
     editUserMobile,
     editUserGender,
     editUserAddress,
-    sendOtpToEmail,
-    editUserPassword
+    // sendOtpToEmail,
+    editUserPassword,
+    forgotPassword,
+    forgotEmailPage,
+    emailSubmit,
+    otpVerificationPage,
+    otpForgotSubmit,
+    newPassword,
+    newPasswordSubmit,
+    hotelDetails,
+    hotelDetailsPage
 
 }

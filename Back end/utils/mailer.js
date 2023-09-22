@@ -1,6 +1,7 @@
 const nodemailer = require('nodemailer');
 
 const sendOTPByEmail = (email,otp) => {
+    
     let mailTransporter = nodemailer.createTransport({
         service: 'gmail',
         auth: {

@@ -7,7 +7,6 @@ const generatedOtp = require('../utils/otpGenerator')
 const findHotels = async (req, res) => {
     try {
         const hotelsData = await userRepository.findAllHotels()
-        console.log(hotelsData);
         if (!hotelsData) {
             const msg = "Something went wrong"
             return { status: 400, msg }
@@ -68,9 +67,11 @@ const generateOtpAndSend = (req) => {
 const otpAuth = async (req) => {
     const genOtp = req.session.otp
     console.log(req.body.otp);
+    
+
     console.log(genOtp);
     if (req.body.otp === genOtp) {
-        delete req.session.otp
+       // delete req.session.otp
         return { status: 200 }
     } else {
         const msg='Entered OTP is wrong'
@@ -210,7 +211,7 @@ const saveEditedUserMobile= async (req)=>{
 
 const saveEditedUserGender= async (req)=>{
     try{
-        
+        console.log(req.session.otp+"000000");
     const updateData= await userRepository.findAndEditGender(req)
     if( updateData ){
         const msg = "Gender added"
@@ -240,43 +241,111 @@ const saveEditedUserAddress= async (req)=>{
     }catch(err){console.log(err);}
 }
 
-const generateOtpAndSendToVerifyEmail = (req) => {
+// const generateOtpAndSendToVerifyEmail = (req,res) => {
+//     const otp = generatedOtp()
+//     req.session.otp = otp
+//     const email = req.session.user
+//     console.log(otp, 'otpNew');
+//     sendMail(email, otp)
+
+// }
+
+// const saveEditedUserPassword= async (req)=>{
+//    try{
+//         console.log(req);
+//         const genOtp = req.session.otp
+//         console.log(req.body.otp +'#####');
+//         console.log(genOtp +"@@@@2");
+//         // if (req.body.otp === genOtp) {
+
+//         const {password,confirm}=req.body
+//         if(req.body.otp === genOtp){
+//          if(password === confirm)   {
+
+//             const updateData= await userRepository.findAndEditPassword(req)
+//             if( updateData ){
+//                 const msg = "New password added"
+//                 delete req.session.otp
+//                 return { status: 200, msg }
+           
+//             } else{
+//                 const msg = "Something went wrong"
+//                 return { status: 500, msg }
+           
+//             }}
+
+//         } else {
+//             const msg='Entered password does not match'
+//             return { status: 400 ,msg}
+//         }
+        
+//        }catch(err){console.log(err);}
+// }
+
+
+const saveEditedUserPassword= async (req)=>{
+    try{
+         
+         const {password,confirm}=req.body
+          if(password === confirm)   {
+ 
+             const updateData= await userRepository.findAndEditPassword(req)
+             if( updateData ){
+                 const msg = "New password added"
+                 delete req.session.otp
+                 return { status: 200, msg }
+            
+             } else{
+                 const msg = "Something went wrong"
+                 return { status: 500, msg }           
+             }
+ 
+         } else {
+             const msg='Entered password does not match'
+             return { status: 400 ,msg}
+         }
+        }catch(err){console.log(err);}
+ }
+
+ const generateOtpAndSendForForgot = (req) => {
     const otp = generatedOtp()
     req.session.otp = otp
-    console.log(req.session.otp +"@@@####");
-
-    const email = req.session.user
+    const { email } = req.body
+    req.session.email=email
     console.log(otp, 'otp');
     sendMail(email, otp)
 }
 
-const saveEditedUserPassword= async (req)=>{
+const authAndSavePassword=(req)=>{
+    const genOtp = req.session.otp
+    console.log(req.body.otp);
+    console.log(genOtp);
+    if (req.body.otp === genOtp) {
+       delete req.session.otp
+        return { status: 200 }
+    } else {
+        const msg='Entered OTP is wrong'
+        return { status: 400 ,msg}
+    }
+}
+
+const changePassord= async (req)=>{
     try{
-        console.log(req);
-        const genOtp = req.session.otp
-        console.log(req.body.otp +'#####');
-        console.log(genOtp +"@@@@2");
-        if (req.body.otp === genOtp) {
-            
-
-            const updateData= await userRepository.findAndEditPassword(req)
-            if( updateData ){
-                const msg = "New password added"
-                delete req.session.otp
-                return { status: 200, msg }
-           
-            } else{
-                const msg = "Something went wrong"
-                return { status: 500, msg }
-           
-            }
-
-        } else {
-            const msg='Entered OTP is wrong'
-            return { status: 400 ,msg}
+  const {password,confirm}=req.body
+  if(password === confirm){
+    const updatePassword= await userRepository.findAndChangePassword(req)
+        if(updatePassword){
+            console.log(updatePassword);
+            const msg="Password changed sucessfully"
+            return {status:200,msg}
+        }else{
+            const msg="Something went wrong"
+            return {status:500,msg}
         }
-        
-   
+  }else{
+    const msg='Password doesnot match'
+    return {status:400,msg}
+  }
     }catch(err){console.log(err);}
 }
 module.exports = {
@@ -292,6 +361,9 @@ module.exports = {
     saveEditedUserMobile,
     saveEditedUserGender,
     saveEditedUserAddress,
-    generateOtpAndSendToVerifyEmail,
-    saveEditedUserPassword
+    // generateOtpAndSendToVerifyEmail,
+    saveEditedUserPassword,
+    generateOtpAndSendForForgot,
+    authAndSavePassword,
+    changePassord
 }
