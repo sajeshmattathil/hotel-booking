@@ -35,5 +35,6 @@ router.get('/newPassword',controller.newPassword)
 router.post('/newPassword-submit',controller.newPasswordSubmit)
 router.get('/hotelDetails/:_id',controller.hotelDetails)
 router.get('/hotelDetailsPage',controller.hotelDetailsPage)
+router.get('/sortHotels',controller.sortHotels)
 
 module.exports=router

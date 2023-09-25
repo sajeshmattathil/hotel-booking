@@ -1,17 +1,22 @@
 const userService = require('../../service/userService')
 
 const userHome=(req,res)=>{
-    res.render('user/index')
+   res.render('user/index')
   //  res.render('user/userManagement')
+  //res.render('user/rooms')
 }
 const userhotelsList= async (req,res)=>{
-    const hotels= await userService.findHotels()
+
+    const hotels= await userService.findHotels(req)
     if(hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
     else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
 
 }
 const userhotelsListPage = async (req,res)=>{
-    const hotels= await userService.findHotels()
+    console.log(req.body);
+    console.log(req.session);
+    const hotels= await userService.findHotels(req)
+    console.log(hotels);
     const userName=''
     const msg=req.query.msg
     res.render('user/hotels',{hotels,msg,userName})
@@ -89,6 +94,7 @@ res.render('user/userManagement')
 }
 
 const manageYourProfile=(req,res)=>{
+    if(!(req.session.user))res.redirect('/login')
     res.redirect('/manageYourProfilePage')
 }
 const manageYourProfilePage= async (req,res)=>{
@@ -205,12 +211,25 @@ const newPasswordSubmit= async (req,res)=>{
 
 const hotelDetails=(req,res)=>{
     const id=req.params._id
+    req.session.id=id
     console.log(454545);
  res.redirect('/hotelDetailsPage')
 }
 
-const hotelDetailsPage=(req,res)=>{
-    res.render('user/hotelDetails')
+const hotelDetailsPage= async (req,res)=>{
+    try{
+    const userName=""
+    const room= await userService.roomDetails(req)
+    console.log(room+'88888');
+    res.render('user/rooms',{userName,room})
+    }catch(err){console.log(err);}
+}
+const sortHotels= async (req,res)=>{
+    const sortedHotels=await userService.sortHotels(req)
+    const userName=''
+    res.render('user/hotels',{sortedHotels,userName})
+    console.log(req.query);
+
 }
 
 module.exports = {
@@ -245,6 +264,7 @@ module.exports = {
     newPassword,
     newPasswordSubmit,
     hotelDetails,
-    hotelDetailsPage
+    hotelDetailsPage,
+    sortHotels
 
 }

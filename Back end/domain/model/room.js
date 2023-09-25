@@ -36,6 +36,18 @@ const roomSchema=new mongoose.Schema({
         type:Array,
         required:true
     },
+    breakfastPrice:{
+        type:Number,
+        required:false
+    },
+    review:{
+        type:Array,
+        required:false
+    },
+    customerRating:{
+        type:Number,
+        required:false
+    },
     isAvailable:{
         type:Boolean,
         default:true

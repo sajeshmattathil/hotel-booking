@@ -1,5 +1,6 @@
 const User=require('../domain/model/user')
 const hotels=require('../domain/model/hotel')
+const rooms=require('../domain/model/room')
 const bcrypt=require('bcryptjs')
 
 const findUserByEmail=async (email)=>{
@@ -10,9 +11,16 @@ const findUserByEmail=async (email)=>{
     }
 }
 
-const findAllHotels= async ()=>{
-    try {
-        return await hotels.find({isApproved:true})
+const findAllHotels= async (cityName)=>{
+    try {  
+        if(cityName){ const data= await hotels.find({isApproved:true,city:cityName}).limit(10)
+        if(data.length === 0){
+            return await hotels.find({isApproved:true})
+        }
+        return data
+    }
+        else console.log('cityName not found');
+        
     } catch (error) {
         console.log(error);
     }
@@ -20,7 +28,6 @@ const findAllHotels= async ()=>{
 const findAndEditName= async (req)=>{
     try{
         const email=req.session.user
-        console.log(email+"<<<<<<>>>>>>");
         const {first_name,last_name}=req.body
         console.log(first_name+"??????????");
         return await User.updateOne({email:email},{$set:{first_name:first_name,last_name:last_name}})
@@ -29,10 +36,7 @@ const findAndEditName= async (req)=>{
 const findAndEditEmail= async (req)=>{
     try{
         const email=req.session.user
-        console.log(email+"<<<<<<>>>>>>");
-
         const newEmail=req.body.email
-        console.log(newEmail+"<<<<<<>>>>>>");
         req.session.user=newEmail
         return await User.updateOne({email:email},{$set:{email:newEmail}})
     }catch(err){console.log(err);}
@@ -41,8 +45,6 @@ const findAndEditEmail= async (req)=>{
 const findAndEditMobile= async (req)=>{
     try{
         const email=req.session.user
-        console.log(email+"<<<<<<>>>>>>");
-
         const mobile=req.body.mobile
         return await User.updateOne({email:email},{$set:{mobile:mobile}})
     }catch(err){console.log(err);}
@@ -51,8 +53,6 @@ const findAndEditMobile= async (req)=>{
 const findAndEditGender= async (req)=>{
     try{
         const email=req.session.user
-        console.log(email+"<<<<<<>>>>>>");
-
         const gender=req.body.gender
         return await User.updateOne({email:email},{$set:{gender:gender}})
     }catch(err){console.log(err);}
@@ -61,8 +61,6 @@ const findAndEditGender= async (req)=>{
 const findAndEditAddress= async (req)=>{
     try{
         const email=req.session.user
-        console.log(email+"<<<<<<>>>>>>");
-
         const {address,city,pin}=req.body
         return await User.updateOne({email:email},{$set:{'addressDetails.address':address,'addressDetails.city':city,'addressDetails.pin':pin}})
     }catch(err){console.log(err);}
@@ -71,8 +69,6 @@ const findAndEditAddress= async (req)=>{
 const findAndEditPassword= async (req)=>{
     try{
         const email=req.session.user
-        console.log(email+"<<<<<<>>>>>>");
-
         const {password}=req.body
         console.log(password);
         const hashPassword = await bcrypt.hash(password, 10)
@@ -85,8 +81,26 @@ const findAndChangePassword= async (req)=>{
         const email=req.session.email
         const {password}=req.body
         const hashPassword = await bcrypt.hash(password, 10)
-
         return await User.updateOne({email:email},{$set:{password:hashPassword}})
+    }catch(err){console.log(err);}
+}
+
+const sortBy = async (req) =>{
+try{
+    const cityName= req.session.city
+    const sort=req.query.sort
+    const sortCriteria = {};
+    sortCriteria[sort] = -1; 
+    return hotels.find({city:cityName}).sort(sortCriteria)
+        
+    
+}catch(err){console.log(err.message);}
+
+}
+
+const roomDetails = async(hotelId)=>{
+    try{
+     return await rooms.find({hotel:hotelId})
     }catch(err){console.log(err);}
 }
 module.exports={
@@ -98,5 +112,8 @@ module.exports={
     findAndEditGender,
     findAndEditAddress,
     findAndEditPassword,
-    findAndChangePassword
+    findAndChangePassword,
+    
+    sortBy,
+    roomDetails
 }

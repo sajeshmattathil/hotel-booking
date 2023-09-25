@@ -4,9 +4,22 @@ const User = require('../domain/model/user')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
 
-const findHotels = async (req, res) => {
+const findHotels = async (req) => {
     try {
-        const hotelsData = await userRepository.findAllHotels()
+        const cityName=req.body.city  
+        if(req.session.city){
+            const city= req.session.city
+            const hotelsData = await userRepository.findAllHotels(city)
+        if (hotelsData.length === 0) {
+            const msg = "Something went wrong"
+            return { status: 400, msg }
+        }
+
+        return hotelsData
+        }
+        req.session.city=cityName
+       console.log(cityName+'>>>>>>>');
+        const hotelsData = await userRepository.findAllHotels(cityName)
         if (!hotelsData) {
             const msg = "Something went wrong"
             return { status: 400, msg }
@@ -15,7 +28,6 @@ const findHotels = async (req, res) => {
         return hotelsData
     } catch (err) { console.log(err); }
 }
-
 
 const auth = async (req) => {
     try {
@@ -347,7 +359,28 @@ const changePassord= async (req)=>{
     return {status:400,msg}
   }
     }catch(err){console.log(err);}
+} 
+
+const sortHotels = async (req) =>{
+    const sortedData = await userRepository.sortBy(req)
+    if(sortedData.length === 0) {
+        const commonData = await findHotels(req)
+        return commonData
+    }
+    return sortedData
+
 }
+
+const roomDetails = async (req)=>{
+  try{
+    const hotelId =req.session.id
+    console.log(hotelId+'>>>>>>> '+11111)
+  const roomsData = await userRepository.roomDetails(hotelId)
+  return roomsData
+  }catch(err){console.log(err);}
+}
+
+
 module.exports = {
     userAuthentication,
     verifyUser,
@@ -365,5 +398,7 @@ module.exports = {
     saveEditedUserPassword,
     generateOtpAndSendForForgot,
     authAndSavePassword,
-    changePassord
+    changePassord,
+    sortHotels,
+    roomDetails
 }
