@@ -11,7 +11,8 @@ const auth = async (req) => {
      }
      try {
           const owner = await ownerRepository.findOwnerByEmail(email)
-          if (owner.email !== email) {
+        
+          if (!owner) {
                const msg = "Email or Password is incorrect"
                return { status: 400, msg: msg }
           }
@@ -45,10 +46,11 @@ const authHotel = async (req) => {
 
      try {
           const image = req.files.map(file => file.filename);
+          const owner=req.session.owner
 
-          const { owner_id, hotel_name,star_rating,description, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
+          const { hotel_name,star_rating,description, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
 
-          if (!owner_id || !hotel_name||!star_rating ||!description|| !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
+          if (!hotel_name||!star_rating ||!description|| !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
                console.log("fill empty fields");
                let msg = 'fill empty fields'
                return { status: 400, msg: msg }
@@ -63,7 +65,7 @@ const authHotel = async (req) => {
           }
           else {
                const newHotel = new hotel({
-                    owner_id,
+                    owner_id:owner,
                     hotel_name,
                     star_rating,
                     description,
@@ -104,27 +106,29 @@ const authenticateRoomDetails = async (req) => {
           const hotel_id = req.session.hotel_id
           console.log(hotel_id);
           const image = req.files.map(file => file.filename);
-          const {roomType,roomSpace,description, price, roomCount, amnities, availableRooms} = req.body
+          let {roomType,roomSpace,description, price,RoomNumberStartwith ,roomCount, amnities, availableRooms} = req.body
 console.log(req.body);
-          if (!roomType || !roomSpace || !description||!price || !roomCount || !amnities || !availableRooms) {
+          if (!roomType || !roomSpace  || !description||!price || !RoomNumberStartwith || !roomCount || !amnities || !availableRooms) {
                console.log("fill empty fields");
                let message = 'fill empty fields'
                return { status: 400,message }
           }
 
-
+     for(let i= 1;i<= roomCount;i++){
           const newRoom = new room({
                roomType,
                roomSpace,
+               roomNumber:RoomNumberStartwith,
                description,
                price,
-               roomCount,
                amnities,
                availableRooms,
                imagesOfRoom: image,
                hotel: hotel_id
           })
           newRoom.save().catch((err)=>{console.log(err);})
+          RoomNumberStartwith++
+     }
           const message = "New room saved sucessfully"
           return { status: 200, message }
      } catch (error) { console.log(error); }

@@ -100,7 +100,32 @@ try{
 
 const roomDetails = async(hotelId)=>{
     try{
-     return await rooms.find({hotel:hotelId})
+        const roomArray = await rooms.aggregate([
+            {
+              $group: {
+                _id: "$roomType", 
+                price: { $addToSet: "$price" } 
+              }
+            },
+            {
+              $project: {
+                type: "$roomType", 
+                price: 1 
+              }
+            }
+          ]);
+          console.log(roomArray,"\\\\\@@@@@@@/////");
+          
+        return roomArray;
+        
+    }catch(err){console.log(err);}
+}
+
+const roomImages =async(hotelId)=>{
+    try{
+        const images = await hotels.findOne({_id:hotelId}).lean()
+        return images;
+        
     }catch(err){console.log(err);}
 }
 module.exports={
@@ -115,5 +140,6 @@ module.exports={
     findAndChangePassword,
     
     sortBy,
-    roomDetails
+    roomDetails,
+    roomImages
 }

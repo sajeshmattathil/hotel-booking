@@ -3,7 +3,7 @@ const mongoose=require('mongoose')
 const hotelSchema=new mongoose.Schema({
     owner_id:{
         type:String,
-        required:true
+        required:false
     },
     star_rating:{
         type:Number,

@@ -12,6 +12,10 @@ const roomSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    roomNumber:{
+        type:String,
+        required:true
+    },
     description:{
         type:String,
         required:true
@@ -20,10 +24,7 @@ const roomSchema=new mongoose.Schema({
         type:Number,
         required:true
     },
-    roomCount:{
-        type:Number,
-        required:true
-    },
+   
     amnities:{
         type:Array,
         required:true
@@ -48,6 +49,10 @@ const roomSchema=new mongoose.Schema({
         type:Number,
         required:false
     },
+    bookingDetails:{
+        type:Array,
+        required:false
+    },
     isAvailable:{
         type:Boolean,
         default:true
@@ -60,5 +65,5 @@ const roomSchema=new mongoose.Schema({
 
 })
 
-const Room=new mongoose.model("Room",roomSchema)
+const Room=new mongoose.model("Room",roomSchema,'rooms')
 module.exports=Room

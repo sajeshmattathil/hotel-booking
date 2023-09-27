@@ -7,6 +7,7 @@ const generatedOtp = require('../utils/otpGenerator')
 const findHotels = async (req) => {
     try {
         const cityName=req.body.city  
+        console.log(req.body);
         if(req.session.city){
             const city= req.session.city
             const hotelsData = await userRepository.findAllHotels(city)
@@ -18,7 +19,6 @@ const findHotels = async (req) => {
         return hotelsData
         }
         req.session.city=cityName
-       console.log(cityName+'>>>>>>>');
         const hotelsData = await userRepository.findAllHotels(cityName)
         if (!hotelsData) {
             const msg = "Something went wrong"
@@ -94,7 +94,6 @@ const otpAuth = async (req) => {
 
 const userAuthentication = async (req) => {
     const userData=req.session.userFormData
-    console.log(userData);
     try {
         const { first_name, last_name, email, mobile, password, confirm } = userData;
 
@@ -134,7 +133,6 @@ const verifyUser = async (userData) => {
 
     try {
         const { first_name, last_name, email, mobile, password, confirm } = userData;
-        console.log(userData);
         if (!first_name || !last_name || !email || !mobile || !password || !confirm) {
             console.log('Fill in empty fields');
             const msg = 'Fill in empty fields'
@@ -148,7 +146,6 @@ const verifyUser = async (userData) => {
             return { status: 400, msg: msg };
         }
         const user = await userRepository.findUserByEmail(email)
-        console.log(user);
         if (user) {
             const msg = 'User already exists'
             return { status: 200, msg: msg }
@@ -163,9 +160,7 @@ const verifyUser = async (userData) => {
 const userDetails= async (req)=>{
 try{
     const email=req.session.user
-    console.log(email);
     const userData= await userRepository.findUserByEmail(email)
-    console.log(userData);
     if(userData)return userData
     else{
         const msg='Something went wrong'
@@ -319,13 +314,21 @@ const saveEditedUserPassword= async (req)=>{
         }catch(err){console.log(err);}
  }
 
- const generateOtpAndSendForForgot = (req) => {
-    const otp = generatedOtp()
-    req.session.otp = otp
-    const { email } = req.body
-    req.session.email=email
-    console.log(otp, 'otp');
-    sendMail(email, otp)
+ const generateOtpAndSendForForgot = async (req) => {
+    try{
+        const { email } = req.body
+        const checkUserExists= await userRepository.findUserByEmail(email)
+        console.log(checkUserExists);
+        if(!checkUserExists) {
+            const msg ="In this email no user exists"
+            return {status:202,msg}
+        }
+        const otp = generatedOtp()
+        req.session.otp = otp
+        req.session.email=email
+        console.log(otp, 'otp');
+        sendMail(email, otp)
+    }catch(err){console.log(err);}
 }
 
 const authAndSavePassword=(req)=>{
@@ -373,12 +376,21 @@ const sortHotels = async (req) =>{
 
 const roomDetails = async (req)=>{
   try{
-    const hotelId =req.session.id
-    console.log(hotelId+'>>>>>>> '+11111)
-  const roomsData = await userRepository.roomDetails(hotelId)
-  return roomsData
+    const hotelId =req.session.hotelId
+    const roomsData = await userRepository.roomDetails(hotelId)
+    return roomsData
   }catch(err){console.log(err);}
 }
+
+const roomImages= async (req) =>{
+    
+    try{
+        const hotelId =req.session.hotelId
+        const images =await userRepository.roomImages(hotelId)
+        return images
+      }catch(err){console.log(err);}
+    }
+
 
 
 module.exports = {
@@ -400,5 +412,6 @@ module.exports = {
     authAndSavePassword,
     changePassord,
     sortHotels,
-    roomDetails
+    roomDetails,
+    roomImages
 }

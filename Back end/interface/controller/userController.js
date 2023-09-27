@@ -1,9 +1,9 @@
 const userService = require('../../service/userService')
 
 const userHome=(req,res)=>{
-   res.render('user/index')
-  //  res.render('user/userManagement')
-  //res.render('user/rooms')
+  res.render('user/index')
+  //res.render('user/proceedBooking')
+
 }
 const userhotelsList= async (req,res)=>{
 
@@ -13,8 +13,6 @@ const userhotelsList= async (req,res)=>{
 
 }
 const userhotelsListPage = async (req,res)=>{
-    console.log(req.body);
-    console.log(req.session);
     const hotels= await userService.findHotels(req)
     console.log(hotels);
     const userName=''
@@ -178,9 +176,13 @@ const forgotEmailPage=(req,res)=>{
     res.render('forgotEmailPage',{msg})
 }
 
-const emailSubmit=(req,res)=>{
-if(!(req.session.otp))userService.generateOtpAndSendForForgot(req)  
- res.redirect('/otpVerificationPage')
+const emailSubmit= async (req,res)=>{
+if(!(req.session.otp)){
+   const response= await userService.generateOtpAndSendForForgot(req)  
+   if(response.status === 202) res.redirect(`/forgotEmailPage?msg=${response.msg}`)
+   else res.redirect('/otpVerificationPage')
+}
+ 
 }
 
 const otpVerificationPage=(req,res)=>{
@@ -211,17 +213,20 @@ const newPasswordSubmit= async (req,res)=>{
 
 const hotelDetails=(req,res)=>{
     const id=req.params._id
-    req.session.id=id
-    console.log(454545);
+    console.log(req.params._id,"22222222");
+    req.session.hotelId=id
+    console.log(req.session.hotelId+"<<<<444444>>>>");
  res.redirect('/hotelDetailsPage')
 }
 
 const hotelDetailsPage= async (req,res)=>{
     try{
-    const userName=""
-    const room= await userService.roomDetails(req)
-    console.log(room+'88888');
-    res.render('user/rooms',{userName,room})
+    const images= await userService.roomImages(req)
+    console.log(images);
+    console.log(images.imagesOfHotel[0]);
+
+    const roomArray= await userService.roomDetails(req)
+    res.render('user/rooms',{roomArray,images})
     }catch(err){console.log(err);}
 }
 const sortHotels= async (req,res)=>{
