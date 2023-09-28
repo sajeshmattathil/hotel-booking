@@ -1,28 +1,28 @@
 const userService = require('../../service/userService')
 
-const userHome=(req,res)=>{
-  res.render('user/index')
-  //res.render('user/proceedBooking')
+const userHome = (req, res) => {
+    res.render('user/index')
+    //res.render('user/proceedBooking')
 
 }
-const userhotelsList= async (req,res)=>{
+const userhotelsList = async (req, res) => {
 
-    const hotels= await userService.findHotels(req)
-    if(hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+    const hotels = await userService.findHotels(req)
+    if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
     else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
 
 }
-const userhotelsListPage = async (req,res)=>{
-    const hotels= await userService.findHotels(req)
+const userhotelsListPage = async (req, res) => {
+    const hotels = await userService.findHotels(req)
     console.log(hotels);
-    const userName=''
-    const msg=req.query.msg
-    res.render('user/hotels',{hotels,msg,userName})
+    const userName = ''
+    const msg = req.query.msg
+    res.render('user/hotels', { hotels, msg, userName })
 }
 
 const userLogin = (req, res) => {
-    const msg=req.query.msg
-    res.render('user-login',{msg:msg})
+    const msg = req.query.msg
+    res.render('user-login', { msg: msg })
 }
 
 const otpVerification = async (req, res) => {
@@ -35,9 +35,9 @@ const otpVerification = async (req, res) => {
 
 }
 const otpPage = (req, res) => {
-    if(!(req.session.otp))userService.generateOtpAndSend(req)  
-    const msg=req.query.msg
-    res.render('otp',{msg})
+    if (!(req.session.otp)) userService.generateOtpAndSend(req)
+    const msg = req.query.msg
+    res.render('otp', { msg })
 }
 
 const otpAuthentication = async (req, res) => {
@@ -57,9 +57,9 @@ const userLoginHome = async (req, res) => {
 
 }
 const userLoginHomeView = (req, res) => {
-    try{
+    try {
         res.render('user/index')
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
 
 const userRegister = async (req, res) => {
@@ -80,162 +80,242 @@ const userRegisterView = (req, res) => {
 }
 const userRegisterPage = (req, res) => {
     const msg = req.query.msg
-    res.render('user-signup',{msg:msg})
+    res.render('user-signup', { msg: msg })
 }
 
-const userManagement=(req,res)=>{
-res.redirect('/manageYourProfilePage')
-}
-
-const userManagementPage=(req,res)=>{
-res.render('user/userManagement')
-}
-
-const manageYourProfile=(req,res)=>{
-    if(!(req.session.user))res.redirect('/login')
+const userManagement = (req, res) => {
     res.redirect('/manageYourProfilePage')
 }
-const manageYourProfilePage= async (req,res)=>{
-    const user= await userService.userDetails(req)
+
+const userManagementPage = (req, res) => {
+    res.render('user/userManagement')
+}
+
+const manageYourProfile = (req, res) => {
+    if (!(req.session.user)) res.redirect('/login')
+    res.redirect('/manageYourProfilePage')
+}
+const manageYourProfilePage = async (req, res) => {
+    const user = await userService.userDetails(req)
     console.log(user);
-    if(user.status === 400) res.redirect(`/manageYourProfilePage?msg=${user.msg}`)
-    const msg=req.query.msg
-    res.render('user/userProfile',{user,msg})
+    if (user.status === 400) res.redirect(`/manageYourProfilePage?msg=${user.msg}`)
+    const msg = req.query.msg
+    res.render('user/userProfile', { user, msg })
 }
-const editUserName= async (req,res)=>{
-    try{
-    const response= await userService.saveEditedUserName(req)
-    console.log(response.status +">>>>>");
-    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+const editUserName = async (req, res) => {
+    try {
+        const response = await userService.saveEditedUserName(req)
+        console.log(response.status + ">>>>>");
+        if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+        if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
-const editUserEmail= async (req,res)=>{
-    try{
-    const response= await userService.saveEditedUserEmail(req)
-    console.log(response.status +">>>>>");
-    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+const editUserEmail = async (req, res) => {
+    try {
+        const response = await userService.saveEditedUserEmail(req)
+        console.log(response.status + ">>>>>");
+        if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+        if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
-const editUserMobile= async (req,res)=>{
-    try{
-    const response= await userService.saveEditedUserMobile(req)
-    console.log(response.status +">>>>>");
-    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+const editUserMobile = async (req, res) => {
+    try {
+        const response = await userService.saveEditedUserMobile(req)
+        console.log(response.status + ">>>>>");
+        if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+        if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
-    }catch(err){console.log(err);}
-}
-
-const editUserGender= async (req,res)=>{
-    try{
-    const response= await userService.saveEditedUserGender(req)
-    console.log(response.status +">>>>>");
-    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
 
-const editUserAddress= async (req,res)=>{
-    try{
-    const response= await userService.saveEditedUserAddress(req)
-    console.log(response.status +">>>>>");
-    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+const editUserGender = async (req, res) => {
+    try {
+        const response = await userService.saveEditedUserGender(req)
+        console.log(response.status + ">>>>>");
+        if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+        if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
+}
+
+const editUserAddress = async (req, res) => {
+    try {
+        const response = await userService.saveEditedUserAddress(req)
+        console.log(response.status + ">>>>>");
+        if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+        if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+
+    } catch (err) { console.log(err); }
 }
 
 // const sendOtpToEmail = (req, res) => {
-    
+
 //     if(!(req.session.otp))userService.generateOtpAndSendToVerifyEmail(req)  
-   
+
 // }
 
-const editUserPassword= async (req,res)=>{
-    try{
-    const response= await userService.saveEditedUserPassword(req)
-    console.log(response.status +">>>>>");
-    if(response.status === 400) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-    if(response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-    if(response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+const editUserPassword = async (req, res) => {
+    try {
+        const response = await userService.saveEditedUserPassword(req)
+        console.log(response.status + ">>>>>");
+        if (response.status === 400) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+        if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+        if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
 
-const forgotPassword=(req,res)=>{
-  res.redirect('/forgotEmailPage')
+const forgotPassword = (req, res) => {
+    res.redirect('/forgotEmailPage')
 }
 
-const forgotEmailPage=(req,res)=>{
-    const msg=req.query.msg
-    res.render('forgotEmailPage',{msg})
+const forgotEmailPage = (req, res) => {
+    const msg = req.query.msg
+    res.render('forgotEmailPage', { msg })
 }
 
-const emailSubmit= async (req,res)=>{
-if(!(req.session.otp)){
-   const response= await userService.generateOtpAndSendForForgot(req)  
-   if(response.status === 202) res.redirect(`/forgotEmailPage?msg=${response.msg}`)
-   else res.redirect('/otpVerificationPage')
-}
- 
-}
-
-const otpVerificationPage=(req,res)=>{
-    const msg=req.query.msg
-    res.render('otpForgot',{msg})
-}
-
-const otpForgotSubmit= async (req,res)=>{
- const response= await userService.authAndSavePassword(req)
- if(response.status === 200) res.redirect(`/newPassword?msg=${response.msg}`)
- if(response.status === 400) res.redirect(`/otpVerificationPage?msg=${response.msg}`)
+const emailSubmit = async (req, res) => {
+    if (!(req.session.otp)) {
+        const response = await userService.generateOtpAndSendForForgot(req)
+        if (response.status === 202) res.redirect(`/forgotEmailPage?msg=${response.msg}`)
+        else res.redirect('/otpVerificationPage')
+    }
 
 }
 
-const newPassword=(req,res)=>{
+const otpVerificationPage = (req, res) => {
+    const msg = req.query.msg
+    res.render('otpForgot', { msg })
+}
+
+const otpForgotSubmit = async (req, res) => {
+    const response = await userService.authAndSavePassword(req)
+    if (response.status === 200) res.redirect(`/newPassword?msg=${response.msg}`)
+    if (response.status === 400) res.redirect(`/otpVerificationPage?msg=${response.msg}`)
+
+}
+
+const newPassword = (req, res) => {
     res.render('newPasswordPage')
 }
 
-const newPasswordSubmit= async (req,res)=>{
+const newPasswordSubmit = async (req, res) => {
+    try {
+        const response = await userService.changePassord(req)
+        if (response.status === 200) res.redirect(`/login?msg=${response.msg}`)
+        if (response.status === 400) res.redirect(`/newPassword?msg=${response.msg}`)
+        if (response.status === 500) res.redirect(`/newPassword?msg=${response.msg}`)
+
+    } catch (err) { console.log(err); }
+}
+
+const hotelDetails = (req, res) => {
+    const id = req.params._id
+    console.log(req.params._id, "22222222");
+    req.session.hotelId = id
+    console.log(req.session.hotelId + "<<<<444444>>>>");
+    res.redirect('/hotelDetailsPage')
+}
+
+const hotelDetailsPage = async (req, res) => {
+    try {
+        const images = await userService.roomImages(req)
+        console.log(images);
+        console.log(images.imagesOfHotel[0]);
+        const checkin_date = req.session.checkin_date
+        const checkout_date = req.session.checkout_date
+        const roomArray = await userService.roomDetails(req)
+
+        res.render('user/rooms', { roomArray, images, checkin_date, checkout_date })
+
+    } catch (err) { console.log(err); }
+}
+const sortHotels = async (req, res) => {
+    try {
+        const sortedHotels = await userService.sortHotels(req)
+        const userName = ''
+        res.render('user/hotels', { sortedHotels, userName })
+        console.log(req.query);
+
+    } catch (err) { console.log(err); }
+}
+
+const proceedBooking = (req, res) => {
+    try {
+        req.session.roomType = req.params.roomType
+        console.log(req.params.roomType);
+        res.redirect('/proceedBookingPage')
+    } catch (err) { console.log(err); }
+}
+
+
+const proceedBookingPage = async (req, res) => {
+    const roomDetails = await userService.selectedRoom(req)
+    const roomData = roomDetails.selectedRoom
+    const hotelData = roomDetails.selectedHotel
+
+    req.session.roomData=roomData
+    req.session.hotelData=hotelData
+
+    let checkin_date = req.session.checkin_date
+    let checkout_date = req.session.checkout_date
+
+    if (!checkin_date) {
+        const today = new Date();
+
+        const months = [
+          "January", "February", "March", "April", "May", "June", 
+          "July", "August", "September", "October", "November", "December"
+        ];
+        
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = months[today.getMonth()];
+        const yyyy = today.getFullYear();
+        
+         checkin_date = `${dd} ${mm} ${yyyy}`;
+         req.session.checkin_date=checkin_date
+
+        console.log(checkin_date);
+        
+    }
+    if(!checkout_date){
+        const today = new Date();
+        const tomorrow = new Date(today);
+        tomorrow.setDate(today.getDate() + 1);
+
+        const months = [
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
+        ];
+
+        const dd = String(tomorrow.getDate()).padStart(2, '0');
+        const mm = months[tomorrow.getMonth()];
+        const yyyy = tomorrow.getFullYear();
+
+         checkout_date = `${dd} ${mm} ${yyyy}`;
+         req.session.checkout_date=checkout_date
+    }
+    res.render('user/proceedBooking', { roomData, hotelData, checkin_date, checkout_date })
+}
+
+
+const checkInDatecheckOutDate = (req, res) => {
+    const { checkin_date, checkout_date } = req.body
+    req.session.checkin_date = checkin_date
+    req.session.checkout_date = checkout_date
+    res.redirect('/hotelDetailsPage')
+
+}
+
+const confirmBooking= async (req,res)=>{
     try{
-  const response= await userService.changePassord(req)
-  if(response.status === 200)res.redirect(`/login?msg=${response.msg}`)
-  if(response.status === 400)res.redirect(`/newPassword?msg=${response.msg}`)
-  if(response.status === 500)res.redirect(`/newPassword?msg=${response.msg}`)
+        const saveAndConfirm= await userService.saveBooking(req)
 
     }catch(err){console.log(err);}
 }
 
-const hotelDetails=(req,res)=>{
-    const id=req.params._id
-    console.log(req.params._id,"22222222");
-    req.session.hotelId=id
-    console.log(req.session.hotelId+"<<<<444444>>>>");
- res.redirect('/hotelDetailsPage')
-}
-
-const hotelDetailsPage= async (req,res)=>{
-    try{
-    const images= await userService.roomImages(req)
-    console.log(images);
-    console.log(images.imagesOfHotel[0]);
-
-    const roomArray= await userService.roomDetails(req)
-    res.render('user/rooms',{roomArray,images})
-    }catch(err){console.log(err);}
-}
-const sortHotels= async (req,res)=>{
-    const sortedHotels=await userService.sortHotels(req)
-    const userName=''
-    res.render('user/hotels',{sortedHotels,userName})
-    console.log(req.query);
-
-}
 
 module.exports = {
     userHome,
@@ -270,6 +350,10 @@ module.exports = {
     newPasswordSubmit,
     hotelDetails,
     hotelDetailsPage,
-    sortHotels
+    sortHotels,
+    proceedBooking,
+    proceedBookingPage,
+    checkInDatecheckOutDate,
+    confirmBooking
 
 }

@@ -6,19 +6,19 @@ const generatedOtp = require('../utils/otpGenerator')
 
 const findHotels = async (req) => {
     try {
-        const cityName=req.body.city  
+        const cityName = req.body.city
         console.log(req.body);
-        if(req.session.city){
-            const city= req.session.city
+        if (req.session.city) {
+            const city = req.session.city
             const hotelsData = await userRepository.findAllHotels(city)
-        if (hotelsData.length === 0) {
-            const msg = "Something went wrong"
-            return { status: 400, msg }
-        }
+            if (hotelsData.length === 0) {
+                const msg = "Something went wrong"
+                return { status: 400, msg }
+            }
 
-        return hotelsData
+            return hotelsData
         }
-        req.session.city=cityName
+        req.session.city = cityName
         const hotelsData = await userRepository.findAllHotels(cityName)
         if (!hotelsData) {
             const msg = "Something went wrong"
@@ -79,21 +79,21 @@ const generateOtpAndSend = (req) => {
 const otpAuth = async (req) => {
     const genOtp = req.session.otp
     console.log(req.body.otp);
-    
+
 
     console.log(genOtp);
     if (req.body.otp === genOtp) {
-       // delete req.session.otp
+        // delete req.session.otp
         return { status: 200 }
     } else {
-        const msg='Entered OTP is wrong'
-        return { status: 400 ,msg}
+        const msg = 'Entered OTP is wrong'
+        return { status: 400, msg }
     }
 }
 
 
 const userAuthentication = async (req) => {
-    const userData=req.session.userFormData
+    const userData = req.session.userFormData
     try {
         const { first_name, last_name, email, mobile, password, confirm } = userData;
 
@@ -101,8 +101,8 @@ const userAuthentication = async (req) => {
 
         if (existingUserData) {
             console.log('User with this email already exists');
-            const msg="User with this email already exists"
-            return { status: 400,msg };
+            const msg = "User with this email already exists"
+            return { status: 400, msg };
         }
 
         const hashPassword = await bcrypt.hash(password, 10)
@@ -119,14 +119,14 @@ const userAuthentication = async (req) => {
         if (newUser) {
             return { status: 200 }
         } else {
-            const msg="Something went wrong"
-            return { status: 400,msg };
+            const msg = "Something went wrong"
+            return { status: 400, msg };
         }
 
     } catch (error) {
         console.log(error);
-        const msg="Some internal error"
-        return { status: 500,msg };
+        const msg = "Some internal error"
+        return { status: 500, msg };
     }
 }
 const verifyUser = async (userData) => {
@@ -157,95 +157,95 @@ const verifyUser = async (userData) => {
     } catch (error) { console.log(error); }
 }
 
-const userDetails= async (req)=>{
-try{
-    const email=req.session.user
-    const userData= await userRepository.findUserByEmail(email)
-    if(userData)return userData
-    else{
-        const msg='Something went wrong'
-        return {status:400,msg}
-    }
+const userDetails = async (req) => {
+    try {
+        const email = req.session.user
+        const userData = await userRepository.findUserByEmail(email)
+        if (userData) return userData
+        else {
+            const msg = 'Something went wrong'
+            return { status: 400, msg }
+        }
 
-}catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
-const saveEditedUserName= async (req)=>{
-    try{
-        
-    const updateData= await userRepository.findAndEditName(req)
-    if( updateData ){
-        const msg = "Name edited"
-        return { status: 200, msg }
-   
-    } else{
-        const msg = "Something went wrong"
-        return { status: 500, msg }
-   
-    }
-    }catch(err){console.log(err);}
-}
-const saveEditedUserEmail= async (req)=>{
-    try{
-        
-    const updateData= await userRepository.findAndEditEmail(req)
-    if( updateData ){
-        const msg = "Email edited"
-        return { status: 200, msg }
-   
-    } else{
-        const msg = "Something went wrong"
-        return { status: 500, msg }
-   
-    }
-    }catch(err){console.log(err);}
-}
+const saveEditedUserName = async (req) => {
+    try {
 
-const saveEditedUserMobile= async (req)=>{
-    try{
-        
-    const updateData= await userRepository.findAndEditMobile(req)
-    if( updateData ){
-        const msg = "Phone number edited"
-        return { status: 200, msg }
-   
-    } else{
-        const msg = "Something went wrong"
-        return { status: 500, msg }
-   
-    }
-    }catch(err){console.log(err);}
+        const updateData = await userRepository.findAndEditName(req)
+        if (updateData) {
+            const msg = "Name edited"
+            return { status: 200, msg }
+
+        } else {
+            const msg = "Something went wrong"
+            return { status: 500, msg }
+
+        }
+    } catch (err) { console.log(err); }
+}
+const saveEditedUserEmail = async (req) => {
+    try {
+
+        const updateData = await userRepository.findAndEditEmail(req)
+        if (updateData) {
+            const msg = "Email edited"
+            return { status: 200, msg }
+
+        } else {
+            const msg = "Something went wrong"
+            return { status: 500, msg }
+
+        }
+    } catch (err) { console.log(err); }
 }
 
-const saveEditedUserGender= async (req)=>{
-    try{
-        console.log(req.session.otp+"000000");
-    const updateData= await userRepository.findAndEditGender(req)
-    if( updateData ){
-        const msg = "Gender added"
-        return { status: 200, msg }
-   
-    } else{
-        const msg = "Something went wrong"
-        return { status: 500, msg }
-   
-    }
-    }catch(err){console.log(err);}
+const saveEditedUserMobile = async (req) => {
+    try {
+
+        const updateData = await userRepository.findAndEditMobile(req)
+        if (updateData) {
+            const msg = "Phone number edited"
+            return { status: 200, msg }
+
+        } else {
+            const msg = "Something went wrong"
+            return { status: 500, msg }
+
+        }
+    } catch (err) { console.log(err); }
 }
 
-const saveEditedUserAddress= async (req)=>{
-    try{
-        
-    const updateData= await userRepository.findAndEditAddress(req)
-    if( updateData ){
-        const msg = "Address added"
-        return { status: 200, msg }
-   
-    } else{
-        const msg = "Something went wrong"
-        return { status: 500, msg }
-   
-    }
-    }catch(err){console.log(err);}
+const saveEditedUserGender = async (req) => {
+    try {
+        console.log(req.session.otp + "000000");
+        const updateData = await userRepository.findAndEditGender(req)
+        if (updateData) {
+            const msg = "Gender added"
+            return { status: 200, msg }
+
+        } else {
+            const msg = "Something went wrong"
+            return { status: 500, msg }
+
+        }
+    } catch (err) { console.log(err); }
+}
+
+const saveEditedUserAddress = async (req) => {
+    try {
+
+        const updateData = await userRepository.findAndEditAddress(req)
+        if (updateData) {
+            const msg = "Address added"
+            return { status: 200, msg }
+
+        } else {
+            const msg = "Something went wrong"
+            return { status: 500, msg }
+
+        }
+    } catch (err) { console.log(err); }
 }
 
 // const generateOtpAndSendToVerifyEmail = (req,res) => {
@@ -274,99 +274,99 @@ const saveEditedUserAddress= async (req)=>{
 //                 const msg = "New password added"
 //                 delete req.session.otp
 //                 return { status: 200, msg }
-           
+
 //             } else{
 //                 const msg = "Something went wrong"
 //                 return { status: 500, msg }
-           
+
 //             }}
 
 //         } else {
 //             const msg='Entered password does not match'
 //             return { status: 400 ,msg}
 //         }
-        
+
 //        }catch(err){console.log(err);}
 // }
 
 
-const saveEditedUserPassword= async (req)=>{
-    try{
-         
-         const {password,confirm}=req.body
-          if(password === confirm)   {
- 
-             const updateData= await userRepository.findAndEditPassword(req)
-             if( updateData ){
-                 const msg = "New password added"
-                 delete req.session.otp
-                 return { status: 200, msg }
-            
-             } else{
-                 const msg = "Something went wrong"
-                 return { status: 500, msg }           
-             }
- 
-         } else {
-             const msg='Entered password does not match'
-             return { status: 400 ,msg}
-         }
-        }catch(err){console.log(err);}
- }
+const saveEditedUserPassword = async (req) => {
+    try {
 
- const generateOtpAndSendForForgot = async (req) => {
-    try{
+        const { password, confirm } = req.body
+        if (password === confirm) {
+
+            const updateData = await userRepository.findAndEditPassword(req)
+            if (updateData) {
+                const msg = "New password added"
+                delete req.session.otp
+                return { status: 200, msg }
+
+            } else {
+                const msg = "Something went wrong"
+                return { status: 500, msg }
+            }
+
+        } else {
+            const msg = 'Entered password does not match'
+            return { status: 400, msg }
+        }
+    } catch (err) { console.log(err); }
+}
+
+const generateOtpAndSendForForgot = async (req) => {
+    try {
         const { email } = req.body
-        const checkUserExists= await userRepository.findUserByEmail(email)
+        const checkUserExists = await userRepository.findUserByEmail(email)
         console.log(checkUserExists);
-        if(!checkUserExists) {
-            const msg ="In this email no user exists"
-            return {status:202,msg}
+        if (!checkUserExists) {
+            const msg = "In this email no user exists"
+            return { status: 202, msg }
         }
         const otp = generatedOtp()
         req.session.otp = otp
-        req.session.email=email
+        req.session.email = email
         console.log(otp, 'otp');
         sendMail(email, otp)
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
 
-const authAndSavePassword=(req)=>{
+const authAndSavePassword = (req) => {
     const genOtp = req.session.otp
     console.log(req.body.otp);
     console.log(genOtp);
     if (req.body.otp === genOtp) {
-       delete req.session.otp
+        delete req.session.otp
         return { status: 200 }
     } else {
-        const msg='Entered OTP is wrong'
-        return { status: 400 ,msg}
+        const msg = 'Entered OTP is wrong'
+        return { status: 400, msg }
     }
 }
 
-const changePassord= async (req)=>{
-    try{
-  const {password,confirm}=req.body
-  if(password === confirm){
-    const updatePassword= await userRepository.findAndChangePassword(req)
-        if(updatePassword){
-            console.log(updatePassword);
-            const msg="Password changed sucessfully"
-            return {status:200,msg}
-        }else{
-            const msg="Something went wrong"
-            return {status:500,msg}
+const changePassord = async (req) => {
+    try {
+        const { password, confirm } = req.body
+        if (password === confirm) {
+            const updatePassword = await userRepository.findAndChangePassword(req)
+            if (updatePassword) {
+                console.log(updatePassword);
+                const msg = "Password changed sucessfully"
+                return { status: 200, msg }
+            } else {
+                const msg = "Something went wrong"
+                return { status: 500, msg }
+            }
+        } else {
+            const msg = 'Password doesnot match'
+            return { status: 400, msg }
         }
-  }else{
-    const msg='Password doesnot match'
-    return {status:400,msg}
-  }
-    }catch(err){console.log(err);}
-} 
+    } catch (err) { console.log(err); }
+}
 
-const sortHotels = async (req) =>{
+const sortHotels = async (req) => {
     const sortedData = await userRepository.sortBy(req)
-    if(sortedData.length === 0) {
+    if (sortedData.length === 0) {
         const commonData = await findHotels(req)
         return commonData
     }
@@ -374,24 +374,42 @@ const sortHotels = async (req) =>{
 
 }
 
-const roomDetails = async (req)=>{
-  try{
-    const hotelId =req.session.hotelId
-    const roomsData = await userRepository.roomDetails(hotelId)
-    return roomsData
-  }catch(err){console.log(err);}
+const roomDetails = async (req) => {
+    try {
+        const hotelId = req.session.hotelId
+        const roomsData = await userRepository.roomDetails(hotelId)
+        return roomsData
+    } catch (err) { console.log(err); }
 }
 
-const roomImages= async (req) =>{
-    
-    try{
-        const hotelId =req.session.hotelId
-        const images =await userRepository.roomImages(hotelId)
+const roomImages = async (req) => {
+
+    try {
+        const hotelId = req.session.hotelId
+        const images = await userRepository.roomImages(hotelId)
         return images
-      }catch(err){console.log(err);}
-    }
+    } catch (err) { console.log(err); }
+}
 
+const selectedRoom = async (req, res) => {
+    try {
+        const roomType = req.session.roomType
+        const hotelId = req.session.hotelId
 
+        console.log(hotelId);
+
+        const selectedHotel = await userRepository.selectedHotelDetails(hotelId)
+        const selectedRoom = await userRepository.selectedRoomDetails(roomType)
+
+        return { selectedHotel, selectedRoom }
+    } catch (err) { console.log(err); }
+}
+
+const saveBooking= async (req)=>{
+    try{
+         const response= await userRepository.saveBooking(req)
+    }catch(err){console.log(err);}
+}
 
 module.exports = {
     userAuthentication,
@@ -413,5 +431,7 @@ module.exports = {
     changePassord,
     sortHotels,
     roomDetails,
-    roomImages
+    roomImages,
+    selectedRoom,
+    saveBooking
 }

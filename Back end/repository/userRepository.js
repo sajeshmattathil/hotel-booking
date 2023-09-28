@@ -1,6 +1,7 @@
 const User=require('../domain/model/user')
 const hotels=require('../domain/model/hotel')
 const rooms=require('../domain/model/room')
+const bookings=require('../domain/model/bookings')
 const bcrypt=require('bcryptjs')
 
 const findUserByEmail=async (email)=>{
@@ -128,6 +129,93 @@ const roomImages =async(hotelId)=>{
         
     }catch(err){console.log(err);}
 }
+
+const selectedRoomDetails= async (roomType)=>{
+    try{
+        return await rooms.findOne({roomType:roomType})
+    }catch(err){console.log(err);}
+
+}
+
+const selectedHotelDetails=async(hotelId)=>{
+    try{
+        return await hotels.findOne({_id:hotelId})
+    }catch(err){console.log(err);}
+}
+
+const saveBooking= async (req)=>{
+    try{
+        const {name,email,phone}=req.body
+        const roomData=req.session.roomData
+        const hotelData=req.session.hotelData
+        const checkin_date = req.session.checkin_date
+        console.log(checkin_date);
+
+        const checkout_date = req.session.checkout_date
+        console.log(checkout_date);
+
+        const user=req.session.user
+        const id='65156b5bdbdae866bd4b69bc'
+
+        function convertDateFormat(dateString) {
+            const months = {
+                January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
+                July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
+            };
+        
+            const [day, month, year] = dateString.split(' ');
+        
+            return `${year}-${months[month]}-${day}`;
+        }
+        
+        const originalDate = "28 September, 2023";
+        const startDate = convertDateFormat(checkin_date);
+        const endDate = convertDateFormat(checkout_date);
+        console.log(startDate,"888888");
+
+        
+        console.log(endDate,"999999"); // Output: "2023-09-28"
+        
+
+        const  newBooking={
+            userName:user,
+            name:name,
+            email:email,
+            hotel_name:hotelData.hotel_name,
+            room:roomData.roomType,
+            checkin_date:checkin_date,
+            checkout_date:checkout_date,
+            status:'pending'
+
+        }
+
+        const selectedRoom=await rooms.findOne({
+            $nor: [
+                    {"bookingDetails.checkin_date":{$gt:startDate}},
+                    {"bookingDetails.checkout_date":{$lt:endDate}}
+                 ]
+        })
+        console.log(selectedRoom,'[][][][]');
+             await rooms.updateOne({_id:selectedRoom._id},{$push:{bookingDetails:newBooking}})
+             const  pendingBookings={
+                userName:user,
+                name:name,
+                email:email,
+                hotel_name:hotelData.hotel_name,
+                room:roomData.roomType,
+                checkin_date:checkin_date,
+                checkout_date:checkout_date,
+                room_no:selectedRoom.roomNumber,
+                status:'pending'
+    
+            }
+
+        await bookings.updateOne({_id:id},{$push:{bookedData:pendingBookings}})
+
+
+    }catch(err){console.log(err);}
+}
+
 module.exports={
     findUserByEmail,
     findAllHotels,
@@ -141,5 +229,8 @@ module.exports={
     
     sortBy,
     roomDetails,
-    roomImages
+    roomImages,
+    selectedRoomDetails,
+    selectedHotelDetails,
+    saveBooking
 }

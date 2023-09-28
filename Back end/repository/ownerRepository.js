@@ -52,7 +52,12 @@ const findSubCategories= async ()=>{
     }
 }
 
-
+const addRoomNumbers= async (hotel_id,roomType,RoomNumberStartwith,roomCount)=>{
+  try{
+       
+      return  await rooms.updateOne({hotel:hotel_id,roomType:roomType},{$push:{roomNumbers:roomNumberArray}})
+  }catch(err){console.log();}
+}
 
 module.exports = {
     findOwnerByEmail,
@@ -60,6 +65,7 @@ module.exports = {
     FindHotelByName,
     findHotelsWithIncompleteDetails,
     findCategories,
-    findSubCategories
+    findSubCategories,
+    addRoomNumbers
 
 }
