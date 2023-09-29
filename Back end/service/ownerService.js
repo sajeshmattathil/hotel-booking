@@ -114,7 +114,6 @@ console.log(req.body);
                return { status: 400,message }
           }
 
-     // for(let i= 1;i<= roomCount;i++)
           const newRoom = new room({
                roomType,
                roomSpace,
@@ -127,14 +126,7 @@ console.log(req.body);
                hotel: hotel_id
           })
           newRoom.save().catch((err)=>{console.log(err);})
-
-          let roomNumberArray=[]
-          for(let i=0;i<roomCount;i++){
-              roomNumberArray.push(RoomNumberStartwith)
-              RoomNumberStartwith++
-          }
-
-         await ownerRepository.addRoomNumbers(roomNumberArray)
+         await ownerRepository.addRoomNumbers(hotel_id,roomType,roomCount,RoomNumberStartwith)
      
           const message = "New room saved sucessfully"
           return { status: 200, message }

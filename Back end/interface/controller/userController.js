@@ -274,7 +274,7 @@ const proceedBookingPage = async (req, res) => {
         const mm = months[today.getMonth()];
         const yyyy = today.getFullYear();
         
-         checkin_date = `${dd} ${mm} ${yyyy}`;
+         checkin_date = `${dd} ${mm}, ${yyyy}`;
          req.session.checkin_date=checkin_date
 
         console.log(checkin_date);
@@ -294,10 +294,11 @@ const proceedBookingPage = async (req, res) => {
         const mm = months[tomorrow.getMonth()];
         const yyyy = tomorrow.getFullYear();
 
-         checkout_date = `${dd} ${mm} ${yyyy}`;
+         checkout_date = `${dd} ${mm}, ${yyyy}`;
          req.session.checkout_date=checkout_date
     }
-    res.render('user/proceedBooking', { roomData, hotelData, checkin_date, checkout_date })
+    const msg=req.query.msg
+    res.render('user/proceedBooking', { roomData, hotelData, checkin_date, checkout_date ,msg})
 }
 
 
@@ -312,6 +313,7 @@ const checkInDatecheckOutDate = (req, res) => {
 const confirmBooking= async (req,res)=>{
     try{
         const saveAndConfirm= await userService.saveBooking(req)
+        if(saveAndConfirm.status === 200)  res.redirect(`/proceedBookingPage?msg=${saveAndConfirm.msg}`)
 
     }catch(err){console.log(err);}
 }

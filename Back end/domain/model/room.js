@@ -12,7 +12,7 @@ const roomSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    roomNumber:{
+    roomCount:{
         type:String,
         required:true
     },
@@ -49,7 +49,7 @@ const roomSchema=new mongoose.Schema({
         type:Number,
         required:false
     },
-    bookingDetails:{
+    roomNumbers:{
         type:Array,
         required:false
     },

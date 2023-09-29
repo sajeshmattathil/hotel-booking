@@ -1,6 +1,8 @@
 const bcrypt = require('bcryptjs')
 const userRepository = require('../repository/userRepository')
 const User = require('../domain/model/user')
+const bookings = require('../domain/model/bookings')
+
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
 
@@ -405,10 +407,71 @@ const selectedRoom = async (req, res) => {
     } catch (err) { console.log(err); }
 }
 
-const saveBooking= async (req)=>{
-    try{
-         const response= await userRepository.saveBooking(req)
-    }catch(err){console.log(err);}
+const saveBooking = async (req) => {
+    try {
+        const { name, email, phone } = req.body
+        const roomData = req.session.roomData
+        const hotelData = req.session.hotelData
+        const hotel_id = hotelData._id
+        const checkin_date = req.session.checkin_date
+        const checkout_date = req.session.checkout_date
+        console.log(checkin_date, '====', checkout_date);
+
+        const user = req.session.user
+        const id = '65156b5bdbdae866bd4b69bc'
+
+
+        function convertDateFormat(inputDate) {
+            const months = {
+                January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
+                July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
+            };
+            const parts = inputDate.split(" ");
+            const day = parseInt(parts[0], 10);
+            const monthNew = parts[1].split(",")
+            const month = months[monthNew[0]];
+            const year = parseInt(parts[2], 10);
+            console.log(`${day} ${month} ${year}`);
+            return `${year}-${month}-${day}`
+        }
+        const Newcheckin_date = convertDateFormat(checkin_date)
+        const Newcheckout_date = convertDateFormat(checkout_date);
+        const startTime = 'T15:00:00';
+        const endTime = 'T11:00:00';
+        const startDate=Newcheckin_date + startTime
+        const endDate=Newcheckout_date + endTime
+
+
+        let selectedRoom = await userRepository.selectedRoom(roomData)
+        let roomNumber = selectedRoom.roomNumbers[0]
+
+        if (roomNumber) await userRepository.removeRoomNumber(roomData)
+        else {
+            let availableRooms = await userRepository.findAvailableRooms(startDate, endDate)
+            console.log(availableRooms, "////\\\\");
+            const availableRoomNumber = availableRooms.map((room) => { return room.roomNumber })
+            console.log(availableRoomNumber, "========");
+
+            roomNumber = availableRoomNumber[0]
+        }
+
+        const newBooking = new bookings({
+            userName: user,
+            name: name,
+            roomNumber,
+            email,
+            hotel_id,
+            room_id: roomData._id,
+            checkin_date: startDate,
+            checkout_date: endDate,
+            status: 'pending'
+
+        })
+        newBooking.save()
+        const msg = "Room booked sucessfully"
+        return { status: 200, msg }
+
+    } catch (err) { console.log(err); }
 }
 
 module.exports = {

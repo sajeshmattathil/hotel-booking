@@ -2,6 +2,7 @@ const Owner = require('../domain/model/owner')
 const hotel = require('../domain/model/hotel')
 const category=require('../domain/model/category')
 const subcategory=require('../domain/model/subCategory')
+const rooms=require('../domain/model/room')
 
 const findOwnerByEmail = async (email) => {
     try {
@@ -52,10 +53,14 @@ const findSubCategories= async ()=>{
     }
 }
 
-const addRoomNumbers= async (hotel_id,roomType,RoomNumberStartwith,roomCount)=>{
+const addRoomNumbers= async (hotel_id,roomType,roomCount,RoomNumberStartwith)=>{
   try{
-       
-      return  await rooms.updateOne({hotel:hotel_id,roomType:roomType},{$push:{roomNumbers:roomNumberArray}})
+    console.log(hotel_id,'><><',roomType,"nn",roomCount,'<><',RoomNumberStartwith);
+    for(let i=0;i<roomCount;i++){
+        await rooms.updateOne({hotel:hotel_id,roomType:roomType},{$push:{roomNumbers:String(RoomNumberStartwith) }})
+        RoomNumberStartwith++
+    }
+        
   }catch(err){console.log();}
 }
 
