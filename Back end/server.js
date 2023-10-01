@@ -34,8 +34,6 @@ app.use('/', userRouter)
 app.use('/admin', adminRouter)
 app.use('/owner', ownerRouter)
 
-const today = new Date(Date.now());
-const formattedDate = today.toLocaleDateString();
-console.log(formattedDate);
+
 
 app.listen(8080, () => { console.log('Listening to the server on http://localhost:8080'); })

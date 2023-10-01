@@ -14,7 +14,6 @@ const userhotelsList = async (req, res) => {
 }
 const userhotelsListPage = async (req, res) => {
     const hotels = await userService.findHotels(req)
-    console.log(hotels);
     const userName = ''
     const msg = req.query.msg
     res.render('user/hotels', { hotels, msg, userName })
@@ -50,7 +49,8 @@ const otpAuthentication = async (req, res) => {
 const userLoginHome = async (req, res) => {
     const response = await userService.auth(req)
     console.log(response);
-
+    
+    if (response.status === 202) res.redirect('/hotelDetailsPage'); 
     if (response.status === 200) res.redirect('/login/home'); console.log(req.session.user);
     if (response.status === 403) res.redirect(`/login?msg=${response.msg}`)
     if (response.status === 400) res.redirect(`/login?msg=${response.msg}`)
@@ -184,6 +184,10 @@ const emailSubmit = async (req, res) => {
     }
 
 }
+const resendOtp= async (req,res)=>{
+    const response = await userService.generateOtpAndSendForForgot(req)
+     if (response.status === 202)res.redirect('/otpVerificationPage')
+}
 
 const otpVerificationPage = (req, res) => {
     const msg = req.query.msg
@@ -222,13 +226,14 @@ const hotelDetails = (req, res) => {
 const hotelDetailsPage = async (req, res) => {
     try {
         const images = await userService.roomImages(req)
-        console.log(images);
+        const user=req.session.user
+        const msg=req.query.msg
         console.log(images.imagesOfHotel[0]);
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
         const roomArray = await userService.roomDetails(req)
 
-        res.render('user/rooms', { roomArray, images, checkin_date, checkout_date })
+        res.render('user/rooms', { roomArray, images, checkin_date, checkout_date ,user,msg})
 
     } catch (err) { console.log(err); }
 }
@@ -346,6 +351,7 @@ module.exports = {
     forgotPassword,
     forgotEmailPage,
     emailSubmit,
+    resendOtp,
     otpVerificationPage,
     otpForgotSubmit,
     newPassword,

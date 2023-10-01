@@ -9,19 +9,23 @@ const generatedOtp = require('../utils/otpGenerator')
 const findHotels = async (req) => {
     try {
         const cityName = req.body.city
-        console.log(req.body);
+        
+        console.log(req.body,"body");
+        let hotelsData
         if (req.session.city) {
             const city = req.session.city
-            const hotelsData = await userRepository.findAllHotels(city)
+            console.log(city,"city in session");
+            let hotelsData = await userRepository.findAllHotels(city)
             if (hotelsData.length === 0) {
-                const msg = "Something went wrong"
+                const msg = "No hotels in found in the city"
+                delete req.session.city
                 return { status: 400, msg }
             }
-
+            delete req.session.city
             return hotelsData
         }
         req.session.city = cityName
-        const hotelsData = await userRepository.findAllHotels(cityName)
+        hotelsData = await userRepository.findAllHotels(cityName)
         if (!hotelsData) {
             const msg = "Something went wrong"
             return { status: 400, msg }
@@ -30,6 +34,8 @@ const findHotels = async (req) => {
         return hotelsData
     } catch (err) { console.log(err); }
 }
+
+
 
 const auth = async (req) => {
     try {
@@ -71,9 +77,10 @@ const auth = async (req) => {
 const generateOtpAndSend = (req) => {
     const otp = generatedOtp()
     req.session.otp = otp
+    req.session.otpExpire=Date.now()+ 10*60*1000
 
-    const userData = req.session.userFormData
-    const { email } = userData
+    const { email } = req.session?.userFormData
+   
     console.log(otp, 'otp');
     sendMail(email, otp)
 }
@@ -85,8 +92,15 @@ const otpAuth = async (req) => {
 
     console.log(genOtp);
     if (req.body.otp === genOtp) {
-        // delete req.session.otp
-        return { status: 200 }
+        if(Date.now() <req.session.otpExpire){
+            console.log(Date.now);
+            delete req.session.otp
+            return { status: 200 }
+        }
+        else{
+            const msg = 'OTP expired'
+            return { status: 400, msg }
+        }
     } else {
         const msg = 'Entered OTP is wrong'
         return { status: 400, msg }
@@ -119,6 +133,7 @@ const userAuthentication = async (req) => {
         newUser.save()
         delete req.session.userFormData
         if (newUser) {
+            if(req.session.hotelId) return {status:202}
             return { status: 200 }
         } else {
             const msg = "Something went wrong"
@@ -318,7 +333,20 @@ const saveEditedUserPassword = async (req) => {
 
 const generateOtpAndSendForForgot = async (req) => {
     try {
-        const { email } = req.body
+        let { email } = req.body
+        
+        //resend otp
+        if(req.session.email){
+            const otp = generatedOtp()
+            email=req.session.email
+        req.session.otp = otp
+        req.session.otpExpire=Date.now()+ 10*60*1000
+        console.log(otp, 'otp');
+
+        sendMail(email, otp)
+        return {status:202}
+        }
+
         const checkUserExists = await userRepository.findUserByEmail(email)
         console.log(checkUserExists);
         if (!checkUserExists) {
@@ -327,9 +355,13 @@ const generateOtpAndSendForForgot = async (req) => {
         }
         const otp = generatedOtp()
         req.session.otp = otp
+        req.session.otpExpire=Date.now()+ 10*60*1000
+        console.log(req.session.otpExpire);
         req.session.email = email
         console.log(otp, 'otp');
+
         sendMail(email, otp)
+        return {status:200}
     } catch (err) { console.log(err); }
 }
 
@@ -338,8 +370,15 @@ const authAndSavePassword = (req) => {
     console.log(req.body.otp);
     console.log(genOtp);
     if (req.body.otp === genOtp) {
-        delete req.session.otp
-        return { status: 200 }
+        if(Date.now() <req.session.otpExpire){
+            console.log(Date.now);
+            delete req.session.otp
+            return { status: 200 }
+        }
+        else{
+            const msg = 'OTP expired'
+            return { status: 400, msg }
+        }
     } else {
         const msg = 'Entered OTP is wrong'
         return { status: 400, msg }
@@ -413,33 +452,38 @@ const saveBooking = async (req) => {
         const roomData = req.session.roomData
         const hotelData = req.session.hotelData
         const hotel_id = hotelData._id
+        const room_id=roomData._id
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
         console.log(checkin_date, '====', checkout_date);
 
         const user = req.session.user
-        const id = '65156b5bdbdae866bd4b69bc'
 
 
-        function convertDateFormat(inputDate) {
-            const months = {
-                January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
-                July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
-            };
-            const parts = inputDate.split(" ");
-            const day = parseInt(parts[0], 10);
-            const monthNew = parts[1].split(",")
-            const month = months[monthNew[0]];
-            const year = parseInt(parts[2], 10);
-            console.log(`${day} ${month} ${year}`);
-            return `${year}-${month}-${day}`
-        }
-        const Newcheckin_date = convertDateFormat(checkin_date)
-        const Newcheckout_date = convertDateFormat(checkout_date);
-        const startTime = 'T15:00:00';
-        const endTime = 'T11:00:00';
-        const startDate=Newcheckin_date + startTime
-        const endDate=Newcheckout_date + endTime
+        // function convertDateFormat(inputDate) {
+        //     const months = {
+        //         January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
+        //         July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
+        //     };
+        //     const parts = inputDate.split(" ");
+        //     const day = parseInt(parts[0], 10);
+        //     const monthNew = parts[1].split(",")
+        //     const month = months[monthNew[0]];
+        //     const year = parseInt(parts[2], 10);
+        //     console.log(`${day} ${month} ${year}`);
+        //     return `${year}-${month}-${day}`
+        // // }
+        // const Newcheckin_date = convertDateFormat(checkin_date)
+        // const Newcheckout_date = convertDateFormat(checkout_date);
+        const startTime = 'T09:30:00.000Z';
+        const endTime = 'T06:30:00.000Z';
+        const startDateString=checkin_date + startTime
+        const endDateString=checkout_date + endTime
+
+        const startDate=new Date(startDateString)
+        const endDate=new Date(endDateString)
+
+        console.log(startDate, endDate,startDateString,endDateString,checkin_date,checkout_date,"<<<<<<<")
 
 
         let selectedRoom = await userRepository.selectedRoom(roomData)
@@ -447,12 +491,15 @@ const saveBooking = async (req) => {
 
         if (roomNumber) await userRepository.removeRoomNumber(roomData)
         else {
-            let availableRooms = await userRepository.findAvailableRooms(startDate, endDate)
-            console.log(availableRooms, "////\\\\");
+            let availableRooms = await userRepository.findAvailableRooms(startDate, endDate,hotel_id,room_id)
             const availableRoomNumber = availableRooms.map((room) => { return room.roomNumber })
-            console.log(availableRoomNumber, "========");
+
+            console.log(startDate, endDate,hotel_id,room_id)
 
             roomNumber = availableRoomNumber[0]
+            const verifyRoom= await userRepository.findOverlapping(startDate, endDate,hotel_id,room_id)
+            const verifiedRooms= verifyRoom.map((room) => { return room.roomNumber })
+            console.log(verifyRoom,'??????');
         }
 
         const newBooking = new bookings({

@@ -15,8 +15,10 @@ const findUserByEmail = async (email) => {
 const findAllHotels = async (cityName) => {
     try {
         if (cityName) {
-            const data = await hotels.find({ isApproved: true, city: cityName }).limit(10)
+            console.log(cityName,"parameter received as city");
+            const data = await hotels.find({ isApproved: true, city:cityName }).limit(10)
             if (data.length === 0) {
+                console.log("Showing all the hotels");
                 return await hotels.find({ isApproved: true })
             }
             return data
@@ -156,14 +158,16 @@ const removeRoomNumber = async (roomData) => {
     } catch (err) { console.log(err); }
 }
 
-const findAvailableRooms = async (startDate, endDate) => {
+const findAvailableRooms = async (startDate, endDate, hotel_id, room_id) => {
     try {
         return await bookings.find({
+            hotel_id: hotel_id, room_id: room_id,
             $nor: [
                 {
                     checkin_date: { $lt: startDate },
                     checkout_date: { $gt: endDate }
                 },
+
                 {
                     checkin_date: { $lt: endDate },
                     checkout_date: { $gt: endDate }
@@ -173,8 +177,30 @@ const findAvailableRooms = async (startDate, endDate) => {
                     checkout_date: { $lte: endDate }
                 }
             ]
+
         })
     } catch (err) { console.log(err); }
+}
+
+const findOverlapping = async (startDate, endDate, hotel_id, room_id) => {
+    try {
+        return await bookings.find({
+            hotel_id: hotel_id, room_id: room_id,
+            $and: [
+                {
+                    checkin_date: { $gt: startDate }
+                    
+                },
+                {
+                    checkout_date: { $lt: endDate }
+                }
+            ]
+        })
+
+    //     console.log(endDate,">>>>>>>")
+    // return await bookings.find({hotel_id: hotel_id, room_id: room_id,checkout_date: { $lt: endDate }})
+   
+} catch (err) { console.log(err.message); }
 }
 module.exports = {
     findUserByEmail,
@@ -194,7 +220,8 @@ module.exports = {
     selectedHotelDetails,
     selectedRoom,
     removeRoomNumber,
-    findAvailableRooms
+    findAvailableRooms,
+    findOverlapping
 
 }
 
