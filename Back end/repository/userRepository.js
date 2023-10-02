@@ -184,21 +184,42 @@ const findAvailableRooms = async (startDate, endDate, hotel_id, room_id) => {
 
 const findOverlapping = async (startDate, endDate, hotel_id, room_id) => {
     try {
+        console.log(startDate, endDate, hotel_id, room_id,">>>>>>>")
         return await bookings.find({
-            hotel_id: hotel_id, room_id: room_id,
-            $and: [
-                {
-                    checkin_date: { $gt: startDate }
-                    
+            hotel_id: hotel_id, 
+            room_id: room_id,
+            $or: [
+                { 
+                    checkin_date: { $lt: startDate },
+                    checkout_date: { $lt: startDate }
                 },
-                {
-                    checkout_date: { $lt: endDate }
+                { 
+                    checkin_date: { $gt: endDate },
+                    checkout_date: { $gt: endDate }
                 }
             ]
         })
+        
+        
 
+
+
+
+        // bookings.find({
+        //     hotel_id: hotel_id, 
+        //     room_id: room_id,
+        //     $or: [
+        //         {
+        //             $or: [
+        //                 { checkin_date: { $gt: startDate } },
+        //                 { checkout_date: { $lt: endDate } }
+        //             ]
+        //         },
+        //         { checkout_date: { $gt: startDate } }
+        //     ]
+        // })
     //     console.log(endDate,">>>>>>>")
-    // return await bookings.find({hotel_id: hotel_id, room_id: room_id,checkout_date: { $lt: endDate }})
+    // return await bookings.find({hotel_id: hotel_id, room_id: room_id,checkout_date: { $lte: endDate }})
    
 } catch (err) { console.log(err.message); }
 }

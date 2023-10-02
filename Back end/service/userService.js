@@ -265,69 +265,35 @@ const saveEditedUserAddress = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-// const generateOtpAndSendToVerifyEmail = (req,res) => {
-//     const otp = generatedOtp()
-//     req.session.otp = otp
-//     const email = req.session.user
-//     console.log(otp, 'otpNew');
-//     sendMail(email, otp)
 
-// }
-
-// const saveEditedUserPassword= async (req)=>{
-//    try{
-//         console.log(req);
-//         const genOtp = req.session.otp
-//         console.log(req.body.otp +'#####');
-//         console.log(genOtp +"@@@@2");
-//         // if (req.body.otp === genOtp) {
-
-//         const {password,confirm}=req.body
-//         if(req.body.otp === genOtp){
-//          if(password === confirm)   {
-
-//             const updateData= await userRepository.findAndEditPassword(req)
-//             if( updateData ){
-//                 const msg = "New password added"
-//                 delete req.session.otp
-//                 return { status: 200, msg }
-
-//             } else{
-//                 const msg = "Something went wrong"
-//                 return { status: 500, msg }
-
-//             }}
-
-//         } else {
-//             const msg='Entered password does not match'
-//             return { status: 400 ,msg}
-//         }
-
-//        }catch(err){console.log(err);}
-// }
 
 
 const saveEditedUserPassword = async (req) => {
     try {
 
-        const { password, confirm } = req.body
-        if (password === confirm) {
+        const {old_password } = req.body
+        
+                const email =req.session.user
+                const user=await userRepository.findUserByEmail(email)
+                const verifyOldPassword = await bcrypt.compare(old_password,user.password)
+            if(verifyOldPassword){
 
-            const updateData = await userRepository.findAndEditPassword(req)
-            if (updateData) {
-                const msg = "New password added"
-                delete req.session.otp
-                return { status: 200, msg }
+                const updateData = await userRepository.findAndEditPassword(req)
+                if (updateData) {
+                    const msg = "New password added"
+                    delete req.session.otp
+                    return { status: 200, msg }
 
-            } else {
-                const msg = "Something went wrong"
-                return { status: 500, msg }
-            }
+                } else {
+                    const msg = "Something went wrong"
+                    return { status: 500, msg }
+                }
+            }else{
+                const msg = 'Old password does not match'
+                return { status: 400, msg }
+           } 
 
-        } else {
-            const msg = 'Entered password does not match'
-            return { status: 400, msg }
-        }
+      
     } catch (err) { console.log(err); }
 }
 
@@ -460,23 +426,9 @@ const saveBooking = async (req) => {
         const user = req.session.user
 
 
-        // function convertDateFormat(inputDate) {
-        //     const months = {
-        //         January: '01', February: '02', March: '03', April: '04', May: '05', June: '06',
-        //         July: '07', August: '08', September: '09', October: '10', November: '11', December: '12'
-        //     };
-        //     const parts = inputDate.split(" ");
-        //     const day = parseInt(parts[0], 10);
-        //     const monthNew = parts[1].split(",")
-        //     const month = months[monthNew[0]];
-        //     const year = parseInt(parts[2], 10);
-        //     console.log(`${day} ${month} ${year}`);
-        //     return `${year}-${month}-${day}`
-        // // }
-        // const Newcheckin_date = convertDateFormat(checkin_date)
-        // const Newcheckout_date = convertDateFormat(checkout_date);
-        const startTime = 'T09:30:00.000Z';
-        const endTime = 'T06:30:00.000Z';
+        
+        const startTime = 'T15:00:00.000Z';
+        const endTime = 'T12:00:00.000Z';
         const startDateString=checkin_date + startTime
         const endDateString=checkout_date + endTime
 
@@ -494,12 +446,21 @@ const saveBooking = async (req) => {
             let availableRooms = await userRepository.findAvailableRooms(startDate, endDate,hotel_id,room_id)
             const availableRoomNumber = availableRooms.map((room) => { return room.roomNumber })
 
-            console.log(startDate, endDate,hotel_id,room_id)
 
             roomNumber = availableRoomNumber[0]
             const verifyRoom= await userRepository.findOverlapping(startDate, endDate,hotel_id,room_id)
             const verifiedRooms= verifyRoom.map((room) => { return room.roomNumber })
-            console.log(verifyRoom,'??????');
+            console.log(verifiedRooms,'??????');
+            if(!verifiedRooms.includes(roomNumber)){ 
+                roomNumber=verifiedRooms[0]
+                console.log(roomNumber,"[][][");
+                if(!roomNumber){
+                    console.log(roomNumber,"[][][");
+
+                    const msg="No rooms available"
+                    return {status:202,msg}
+                }
+        }
         }
 
         const newBooking = new bookings({

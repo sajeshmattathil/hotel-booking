@@ -32,12 +32,12 @@ const currentBookingsSchema = new mongoose.Schema({
 
   },
   checkin_date: {
-    type: String,
+    type: Date,
     required: true
 
   },
   checkout_date: {
-    type: String,
+    type: Date,
     required: true
 
   },

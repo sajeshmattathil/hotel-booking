@@ -41,15 +41,12 @@ const otpPage = (req, res) => {
 
 const otpAuthentication = async (req, res) => {
     const response = await userService.otpAuth(req)
-    console.log(response);
     if (response.status === 200) res.redirect('/register')
-    if (response.status === 400) res.redirect('/otpPage')
+    if (response.status === 400) res.redirect(`/otpPage?msg=${response.msg}`)
 }
 
 const userLoginHome = async (req, res) => {
     const response = await userService.auth(req)
-    console.log(response);
-    
     if (response.status === 202) res.redirect('/hotelDetailsPage'); 
     if (response.status === 200) res.redirect('/login/home'); console.log(req.session.user);
     if (response.status === 403) res.redirect(`/login?msg=${response.msg}`)
@@ -114,7 +111,6 @@ const editUserName = async (req, res) => {
 const editUserEmail = async (req, res) => {
     try {
         const response = await userService.saveEditedUserEmail(req)
-        console.log(response.status + ">>>>>");
         if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
@@ -150,11 +146,7 @@ const editUserAddress = async (req, res) => {
     } catch (err) { console.log(err); }
 }
 
-// const sendOtpToEmail = (req, res) => {
 
-//     if(!(req.session.otp))userService.generateOtpAndSendToVerifyEmail(req)  
-
-// }
 
 const editUserPassword = async (req, res) => {
     try {
@@ -268,38 +260,19 @@ const proceedBookingPage = async (req, res) => {
     let checkout_date = req.session.checkout_date
 
     if (!checkin_date) {
-        const today = new Date();
-
-        const months = [
-          "January", "February", "March", "April", "May", "June", 
-          "July", "August", "September", "October", "November", "December"
-        ];
-        
-        const dd = String(today.getDate()).padStart(2, '0');
-        const mm = months[today.getMonth()];
-        const yyyy = today.getFullYear();
-        
-         checkin_date = `${dd} ${mm}, ${yyyy}`;
+        const today = new Date().toISOString().split('T')[0];
+         checkin_date = today
          req.session.checkin_date=checkin_date
 
         console.log(checkin_date);
         
     }
     if(!checkout_date){
-        const today = new Date();
+        const today = new Date()
         const tomorrow = new Date(today);
         tomorrow.setDate(today.getDate() + 1);
-
-        const months = [
-        "January", "February", "March", "April", "May", "June", 
-        "July", "August", "September", "October", "November", "December"
-        ];
-
-        const dd = String(tomorrow.getDate()).padStart(2, '0');
-        const mm = months[tomorrow.getMonth()];
-        const yyyy = tomorrow.getFullYear();
-
-         checkout_date = `${dd} ${mm}, ${yyyy}`;
+        const tomorrowString =tomorrow.toISOString().split('T')[0];
+         checkout_date = tomorrowString
          req.session.checkout_date=checkout_date
     }
     const msg=req.query.msg
@@ -319,6 +292,7 @@ const confirmBooking= async (req,res)=>{
     try{
         const saveAndConfirm= await userService.saveBooking(req)
         if(saveAndConfirm.status === 200)  res.redirect(`/proceedBookingPage?msg=${saveAndConfirm.msg}`)
+        if(saveAndConfirm.status === 202)  res.redirect(`/proceedBookingPage?msg=${saveAndConfirm.msg}`)
 
     }catch(err){console.log(err);}
 }
