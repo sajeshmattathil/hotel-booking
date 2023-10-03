@@ -37,10 +37,11 @@ router.post('/newPassword-submit',controller.newPasswordSubmit)
 router.get('/hotelDetails/:_id',controller.hotelDetails)
 router.get('/hotelDetailsPage',controller.hotelDetailsPage)
 router.get('/sortHotels',controller.sortHotels)
-
 router.get('/proceedBooking/:roomType',controller.proceedBooking)
 router.get('/proceedBookingPage',controller.proceedBookingPage)
 router.post('/checkInDate-checkOutDate',controller.checkInDatecheckOutDate)
 router.post('/confirmBooking',controller.confirmBooking)
+router.get('/manageBookings',controller.manageBookings)
+router.get('/manageBookingsPage',controller.manageBookingsPage)
 
 module.exports=router

@@ -199,30 +199,57 @@ const findOverlapping = async (startDate, endDate, hotel_id, room_id) => {
                 }
             ]
         })
-        
-        
-
-
-
-
-        // bookings.find({
-        //     hotel_id: hotel_id, 
-        //     room_id: room_id,
-        //     $or: [
-        //         {
-        //             $or: [
-        //                 { checkin_date: { $gt: startDate } },
-        //                 { checkout_date: { $lt: endDate } }
-        //             ]
-        //         },
-        //         { checkout_date: { $gt: startDate } }
-        //     ]
-        // })
-    //     console.log(endDate,">>>>>>>")
-    // return await bookings.find({hotel_id: hotel_id, room_id: room_id,checkout_date: { $lte: endDate }})
-   
+           
 } catch (err) { console.log(err.message); }
 }
+
+const findUserHistory= async (email)=>{
+try{
+         return await bookings.aggregate([
+    {
+        $match: { userName: email } 
+     },
+    {
+        $lookup: {
+            from: "hotels",
+            localField: "hotel_id",
+            foreignField: "_id",
+            as: "hotelInfo"
+        }
+     },
+    {
+        $unwind: "$hotelInfo" 
+    },
+    {
+        $lookup: {
+            from: "rooms",
+            localField: "room_id",
+            foreignField: "_id",
+            as: "roomInfo"
+        }
+    },
+    {
+        $unwind: "$roomInfo"
+    },
+    {
+        $project: {
+            userName: 1,
+            roomNumber:"$roomNumber",
+            checkin: "$checkin_date",
+            checkout: "$checkout_date",
+            hotelName: "$hotelInfo.hotel_name",
+            roomType: "$roomInfo.roomType",
+            city:"$hotelInfo.city",
+            hotelImage:    {  
+                $arrayElemAt: ["$hotelInfo.imagesOfHotel", 0]
+            }          
+        }
+    }
+]);
+
+}catch(err){console.log(err);}
+}
+
 module.exports = {
     findUserByEmail,
     findAllHotels,
@@ -233,7 +260,6 @@ module.exports = {
     findAndEditAddress,
     findAndEditPassword,
     findAndChangePassword,
-
     sortBy,
     roomDetails,
     roomImages,
@@ -242,7 +268,8 @@ module.exports = {
     selectedRoom,
     removeRoomNumber,
     findAvailableRooms,
-    findOverlapping
+    findOverlapping,
+    findUserHistory
 
 }
 

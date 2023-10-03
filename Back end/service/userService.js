@@ -2,7 +2,7 @@ const bcrypt = require('bcryptjs')
 const userRepository = require('../repository/userRepository')
 const User = require('../domain/model/user')
 const bookings = require('../domain/model/bookings')
-
+const history = require('../domain/model/bookingHistory')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
 
@@ -77,7 +77,7 @@ const auth = async (req) => {
 const generateOtpAndSend = (req) => {
     const otp = generatedOtp()
     req.session.otp = otp
-    req.session.otpExpire=Date.now()+ 10*60*1000
+    req.session.otpExpireForRegister=Date.now()+ 10*60*1000
 
     const { email } = req.session?.userFormData
    
@@ -92,7 +92,7 @@ const otpAuth = async (req) => {
 
     console.log(genOtp);
     if (req.body.otp === genOtp) {
-        if(Date.now() <req.session.otpExpire){
+        if(Date.now() <req.session.otpExpireForRegister){
             console.log(Date.now);
             delete req.session.otp
             return { status: 200 }
@@ -476,12 +476,27 @@ const saveBooking = async (req) => {
 
         })
         newBooking.save()
+        const newBookingHistory=new history({...newBooking})
+        newBookingHistory.save()
         const msg = "Room booked sucessfully"
         return { status: 200, msg }
 
     } catch (err) { console.log(err); }
 }
 
+const findBookings= async (email)=>{
+    try{
+        const history= await userRepository.findUserHistory(email)
+            if(history) return history
+            else {
+                const msg="No bookings done ,Book now grab offers"
+                return {msg}
+            }
+            
+        
+
+    }catch(err){console.log(err.message);}
+}
 module.exports = {
     userAuthentication,
     verifyUser,
@@ -495,7 +510,6 @@ module.exports = {
     saveEditedUserMobile,
     saveEditedUserGender,
     saveEditedUserAddress,
-    // generateOtpAndSendToVerifyEmail,
     saveEditedUserPassword,
     generateOtpAndSendForForgot,
     authAndSavePassword,
@@ -504,5 +518,6 @@ module.exports = {
     roomDetails,
     roomImages,
     selectedRoom,
-    saveBooking
+    saveBooking,
+    findBookings
 }

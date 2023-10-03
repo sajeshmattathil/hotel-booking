@@ -22,13 +22,13 @@ const currentBookingsSchema = new mongoose.Schema({
 
   },
   hotel_id: {
-    type: String,
-    required: true
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'hotels'
 
-  },
+  }, 
   room_id: {
-    type: String,
-    required: true
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'rooms'
 
   },
   checkin_date: {

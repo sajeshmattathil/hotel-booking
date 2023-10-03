@@ -1,8 +1,8 @@
 const userService = require('../../service/userService')
 
 const userHome = (req, res) => {
-    res.render('user/index')
-    //res.render('user/proceedBooking')
+ res.render('user/index')
+    //res.render('user/manageBookings')
 
 }
 const userhotelsList = async (req, res) => {
@@ -297,6 +297,25 @@ const confirmBooking= async (req,res)=>{
     }catch(err){console.log(err);}
 }
 
+const manageBookings=(req,res)=>{
+    try{
+        if(req.session.user){
+             res.redirect('/manageBookingsPage')
+        }else{
+            res.redirect('/signup')
+        }
+    }catch(err){console.log(err);}
+}
+
+const manageBookingsPage= async (req,res)=>{
+    try{
+            const email=req.session.user
+            const hotels= await userService.findBookings(email)
+            console.log(hotels);
+            const msg=req.query.msg
+          res.render('user/manageBookings',{hotels,msg})     
+    }catch(err){console.log(err);}
+}
 
 module.exports = {
     userHome,
@@ -320,7 +339,6 @@ module.exports = {
     editUserMobile,
     editUserGender,
     editUserAddress,
-    // sendOtpToEmail,
     editUserPassword,
     forgotPassword,
     forgotEmailPage,
@@ -336,6 +354,8 @@ module.exports = {
     proceedBooking,
     proceedBookingPage,
     checkInDatecheckOutDate,
-    confirmBooking
+    confirmBooking,
+    manageBookings,
+    manageBookingsPage
 
 }
