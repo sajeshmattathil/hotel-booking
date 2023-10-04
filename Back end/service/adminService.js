@@ -3,26 +3,29 @@ const adminRepository = require('../repository/adminRepository')
 const Category = require('../domain/model/category')
 const subCategory = require('../domain/model/subCategory')
 const owner=require('../domain/model/owner')
+const coupon=require('../domain/model/coupon')
 
 const auth = async (req) => {
      const { email, password } = req.body
      if (!email && !password) {
-          return { status: 403 }
+          const msg="Fill empty fields "
+          return { status: 401,msg }
      }
      try {
           const admin = await adminRepository.findAdminByEmail(email)
-          if (!admin) return { status: 403 }
-
+          if (!admin) {const msg="Username or password is incorrect "; return { status: 401,msg }
+}
           const checkedPassword = await bcrypt.compare(password, admin.password)
-
-
           if (admin && checkedPassword) {
                if (admin.isAdmin) {
                     req.session.admin = email;
                     return { status: 200 }
                }
           }
-          else return { status: 400 }
+          else {
+               const msg="Username or password is incorrect "
+               return { status: 401,msg }
+          }
      }
      catch (error) {
           console.log(error);
@@ -48,6 +51,7 @@ const saveNewCategory = async (req) => {
 
           const checkExistingCategory = await adminRepository.findCategoryByName(name)
           if (!checkExistingCategory) {
+
                const newCategory = new Category({
                     name: name
                })
@@ -155,7 +159,29 @@ const authenticateOwner= async (req)=>{
       } catch (error) { console.log(error); }
 }
 
+const existingCoupons= async ()=>{
+     try{
+         const data=await adminRepository.findExistingCoupons()
+           return data
+         
 
+     }catch(err){console.log(err);}
+}
+
+const addCoupon= async (req)=>{
+    try{
+     const {name,discount,startingDate,expiry}=req.body
+     const newCoupon=new coupon({
+          name,
+          discount,
+          startingDate,
+          expiry
+     })
+     newCoupon.save()
+     const msg="Coupon saved sucessfully"
+     return {status:200,msg}
+    }catch(err){console.log(err);}
+}
 
 module.exports = {
      auth,
@@ -164,6 +190,8 @@ module.exports = {
      saveNewSubCategory,
      findRequests,
      approve,
-     authenticateOwner
+     authenticateOwner,
+     existingCoupons,
+     addCoupon
 }
 

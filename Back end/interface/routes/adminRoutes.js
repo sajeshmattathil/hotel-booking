@@ -16,6 +16,9 @@ router.get('/approve/:email',jwt.verifyToken,admincontroller.requestApprove)
 router.get('/owner-management',jwt.verifyToken,admincontroller.ownerManagement)
 router.get('/ownerMangementPage',jwt.verifyToken,admincontroller.ownerMangementPage)
 router.post('/add-newOwner',jwt.verifyToken,admincontroller.addNewOwner)
+router.get('/coupon-management',jwt.verifyToken,admincontroller.couponManagement)
+router.get('/couponManagementPage',jwt.verifyToken,admincontroller.couponManagementPage)
+router.post('/add_coupon',jwt.verifyToken,admincontroller.addCoupon)
 
 module.exports = router
 

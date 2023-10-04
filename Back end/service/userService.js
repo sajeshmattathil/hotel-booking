@@ -12,7 +12,7 @@ const findHotels = async (req) => {
         
         console.log(req.body,"body");
         let hotelsData
-        if (req.session.city) {
+        if (req.body.city) {
             const city = req.session.city
             console.log(city,"city in session");
             let hotelsData = await userRepository.findAllHotels(city)
@@ -21,7 +21,7 @@ const findHotels = async (req) => {
                 delete req.session.city
                 return { status: 400, msg }
             }
-            delete req.session.city
+           // delete req.session.city
             return hotelsData
         }
         req.session.city = cityName
@@ -34,8 +34,6 @@ const findHotels = async (req) => {
         return hotelsData
     } catch (err) { console.log(err); }
 }
-
-
 
 const auth = async (req) => {
     try {

@@ -3,6 +3,7 @@ const hotels=require('../domain/model/hotel')
 const category=require('../domain/model/category')
 const subcategory=require('../domain/model/subCategory')
 const owner=require('../domain/model/owner')
+const coupons=require('../domain/model/coupon')
 
 
 
@@ -66,6 +67,15 @@ const findOwnerByEmail= async (email)=>{
 }
 }
 
+const findExistingCoupons=async()=>{
+    try {
+            const today=new Date()
+            const todayDate=today.toISOString().split('T')[0]
+        return await coupons.find({expiry:{$gte:todayDate}})
+} catch (error) {
+   console.log(error);
+}
+}
 
 module.exports={
     findAdminByEmail,
@@ -74,5 +84,6 @@ module.exports={
     findHotelAndApprove,
     findCategoryByName,
     findSubCategoryByName,
-    findOwnerByEmail
+    findOwnerByEmail,
+    findExistingCoupons
 }

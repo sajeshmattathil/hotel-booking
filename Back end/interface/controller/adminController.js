@@ -1,15 +1,15 @@
 const adminService = require('../../service/adminService')
 
 const adminLogin = (req, res) => {
-  res.render('admin-login')
+  const msg=req.query.msg
+  res.render('admin-login',{msg})
 }
 
 const adminAuthentication = async (req, res) => {
 try{
   const response = await adminService.auth(req)
-  if (response.status === 403) res.redirect('/admin')
+  if (response.status === 401) res.redirect(`/admin?msg=${response.msg}`)
   if (response.status === 200) res.redirect('/admin/home')
-  if (response.status === 400) res.redirect('/admin')
 }catch(error){console.log(error);}
 }
 const adminHome = async (req, res) => {
@@ -36,8 +36,6 @@ const saveCategory = async (req, res) => {
   console.log(response);
   if(response.status === 200)  res.redirect(`/admin/categoryManagementPage?msg1=${response.message}`)
   if(response.status === 400)  res.redirect(`/admin/categoryManagementPage?msg1=${response.message}`)
-
-
   }catch(error){console.log(error);}
 
 }
@@ -48,15 +46,12 @@ const saveSubCategory=async (req, res) => {
   console.log(response);
   if(response.status === 200)  res.redirect(`/admin/categoryManagementPage?msg2=${response.message}`)
   if(response.status === 400)  res.redirect(`/admin/categoryManagementPage?msg2=${response.message}`)
-
-
   }catch(error){console.log(error);}
 
 }
 
 const hotelRequests = (req, res) => {
   res.redirect('/admin/aproveHotelList')
-
 }
 
 const hotelRequestView = async (req, res) => {
@@ -92,6 +87,37 @@ const addNewOwner= async (req,res)=>{
     }catch (error) { console.log(error); }
 }
 
+const couponManagement=(req,res)=>{
+  try{
+    res.redirect('/admin/couponManagementPage')
+  }catch(err){console.log(err);}
+}
+
+const couponManagementPage= async (req,res)=>{
+  try{
+    let msg=req.query.msg
+    const coupons= await adminService.existingCoupons()
+
+    const modifiedCoupons = coupons.map(coupon => {
+      return {
+        ...coupon,
+        startingDate: coupon.startingDate.toISOString().split('T')[0],
+        expiry:coupon.expiry.toISOString().split('T')[0],
+        discount:coupon.discount,
+        name:coupon.name
+      };
+    });
+    
+    if(coupons.length === 0){ msg=coupons.msg}
+     res.render('adminCouponManagement',{coupons:modifiedCoupons,msg})
+  }catch(err){console.log(err);}
+}
+const addCoupon= async (req,res)=>{
+  try{
+     const response= await adminService.addCoupon(req)
+     if(response.status === 200) res.redirect(`/admin/couponManagementPage?msg=${response.msg}`)
+  }catch(err){console.log(err);}
+}
 module.exports = {
   adminLogin,
   adminAuthentication,
@@ -105,5 +131,8 @@ module.exports = {
   requestApprove,
   ownerManagement,
   ownerMangementPage,
-  addNewOwner
+  addNewOwner,
+  couponManagement,
+  couponManagementPage,
+  addCoupon
 }

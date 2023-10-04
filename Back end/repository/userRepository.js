@@ -92,16 +92,14 @@ const findAndChangePassword = async (req) => {
 const sortBy = async (req) => {
     try {
         const cityName = req.session.city
-        const sort = req.query.sort
-        const sortCriteria = {};
-        sortCriteria[sort] = -1;
+        let sortCriteria = {};
+
+        const sort = req.body.sort
+        if(sort === low) sortCriteria[price] = 1;
+        else if(sort === high) sortCriteria[price] = -1;
         return hotels.find({ city: cityName }).sort(sortCriteria)
-
-
     } catch (err) { console.log(err.message); }
-
 }
-
 const roomDetails = async (hotelId) => {
     try {
         const roomArray = await rooms.aggregate([
@@ -118,7 +116,7 @@ const roomDetails = async (hotelId) => {
                 }
             }
         ]);
-        console.log(roomArray, "\\\\\@@@@@@@/////");
+        console.log(roomArray);
 
         return roomArray;
 
