@@ -6,14 +6,20 @@ const userHome = (req, res) => {
 
 }
 const userhotelsList = async (req, res) => {
-
-    const hotels = await userService.findHotels(req)
+    req.session.city= req.body.city
+    req.session.adult=req.body.adult
+    req.session.children =req.body.children
+    req.session.checkin_date = req.body.checkin_date
+    req.session.checkout_date = req.body.checkout_date
+    
+    console.log(req.session.city,"oooooooo");
+   const hotels = await userService.findHotels( req.session.city)
     if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
     else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
 
 }
 const userhotelsListPage = async (req, res) => {
-    const hotels = await userService.findHotels(req)
+    const hotels = await userService.findHotels(req.session.city)
     const userName = ''
     const msg = req.query.msg
     res.render('user/hotels', { hotels, msg, userName })
@@ -21,7 +27,7 @@ const userhotelsListPage = async (req, res) => {
 
 const userLogin = (req, res) => {
     const msg = req.query.msg
-    res.render('user-login', { msg: msg })
+    res.render('user-login', {msg})
 }
 
 const otpVerification = async (req, res) => {
@@ -63,8 +69,7 @@ const userRegister = async (req, res) => {
     const userData = req.session.userFormData
     try {
         let response = await userService.userAuthentication(req)
-
-        if (response.status === 200) res.redirect('/login')
+        if (response.status === 200) res.redirect(`/login?msg=${response.msg}`)
         if (response.status === 400) res.redirect(`/signup?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/otpPage?msg=${response.msg}`)
 
@@ -190,7 +195,6 @@ const otpForgotSubmit = async (req, res) => {
     const response = await userService.authAndSavePassword(req)
     if (response.status === 200) res.redirect(`/newPassword?msg=${response.msg}`)
     if (response.status === 400) res.redirect(`/otpVerificationPage?msg=${response.msg}`)
-
 }
 
 const newPassword = (req, res) => {
@@ -287,12 +291,49 @@ const checkInDatecheckOutDate = (req, res) => {
     res.redirect('/hotelDetailsPage')
 
 }
-
 const confirmBooking= async (req,res)=>{
     try{
+      req.session.booking=req.body
+      res.redirect('/confirmPayment')
+    }catch(err){console.log(err);}
+}
+
+const confirmPayment= async (req,res)=>{
+    try{
+        const booking = req.session.booking
+        const roomData = req.session.roomData
+        const coupons = await userService.findCoupons(req)
+        const couponSelected = req.session.couponSelected
+        const couponMsg=coupons.couponMsg
+        const userName= ""
+        const msg=req.query.msg
+        const checkin_date = req.session.checkin_date
+        const checkout_date = req.session.checkout_date
+        const offer = await userService.findCategoryOffer()
+
+        res.render('user/payment',{userName,msg,checkin_date,checkout_date,booking,roomData,coupons,couponMsg,couponSelected})
+      }catch(err){console.log(err);}
+  }
+
+  const selectedCoupon=(req,res)=>{
+    try{
+        req.session.couponSelected =req.params.coupon
+        res.redirect('/confirmPayment')
+    }catch(err){console.log();}
+  }
+
+  const removeCoupon=(req,res)=>{
+    try{
+     delete  req.session.couponSelected
+     res.redirect('/confirmPayment')
+
+    }catch(err){console.log(err);}
+  }
+const bookNow= async (req,res)=>{
+    try{
         const saveAndConfirm= await userService.saveBooking(req)
-        if(saveAndConfirm.status === 200)  res.redirect(`/proceedBookingPage?msg=${saveAndConfirm.msg}`)
-        if(saveAndConfirm.status === 202)  res.redirect(`/proceedBookingPage?msg=${saveAndConfirm.msg}`)
+        if(saveAndConfirm.status === 200)  res.redirect(`/confirmPayment?msg=${saveAndConfirm.msg}`)
+        if(saveAndConfirm.status === 202)  res.redirect(`/confirmPayment?msg=${saveAndConfirm.msg}`)
 
     }catch(err){console.log(err);}
 }
@@ -316,6 +357,18 @@ const manageBookingsPage= async (req,res)=>{
           res.render('user/manageBookings',{hotels,msg})     
     }catch(err){console.log(err);}
 }
+
+// const offerManagement=(req,res)=>{
+//     try{
+//         res.redirect('/owner/offerManagementPage')
+//     }catch(err){console.log(err);}
+// }
+
+// const offerManagementPage=(req,res)=>{
+//     try{
+//         res.render('ownerofferManagement')
+//     }catch(err){console.log(err);}
+// }
 
 module.exports = {
     userHome,
@@ -355,7 +408,13 @@ module.exports = {
     proceedBookingPage,
     checkInDatecheckOutDate,
     confirmBooking,
+    confirmPayment,
+    bookNow,
     manageBookings,
-    manageBookingsPage
+    manageBookingsPage,
+    selectedCoupon,
+    removeCoupon,
+    // offerManagement,
+    // offerManagementPage
 
 }

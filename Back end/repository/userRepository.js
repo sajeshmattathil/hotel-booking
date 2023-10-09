@@ -2,6 +2,7 @@ const User = require('../domain/model/user')
 const hotels = require('../domain/model/hotel')
 const rooms = require('../domain/model/room')
 const bookings = require('../domain/model/bookings')
+const coupons = require('../domain/model/coupon')
 const bcrypt = require('bcryptjs')
 
 const findUserByEmail = async (email) => {
@@ -149,6 +150,12 @@ const selectedRoom = async (roomData) => {
         return await rooms.findOne({ _id: roomData._id })
     } catch (err) { console.log(err); }
 }
+  
+const findCouponByUser=async (email)=>{
+    try{
+        return await coupons.find({used_users:{$ne:email}})
+    }catch(err){console.log(err);}
+}
 
 const removeRoomNumber = async (roomData) => {
     try {
@@ -160,20 +167,25 @@ const findAvailableRooms = async (startDate, endDate, hotel_id, room_id) => {
     try {
         return await bookings.find({
             hotel_id: hotel_id, room_id: room_id,
-            $nor: [
+            $and: [
                 {
-                    checkin_date: { $lt: startDate },
-                    checkout_date: { $gt: endDate }
+                    checkin_date: { $lte: startDate },
+                    checkout_date: { $gte: endDate }
                 },
 
-                {
-                    checkin_date: { $lt: endDate },
-                    checkout_date: { $gt: endDate }
-                },
-                {
-                    checkin_date: { $gte: startDate, $lt: endDate },
-                    checkout_date: { $lte: endDate }
-                }
+                // {
+                //     checkin_date: { $lt: endDate },
+                //     checkout_date: { $gt: endDate }
+                // },
+                // {
+                //     checkin_date: { $gte: startDate, $lt: endDate },
+                //     checkout_date: { $lte: endDate }
+                // },
+                // {
+                //     checkin_date: { $lt: startDate },
+                //     checkout_date: { $lte: endDate,$gt:startDate }
+               
+                // }
             ]
 
         })
@@ -183,24 +195,27 @@ const findAvailableRooms = async (startDate, endDate, hotel_id, room_id) => {
 const findOverlapping = async (startDate, endDate, hotel_id, room_id) => {
     try {
         console.log(startDate, endDate, hotel_id, room_id,">>>>>>>")
-        return await bookings.find({
-            hotel_id: hotel_id, 
+        return await  bookings.find({
+            hotel_id: hotel_id,
             room_id: room_id,
-            $or: [
-                { 
-                    checkin_date: { $lt: startDate },
-                    checkout_date: { $lt: startDate }
-                },
-                { 
-                    checkin_date: { $gt: endDate },
-                    checkout_date: { $gt: endDate }
-                }
-            ]
-        })
            
+                    $and: [
+                        {
+                            checkin_date: { $gte: startDate },
+                            checkout_date: { $lte: endDate }
+                        }
+                    ]
+                }
+        )
+             
 } catch (err) { console.log(err.message); }
 }
 
+const  findAllRoomNumber= async ()=>{
+    try{
+       return await bookings.distinct("roomNumber")
+    }catch(err){console.log(err);}
+}
 const findUserHistory= async (email)=>{
 try{
          return await bookings.aggregate([
@@ -267,7 +282,9 @@ module.exports = {
     removeRoomNumber,
     findAvailableRooms,
     findOverlapping,
-    findUserHistory
+    findUserHistory,
+    findCouponByUser,
+    findAllRoomNumber
 
 }
 

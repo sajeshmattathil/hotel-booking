@@ -10,11 +10,13 @@ const sendOTPByEmail = (email,otp) => {
         }
     });
 
+    let msg=`Dear user  OTP to reset your Travel nest login  is  ${otp}.Do not share this to any one`
+
     let mailDetails = {
         from: '74123loo@gmail.com',
      	to: email,
-        subject: 'OTP',
-        text: otp
+        subject: 'Trave Nest',
+        text: msg
     };
 
     mailTransporter.sendMail(mailDetails, (error, data) => {

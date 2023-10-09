@@ -2,6 +2,7 @@ const ownerRepository = require('../repository/ownerRepository')
 const hotel = require('../domain/model/hotel')
 const room = require('../domain/model/room')
 const bcrypt = require('bcryptjs')
+const offer = require('../domain/model/category_offer')
 
 const auth = async (req) => {
      const { email, password } = req.body
@@ -145,6 +146,51 @@ const findSubCategories= async ()=>{
  return category
      }catch(err){console.log(err);}
 }
+
+const addCategoryOffer = async (req)=>{
+     try{ 
+          const hotel_id=req.session.hotel_id
+          console.log(hotel_id);
+          const {name,roomType,discount,startingDate,expiry} = req.body
+          req.session.roomType = roomType
+      const isExist = await offer.findOne({roomType:roomType})
+      if(isExist){
+          const msg="Offer for this Category alredy exists,edit existing data"
+          return {status:201,msg}
+      }else{
+          const newOffer = new offer({
+               name,
+               roomType,
+               discount,
+               startingDate,
+               expiry,
+               hotel_id
+          })
+               console.log(newOffer);
+               newOffer.save()
+
+               
+               const msg="Offer for this Category saved sucessfully"
+               return {status:200,msg}
+          }
+      
+     }catch(err){console.log(err);}
+     
+}
+
+const findOffers = async (req)=>{
+     try{
+          console.log(req.session.hotel_id,"8888");
+       const hotel_id = req.session.hotel_id
+       
+       const offers = await ownerRepository.findOffers(hotel_id)
+
+       if(!offers.length) {
+          const msg = "No offers available"
+          return {msg}
+       }else return offers
+     }catch(err){console.log(err);}
+}
 module.exports = {
      auth,
      ownerUsername,
@@ -152,6 +198,10 @@ module.exports = {
      hotelsWithIncompleteDetails,
      authenticateRoomDetails,
      findCategories,
-     findSubCategories
+     findSubCategories,
+     addCategoryOffer,
+     findOffers
 
 }
+
+

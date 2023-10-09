@@ -6,33 +6,21 @@ const history = require('../domain/model/bookingHistory')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
 
-const findHotels = async (req) => {
+const findHotels = async (city) => {
     try {
-        const cityName = req.body.city
-        
-        console.log(req.body,"body");
-        let hotelsData
-        if (req.body.city) {
-            const city = req.session.city
-            console.log(city,"city in session");
+        if (city) {
             let hotelsData = await userRepository.findAllHotels(city)
-            if (hotelsData.length === 0) {
+            if (!hotelsData.length) {
                 const msg = "No hotels in found in the city"
                 delete req.session.city
                 return { status: 400, msg }
             }
-           // delete req.session.city
             return hotelsData
         }
-        req.session.city = cityName
-        hotelsData = await userRepository.findAllHotels(cityName)
-        if (!hotelsData) {
-            const msg = "Something went wrong"
-            return { status: 400, msg }
-        }
+
 
         return hotelsData
-    } catch (err) { console.log(err); }
+    } catch (err) { console.log(err.message); }
 }
 
 const auth = async (req) => {
@@ -75,10 +63,10 @@ const auth = async (req) => {
 const generateOtpAndSend = (req) => {
     const otp = generatedOtp()
     req.session.otp = otp
-    req.session.otpExpireForRegister=Date.now()+ 10*60*1000
+    req.session.otpExpireForRegister = Date.now() + 10 * 60 * 1000
 
     const { email } = req.session?.userFormData
-   
+
     console.log(otp, 'otp');
     sendMail(email, otp)
 }
@@ -90,12 +78,12 @@ const otpAuth = async (req) => {
 
     console.log(genOtp);
     if (req.body.otp === genOtp) {
-        if(Date.now() <req.session.otpExpireForRegister){
+        if (Date.now() < req.session.otpExpireForRegister) {
             console.log(Date.now);
             delete req.session.otp
             return { status: 200 }
         }
-        else{
+        else {
             const msg = 'OTP expired'
             return { status: 400, msg }
         }
@@ -131,8 +119,9 @@ const userAuthentication = async (req) => {
         newUser.save()
         delete req.session.userFormData
         if (newUser) {
-            if(req.session.hotelId) return {status:202}
-            return { status: 200 }
+            if (req.session.hotelId) return { status: 202 }
+            const msg="You are now a user,redeem offers"
+            return { status: 200,msg }
         } else {
             const msg = "Something went wrong"
             return { status: 400, msg };
@@ -269,46 +258,46 @@ const saveEditedUserAddress = async (req) => {
 const saveEditedUserPassword = async (req) => {
     try {
 
-        const {old_password } = req.body
-        
-                const email =req.session.user
-                const user=await userRepository.findUserByEmail(email)
-                const verifyOldPassword = await bcrypt.compare(old_password,user.password)
-            if(verifyOldPassword){
+        const { old_password } = req.body
 
-                const updateData = await userRepository.findAndEditPassword(req)
-                if (updateData) {
-                    const msg = "New password added"
-                    delete req.session.otp
-                    return { status: 200, msg }
+        const email = req.session.user
+        const user = await userRepository.findUserByEmail(email)
+        const verifyOldPassword = await bcrypt.compare(old_password, user.password)
+        if (verifyOldPassword) {
 
-                } else {
-                    const msg = "Something went wrong"
-                    return { status: 500, msg }
-                }
-            }else{
-                const msg = 'Old password does not match'
-                return { status: 400, msg }
-           } 
+            const updateData = await userRepository.findAndEditPassword(req)
+            if (updateData) {
+                const msg = "New password added"
+                delete req.session.otp
+                return { status: 200, msg }
 
-      
+            } else {
+                const msg = "Something went wrong"
+                return { status: 500, msg }
+            }
+        } else {
+            const msg = 'Old password does not match'
+            return { status: 400, msg }
+        }
+
+
     } catch (err) { console.log(err); }
 }
 
 const generateOtpAndSendForForgot = async (req) => {
     try {
         let { email } = req.body
-        
-        //resend otp
-        if(req.session.email){
-            const otp = generatedOtp()
-            email=req.session.email
-        req.session.otp = otp
-        req.session.otpExpire=Date.now()+ 10*60*1000
-        console.log(otp, 'otp');
 
-        sendMail(email, otp)
-        return {status:202}
+        //resend otp
+        if (req.session.email) {
+            const otp = generatedOtp()
+            email = req.session.email
+            req.session.otp = otp
+            req.session.otpExpire = Date.now() + 10 * 60 * 1000
+            console.log(otp, 'otp');
+
+            sendMail(email, otp)
+            return { status: 202 }
         }
 
         const checkUserExists = await userRepository.findUserByEmail(email)
@@ -319,13 +308,13 @@ const generateOtpAndSendForForgot = async (req) => {
         }
         const otp = generatedOtp()
         req.session.otp = otp
-        req.session.otpExpire=Date.now()+ 10*60*1000
+        req.session.otpExpire = Date.now() + 10 * 60 * 1000
         console.log(req.session.otpExpire);
         req.session.email = email
         console.log(otp, 'otp');
 
         sendMail(email, otp)
-        return {status:200}
+        return { status: 200 }
     } catch (err) { console.log(err); }
 }
 
@@ -334,12 +323,12 @@ const authAndSavePassword = (req) => {
     console.log(req.body.otp);
     console.log(genOtp);
     if (req.body.otp === genOtp) {
-        if(Date.now() <req.session.otpExpire){
+        if (Date.now() < req.session.otpExpire) {
             console.log(Date.now);
             delete req.session.otp
             return { status: 200 }
         }
-        else{
+        else {
             const msg = 'OTP expired'
             return { status: 400, msg }
         }
@@ -410,55 +399,72 @@ const selectedRoom = async (req, res) => {
     } catch (err) { console.log(err); }
 }
 
+const findCoupons = async (req) => {
+    try {
+        const email = req.session.user
+        const couponData = await userRepository.findCouponByUser(email)
+        if (couponData.length > 0) return couponData
+        else {
+            const couponMsg = "No coupons available"
+            return couponMsg
+        }
+
+    } catch (err) { console.log(err); }
+}
+
 const saveBooking = async (req) => {
     try {
-        const { name, email, phone } = req.body
+        const { name, email, phone } = req.session.booking
         const roomData = req.session.roomData
         const hotelData = req.session.hotelData
         const hotel_id = hotelData._id
-        const room_id=roomData._id
+        const room_id = roomData._id
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
         console.log(checkin_date, '====', checkout_date);
 
         const user = req.session.user
 
-
-        
         const startTime = 'T15:00:00.000Z';
         const endTime = 'T12:00:00.000Z';
-        const startDateString=checkin_date + startTime
-        const endDateString=checkout_date + endTime
+        const startDateString = checkin_date + startTime
+        const endDateString = checkout_date + endTime
 
-        const startDate=new Date(startDateString)
-        const endDate=new Date(endDateString)
+        const startDate = new Date(startDateString)
+        const endDate = new Date(endDateString)
 
-        console.log(startDate, endDate,startDateString,endDateString,checkin_date,checkout_date,"<<<<<<<")
 
 
         let selectedRoom = await userRepository.selectedRoom(roomData)
         let roomNumber = selectedRoom.roomNumbers[0]
-
         if (roomNumber) await userRepository.removeRoomNumber(roomData)
         else {
-            let availableRooms = await userRepository.findAvailableRooms(startDate, endDate,hotel_id,room_id)
+            let availableRooms = await userRepository.findAvailableRooms(startDate, endDate, hotel_id, room_id)
             const availableRoomNumber = availableRooms.map((room) => { return room.roomNumber })
-
+            console.log(availableRoomNumber,"{}{}{}{}{");
 
             roomNumber = availableRoomNumber[0]
-            const verifyRoom= await userRepository.findOverlapping(startDate, endDate,hotel_id,room_id)
-            const verifiedRooms= verifyRoom.map((room) => { return room.roomNumber })
-            console.log(verifiedRooms,'??????');
-            if(!verifiedRooms.includes(roomNumber)){ 
-                roomNumber=verifiedRooms[0]
-                console.log(roomNumber,"[][][");
-                if(!roomNumber){
-                    console.log(roomNumber,"[][][");
+            const verifyRoom = await userRepository.findOverlapping(startDate, endDate, hotel_id, room_id)
+            const verifiedRooms = verifyRoom.map((room) => { return room.roomNumber })
+            console.log(verifiedRooms, '??????');
 
-                    const msg="No rooms available"
-                    return {status:202,msg}
+            const roomNumberArray = await userRepository.findAllRoomNumber()
+            console.log(roomNumberArray, "555555");
+            const choosenRoom = roomNumberArray.find((number) => {
+                return !availableRoomNumber.includes(number)
+            })
+
+            if (choosenRoom) {
+                roomNumber = choosenRoom
+                console.log(choosenRoom, "[][][");
+            }
+            else{
+                    console.log(roomNumber, "[lkjknj]");
+
+                    const msg = "No rooms available"
+                    return { status: 202, msg }
                 }
-        }
+            
         }
 
         const newBooking = new bookings({
@@ -474,7 +480,7 @@ const saveBooking = async (req) => {
 
         })
         newBooking.save()
-        const newBookingHistory=new history({...newBooking})
+        const newBookingHistory = new history({ ...newBooking })
         newBookingHistory.save()
         const msg = "Room booked sucessfully"
         return { status: 200, msg }
@@ -482,18 +488,23 @@ const saveBooking = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-const findBookings= async (email)=>{
-    try{
-        const history= await userRepository.findUserHistory(email)
-            if(history) return history
-            else {
-                const msg="No bookings done ,Book now grab offers"
-                return {msg}
-            }
-            
-        
+const findBookings = async (email) => {
+    try {
+        const history = await userRepository.findUserHistory(email)
+        if (history) return history
+        else {
+            const msg = "No bookings done ,Book now grab offers"
+            return { msg }
+        }
+    } catch (err) { console.log(err.message); }
+}
 
-    }catch(err){console.log(err.message);}
+
+const findCategoryOffer = async () =>{
+    try{
+        
+        const offers = await userRepository.findOffers()
+    }catch(err){console.log(err);}
 }
 module.exports = {
     userAuthentication,
@@ -517,5 +528,7 @@ module.exports = {
     roomImages,
     selectedRoom,
     saveBooking,
-    findBookings
+    findBookings,
+    findCoupons,
+    findCategoryOffer
 }
