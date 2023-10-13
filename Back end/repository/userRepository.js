@@ -3,6 +3,7 @@ const hotels = require('../domain/model/hotel')
 const rooms = require('../domain/model/room')
 const bookings = require('../domain/model/bookings')
 const coupons = require('../domain/model/coupon')
+const offers = require ('../domain/model/category_offer')
 const bcrypt = require('bcryptjs')
 
 const findUserByEmail = async (email) => {
@@ -167,49 +168,102 @@ const findAvailableRooms = async (startDate, endDate, hotel_id, room_id) => {
     try {
         return await bookings.find({
             hotel_id: hotel_id, room_id: room_id,
-            $and: [
+            $nor: [
                 {
                     checkin_date: { $lte: startDate },
                     checkout_date: { $gte: endDate }
-                },
-
-                // {
-                //     checkin_date: { $lt: endDate },
-                //     checkout_date: { $gt: endDate }
-                // },
-                // {
-                //     checkin_date: { $gte: startDate, $lt: endDate },
-                //     checkout_date: { $lte: endDate }
-                // },
-                // {
-                //     checkin_date: { $lt: startDate },
-                //     checkout_date: { $lte: endDate,$gt:startDate }
+                }
                
-                // }
+              
             ]
 
         })
     } catch (err) { console.log(err); }
 }
 
-const findOverlapping = async (startDate, endDate, hotel_id, room_id) => {
+
+
+
+const bothStartEndOverlaps = async (startDate, endDate, hotel_id, room_id) => {
     try {
-        console.log(startDate, endDate, hotel_id, room_id,">>>>>>>")
-        return await  bookings.find({
-            hotel_id: hotel_id,
-            room_id: room_id,
-           
-                    $and: [
-                        {
-                            checkin_date: { $gte: startDate },
-                            checkout_date: { $lte: endDate }
-                        }
-                    ]
+        return await bookings.find({
+            hotel_id: hotel_id, room_id: room_id,
+            $and: [
+                {
+                    checkin_date: { $lte: startDate },
+                    checkout_date: { $gte: endDate }
                 }
-        )
-             
-} catch (err) { console.log(err.message); }
+               
+              
+            ]
+
+        })
+    } catch (err) { console.log(err); }
 }
+
+const onlyEndOverlaps = async (startDate, endDate, hotel_id, room_id) => {
+    try {
+        return await bookings.find({
+            hotel_id: hotel_id, room_id: room_id,
+            $and: [
+                {
+                    checkin_date: { $lte: endDate },
+                    checkout_date: { $gte: endDate }
+                }
+               
+              
+            ]
+
+        })
+    } catch (err) { console.log(err); }
+}
+
+const onlyStartOverlapsRooms = async (startDate, endDate, hotel_id, room_id) => {
+    try {
+        return await bookings.find({
+            hotel_id: hotel_id, room_id: room_id,
+            $and: [
+                {
+                    checkin_date: { $lte: startDate },
+                    checkout_date: { $gte: startDate }
+                }
+               
+              
+            ]
+
+        })
+    } catch (err) { console.log(err); }
+}
+
+
+const findWalletMoney = async (email)=>{
+    try{
+        return await User.findOne({email:email},{wallet:1,_id:0})
+     }catch(err){console.log(err);}
+}
+
+// const findOverlapping = async (startDate, endDate, hotel_id, room_id) => {
+//     try {
+//         console.log(startDate, endDate, hotel_id, room_id,">>>>>>>")
+//         return await  bookings.find({
+//             hotel_id: hotel_id,
+//             room_id: room_id,
+           
+//                     $nor: [
+//                         {
+//                             checkin_date: { $gte: startDate },
+//                             checkin_date: { $lte: endDate }
+//                         },
+//                         {
+//                             checkout_date: { $gte: startDate },
+//                             checkout_date: { $lte: endDate }
+//                         }
+//                     ]
+//                 }
+//         )
+             
+// } catch (err) { console.log(err.message); }
+// }
 
 const  findAllRoomNumber= async ()=>{
     try{
@@ -263,6 +317,28 @@ try{
 }catch(err){console.log(err);}
 }
 
+const findOffers = async (roomType)=>{
+    try{
+      return await offers.findOne({roomType:roomType})
+    }catch(err){console.log(err);}
+}
+
+const findUserByReferal = async (code)=>{
+    try{
+        return await User.findOne({"referal.referalCode":code})
+    }catch(err){console.log(err);}
+}
+
+const updateReferalForExistinUser = async (id)=>{
+    try{
+        return await User.updateOne({_id:id},{$inc:{"referal.referalMoney":100,wallet:100}})
+    }catch(err){console.log(err);}
+}
+const updateNewUserWallet = async (email)=>{
+    try{
+        return await User.updateOne({email:email},{$inc:{wallet:50}})
+    }catch(err){console.log(err);}
+}
 module.exports = {
     findUserByEmail,
     findAllHotels,
@@ -281,10 +357,22 @@ module.exports = {
     selectedRoom,
     removeRoomNumber,
     findAvailableRooms,
-    findOverlapping,
+   // findOverlapping,
     findUserHistory,
     findCouponByUser,
-    findAllRoomNumber
+    findAllRoomNumber,
+    findOffers,
+    findUserByReferal,
+    updateReferalForExistinUser,
+    updateNewUserWallet,
+
+    bothStartEndOverlaps,
+    onlyEndOverlaps,
+    onlyStartOverlapsRooms ,
+    findWalletMoney
+
+
+    
 
 }
 

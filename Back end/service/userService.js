@@ -5,6 +5,7 @@ const bookings = require('../domain/model/bookings')
 const history = require('../domain/model/bookingHistory')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
+const referalCodeGenerator = require('../utils/referalCodeGenerator')
 
 const findHotels = async (city) => {
     try {
@@ -97,8 +98,9 @@ const otpAuth = async (req) => {
 const userAuthentication = async (req) => {
     const userData = req.session.userFormData
     try {
-        const { first_name, last_name, email, mobile, password, confirm } = userData;
-
+        const { first_name, last_name, email, mobile, password, referal } = userData;
+        console.log(referal, ".,.,><><");
+        var referalMoney = 0
         const existingUserData = await userRepository.findUserByEmail(email);
 
         if (existingUserData) {
@@ -106,7 +108,14 @@ const userAuthentication = async (req) => {
             const msg = "User with this email already exists"
             return { status: 400, msg };
         }
+        if (referal) { var verifyReferal = await userRepository.findUserByReferal(referal) }
+        console.log(verifyReferal, "jhgjhgjhg");
+        if (verifyReferal) {
+            await userRepository.updateReferalForExistinUser(verifyReferal._id)
+            referalMoney = 50
 
+        }
+        const referalCode = referalCodeGenerator()
         const hashPassword = await bcrypt.hash(password, 10)
 
         const newUser = new User({
@@ -114,14 +123,20 @@ const userAuthentication = async (req) => {
             last_name,
             email,
             mobile,
-            password: hashPassword
+            password: hashPassword,
+            referal: {
+                referalCode: referalCode,
+                referalMoney: referalMoney
+            }
         });
         newUser.save()
+        const walletMoney = await userRepository.updateNewUserWallet(email)
+
         delete req.session.userFormData
         if (newUser) {
             if (req.session.hotelId) return { status: 202 }
-            const msg="You are now a user,redeem offers"
-            return { status: 200,msg }
+            const msg = "You got a welcome bonus ₹ 100"
+            return { status: 200, msg }
         } else {
             const msg = "Something went wrong"
             return { status: 400, msg };
@@ -136,7 +151,7 @@ const userAuthentication = async (req) => {
 const verifyUser = async (userData) => {
 
     try {
-        const { first_name, last_name, email, mobile, password, confirm } = userData;
+        const { first_name, last_name, email, mobile, password, confirm, referal } = userData;
         if (!first_name || !last_name || !email || !mobile || !password || !confirm) {
             console.log('Fill in empty fields');
             const msg = 'Fill in empty fields'
@@ -149,6 +164,14 @@ const verifyUser = async (userData) => {
             const msg = 'Passwords must match'
             return { status: 400, msg: msg };
         }
+        if (referal) {
+            var verifyReferal = await userRepository.findUserByReferal(referal)
+        }
+        if (!verifyReferal) {
+            const msg = "No user found in this referal"
+            return { status: 400, msg };
+
+        }
         const user = await userRepository.findUserByEmail(email)
         if (user) {
             const msg = 'User already exists'
@@ -157,6 +180,8 @@ const verifyUser = async (userData) => {
             const msg = ''
             return { status: 202, msg: msg }
         }
+
+
 
     } catch (error) { console.log(error); }
 }
@@ -385,6 +410,21 @@ const roomImages = async (req) => {
     } catch (err) { console.log(err); }
 }
 
+const checkRoomAvailability = async (req) => {
+    try {
+        const roomData = req.session.roomData
+        const hotelData = req.session.hotelData
+        const hotel_id = hotelData._id
+        const room_id = roomData._id
+        const checkin_date = req.session.checkin_date
+        const checkout_date = req.session.checkout_date
+        console.log(hotel_id, room_id, checkin_date, checkout_date, "+++++-----");
+        const checkRoomAvailability = await userRepository.findAvailableRooms(checkin_date, checkout_date, hotel_id, room_id)
+        return checkRoomAvailability
+
+    } catch (err) { console.log(err); }
+}
+
 const selectedRoom = async (req, res) => {
     try {
         const roomType = req.session.roomType
@@ -404,7 +444,11 @@ const findCoupons = async (req) => {
         const email = req.session.user
         const couponData = await userRepository.findCouponByUser(email)
         if (couponData.length > 0) return couponData
-        else {
+        else if(!couponData.length) {
+            const couponMsg = "No coupons available"
+            return couponMsg
+        }
+        else{
             const couponMsg = "No coupons available"
             return couponMsg
         }
@@ -412,8 +456,31 @@ const findCoupons = async (req) => {
     } catch (err) { console.log(err); }
 }
 
+const findWalletMoney = async (req) =>{
+    try{
+      const email =  req.session.user
+      const walletMoney = await userRepository.findWalletMoney(email)
+      return walletMoney
+
+    }catch(err){console.log(err);}
+}
+
+
 const saveBooking = async (req) => {
     try {
+        if (req.query.param) {
+            var paymentMode = "razorpay"
+            var couponUsed = req.session.selected_coupon
+            var moneyPaid = req.query.param / 100
+            var moneyFromWallet = 0
+        } else {
+            var paymentMode = "offline"
+            var couponUsed = req.session.selected_coupon
+            var moneyPaid = 0
+            var moneyFromWallet = 0
+
+        }
+
         const { name, email, phone } = req.session.booking
         const roomData = req.session.roomData
         const hotelData = req.session.hotelData
@@ -433,38 +500,51 @@ const saveBooking = async (req) => {
         const startDate = new Date(startDateString)
         const endDate = new Date(endDateString)
 
-
-
         let selectedRoom = await userRepository.selectedRoom(roomData)
-        let roomNumber = selectedRoom.roomNumbers[0]
+        var roomNumber = selectedRoom.roomNumbers[0]
         if (roomNumber) await userRepository.removeRoomNumber(roomData)
         else {
-            let availableRooms = await userRepository.findAvailableRooms(startDate, endDate, hotel_id, room_id)
-            const availableRoomNumber = availableRooms.map((room) => { return room.roomNumber })
-            console.log(availableRoomNumber,"{}{}{}{}{");
-
-            roomNumber = availableRoomNumber[0]
-            const verifyRoom = await userRepository.findOverlapping(startDate, endDate, hotel_id, room_id)
-            const verifiedRooms = verifyRoom.map((room) => { return room.roomNumber })
-            console.log(verifiedRooms, '??????');
-
-            const roomNumberArray = await userRepository.findAllRoomNumber()
-            console.log(roomNumberArray, "555555");
-            const choosenRoom = roomNumberArray.find((number) => {
-                return !availableRoomNumber.includes(number)
-            })
-
-            if (choosenRoom) {
-                roomNumber = choosenRoom
-                console.log(choosenRoom, "[][][");
-            }
-            else{
-                    console.log(roomNumber, "[lkjknj]");
-
-                    const msg = "No rooms available"
-                    return { status: 202, msg }
-                }
             
+
+            var roomNumberArray = await userRepository.findAllRoomNumber()
+            console.log(roomNumberArray, "All room numbers");
+
+            let bothStartEndOverlaps = await userRepository.bothStartEndOverlaps(startDate, endDate, hotel_id, room_id)
+            const bothStartEndOverlapsRooms = bothStartEndOverlaps.map((room) => { return room.roomNumber })
+            console.log(bothStartEndOverlapsRooms, "Room numbers having both startDate, endDate inside ");
+
+            if (bothStartEndOverlapsRooms.length) {
+                roomNumberArray = roomNumberArray.filter(item => !bothStartEndOverlapsRooms.includes(item));
+                console.log(roomNumberArray, "After first filtering");
+            }
+
+            let onlyEndOverlaps = await userRepository.onlyEndOverlaps(startDate, endDate, hotel_id, room_id)
+            const onlyEndOverlapsRooms = onlyEndOverlaps.map((room) => { return room.roomNumber })
+            console.log(onlyEndOverlapsRooms, "Room numbers having only endDate inside");
+
+            if (onlyEndOverlapsRooms.length) {
+                roomNumberArray = roomNumberArray.filter(item => !onlyEndOverlapsRooms.includes(item));
+                console.log(roomNumberArray, "After second filtering ");
+            }
+
+            let onlyStartOverlaps = await userRepository.onlyStartOverlapsRooms(startDate, endDate, hotel_id, room_id)
+            const onlyStartOverlapsRooms = onlyStartOverlaps.map((room) => { return room.roomNumber })
+            console.log(onlyStartOverlapsRooms, "Room numbers having only endDate inside");
+
+            if (onlyStartOverlapsRooms.length) {
+                roomNumberArray = roomNumberArray.filter(item => !onlyStartOverlapsRooms.includes(item));
+                console.log(roomNumberArray, "After final filtering");
+            }
+
+            if (roomNumberArray.length) {
+                roomNumber = roomNumberArray[0]
+            } else {
+                const msg = "No rooms available"
+                return { status: 202, msg }
+            }
+
+      
+
         }
 
         const newBooking = new bookings({
@@ -476,11 +556,33 @@ const saveBooking = async (req) => {
             room_id: roomData._id,
             checkin_date: startDate,
             checkout_date: endDate,
-            status: 'pending'
+            status: 'pending',
+            otherDetails: {
+                paymentMode,
+                couponUsed,
+                moneyPaid,
+                moneyFromWallet
+            }
 
         })
         newBooking.save()
-        const newBookingHistory = new history({ ...newBooking })
+        const newBookingHistory = new history({ 
+            userName: user,
+            name: name,
+            roomNumber,
+            email,
+            hotel_id,
+            room_id: roomData._id,
+            checkin_date: startDate,
+            checkout_date: endDate,
+            status: 'pending',
+            otherDetails: {
+                paymentMode,
+                couponUsed,
+                moneyPaid,
+                moneyFromWallet
+            }
+         })
         newBookingHistory.save()
         const msg = "Room booked sucessfully"
         return { status: 200, msg }
@@ -500,11 +602,18 @@ const findBookings = async (email) => {
 }
 
 
-const findCategoryOffer = async () =>{
-    try{
-        
-        const offers = await userRepository.findOffers()
-    }catch(err){console.log(err);}
+const findCategoryOffer = async (req) => {
+    try {
+        const roomData = req.session.roomData
+        const offer = await userRepository.findOffers(roomData.roomType)
+        return offer
+    } catch (err) { console.log(err); }
+}
+
+const updateRooms = (req, res) => {
+    try {
+
+    } catch (err) { console.log(err); }
 }
 module.exports = {
     userAuthentication,
@@ -526,9 +635,12 @@ module.exports = {
     sortHotels,
     roomDetails,
     roomImages,
+    checkRoomAvailability,
     selectedRoom,
     saveBooking,
     findBookings,
     findCoupons,
-    findCategoryOffer
+    findCategoryOffer,
+    updateRooms,
+    findWalletMoney
 }

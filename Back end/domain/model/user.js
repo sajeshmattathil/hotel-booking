@@ -1,5 +1,16 @@
 const mongoose=require('mongoose')
 
+const referalSchema = new mongoose.Schema({
+    referalCode:{
+        type:String,
+        required:false
+    },
+    referalMoney:{
+        type:Number,
+        required:false
+    }
+})
+
 const userSchema=new mongoose.Schema({
     first_name:{
         type:String,
@@ -33,7 +44,12 @@ const userSchema=new mongoose.Schema({
     isUser:{
         type:Boolean,
         default:true
-    }
+    },
+    wallet:{
+        type:Number,
+        default:100
+    },
+    referal:referalSchema
         
 })
 

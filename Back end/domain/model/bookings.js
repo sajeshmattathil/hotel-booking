@@ -1,5 +1,27 @@
 const mongoose = require('mongoose');
 
+const otherDetailsSchema= new mongoose.Schema({
+  couponUsed: {
+    type: String,
+    required: false
+
+  },
+  paymentMode: {
+    type: String,
+    required: false
+
+  },
+  moneyFromWallet: {
+    type: Number,
+    default:0
+
+  },
+  moneyPaid:{
+    type: Number,
+    required: false
+  }
+
+})
 const currentBookingsSchema = new mongoose.Schema({
   userName: {
     type: String,
@@ -45,7 +67,8 @@ const currentBookingsSchema = new mongoose.Schema({
     type: String,
     required: true
 
-  }
+  },
+  otherDetails:otherDetailsSchema
 
 
 });

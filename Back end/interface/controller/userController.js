@@ -2,7 +2,7 @@ const userService = require('../../service/userService')
 
 const userHome = (req, res) => {
  res.render('user/index')
-    //res.render('user/manageBookings')
+   // res.render('product')
 
 }
 const userhotelsList = async (req, res) => {
@@ -26,8 +26,9 @@ const userhotelsListPage = async (req, res) => {
 }
 
 const userLogin = (req, res) => {
-    const msg = req.query.msg
+    let msg = req.query.msg
     res.render('user-login', {msg})
+    msg=" "
 }
 
 const otpVerification = async (req, res) => {
@@ -243,44 +244,60 @@ const sortHotels = async (req, res) => {
     } catch (err) { console.log(err); }
 }
 
-const proceedBooking = (req, res) => {
+const proceedBooking = async (req, res) => {
     try {
         req.session.roomType = req.params.roomType
-        console.log(req.params.roomType);
-        res.redirect('/proceedBookingPage')
+        const roomDetails = await userService.selectedRoom(req)
+        const roomData = roomDetails.selectedRoom
+        const hotelData = roomDetails.selectedHotel
+    
+        req.session.roomData=roomData
+        req.session.hotelData=hotelData
+
+        let checkin_date = req.session.checkin_date
+        let checkout_date = req.session.checkout_date
+    
+        if (!checkin_date) {
+            const today = new Date().toISOString().split('T')[0];
+             checkin_date = today
+             req.session.checkin_date=checkin_date
+    
+            console.log(checkin_date);
+            
+        }
+        if(!checkout_date){
+            const today = new Date()
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            const tomorrowString =tomorrow.toISOString().split('T')[0];
+             checkout_date = tomorrowString
+             req.session.checkout_date=checkout_date
+        }
+
+        const checkRoomAvailability = await userService.checkRoomAvailability(req)
+        console.log(checkRoomAvailability,",,,,,,,,,,,,,,,");
+
+            if(!checkRoomAvailability.length){
+
+                const availablityMsg = "No rooms available in these dates,change dates or room "
+                res.redirect(`/proceedBookingPage?availablityMsg=${availablityMsg}`)
+
+            }else  res.redirect('/proceedBookingPage')
+
     } catch (err) { console.log(err); }
 }
 
 
 const proceedBookingPage = async (req, res) => {
-    const roomDetails = await userService.selectedRoom(req)
-    const roomData = roomDetails.selectedRoom
-    const hotelData = roomDetails.selectedHotel
+    
+   const roomData = req.session.roomData
+    const hotelData= req.session.hotelData
+    const checkin_date = req.session.checkin_date
+    const checkout_date = req.session.checkout_date
 
-    req.session.roomData=roomData
-    req.session.hotelData=hotelData
-
-    let checkin_date = req.session.checkin_date
-    let checkout_date = req.session.checkout_date
-
-    if (!checkin_date) {
-        const today = new Date().toISOString().split('T')[0];
-         checkin_date = today
-         req.session.checkin_date=checkin_date
-
-        console.log(checkin_date);
-        
-    }
-    if(!checkout_date){
-        const today = new Date()
-        const tomorrow = new Date(today);
-        tomorrow.setDate(today.getDate() + 1);
-        const tomorrowString =tomorrow.toISOString().split('T')[0];
-         checkout_date = tomorrowString
-         req.session.checkout_date=checkout_date
-    }
-    const msg=req.query.msg
-    res.render('user/proceedBooking', { roomData, hotelData, checkin_date, checkout_date ,msg})
+    const msg = req.query.msg
+    const availablityMsg = req.query.availablityMsg
+    res.render('user/proceedBooking', { roomData, hotelData, checkin_date, checkout_date ,msg,availablityMsg})
 }
 
 
@@ -294,7 +311,17 @@ const checkInDatecheckOutDate = (req, res) => {
 const confirmBooking= async (req,res)=>{
     try{
       req.session.booking=req.body
-      res.redirect('/confirmPayment')
+
+      const checkRoomAvailability = await userService.checkRoomAvailability(req)
+      console.log(checkRoomAvailability,"..................");
+      if(!checkRoomAvailability.length){
+
+          const availablityMsg = "No rooms available in these dates,change dates or room "
+          res.redirect(`/proceedBookingPage?availablityMsg=${availablityMsg}`)
+
+      }else  res.redirect('/confirmPayment')
+
+      
     }catch(err){console.log(err);}
 }
 
@@ -309,9 +336,23 @@ const confirmPayment= async (req,res)=>{
         const msg=req.query.msg
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
-        const offer = await userService.findCategoryOffer()
+        const offer = await userService.findCategoryOffer(req)
+        const walletMoney = await userService.findWalletMoney(req)
+        console.log(walletMoney,"wallet");
+        var totalAmount
+        if(couponSelected && offer ){
+            totalAmount = (roomData.price - (roomData.price * (offer.discount / 100))) - parseInt(couponSelected)-walletMoney.wallet + ((roomData.price - (roomData.price * (offer.discount / 100))) * 0.12);
 
-        res.render('user/payment',{userName,msg,checkin_date,checkout_date,booking,roomData,coupons,couponMsg,couponSelected})
+        }else if(offer && !couponSelected){
+            totalAmount = (roomData.price - (roomData.price * (offer.discount / 100)))-walletMoney.wallet + ((roomData.price - (roomData.price * (offer.discount / 100))) * 0.12);
+
+        }else if(couponSelected && !offer){
+            totalAmount=   (roomData.price) -parseInt(couponSelected)-walletMoney.wallet +(roomData.price *.12) 
+        }else {
+            totalAmount= roomData.price + (roomData.price *.12)-walletMoney.wallet
+        }
+
+        res.render('user/payment',{userName,msg,checkin_date,checkout_date,booking,roomData,coupons,couponMsg,totalAmount,offer,couponSelected,walletMoney})
       }catch(err){console.log(err);}
   }
 
@@ -331,10 +372,12 @@ const confirmPayment= async (req,res)=>{
   }
 const bookNow= async (req,res)=>{
     try{
+        console.log(req.query.param,"*******");
         const saveAndConfirm= await userService.saveBooking(req)
         if(saveAndConfirm.status === 200)  res.redirect(`/confirmPayment?msg=${saveAndConfirm.msg}`)
         if(saveAndConfirm.status === 202)  res.redirect(`/confirmPayment?msg=${saveAndConfirm.msg}`)
-
+        
+    
     }catch(err){console.log(err);}
 }
 

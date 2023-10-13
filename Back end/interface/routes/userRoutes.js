@@ -1,7 +1,10 @@
 const express=require('express')
 const router=express.Router()
 const controller=require('../controller/userController')
+const paymentController = require('../../utils/payment')
 
+// router.get('/', paymentController.renderProductPage);
+// router.post('/createOrder', paymentController.createOrder);
 router.get('/',controller.userHome)
 router.post('/searchHotels',controller.userhotelsList)
 router.get('/hotelsPage',controller.userhotelsListPage)
@@ -41,6 +44,8 @@ router.post('/checkInDate-checkOutDate',controller.checkInDatecheckOutDate)
 router.post('/confirmBooking',controller.confirmBooking)
 router.get('/confirmPayment',controller.confirmPayment)
 router.get('/bookNow',controller.bookNow)
+router.post('/createOrder', paymentController.createOrder);
+
 router.get('/manageBookings',controller.manageBookings)
 router.get('/manageBookingsPage',controller.manageBookingsPage)
 router.get('/selected_coupon/:coupon',controller.selectedCoupon)
