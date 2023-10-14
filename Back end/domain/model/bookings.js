@@ -43,6 +43,11 @@ const currentBookingsSchema = new mongoose.Schema({
     required: true
 
   },
+  mobile: {
+    type: String,
+    required: true
+
+  },
   hotel_id: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'hotels'

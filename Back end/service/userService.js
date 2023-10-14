@@ -444,11 +444,11 @@ const findCoupons = async (req) => {
         const email = req.session.user
         const couponData = await userRepository.findCouponByUser(email)
         if (couponData.length > 0) return couponData
-        else if(!couponData.length) {
+        else if (!couponData.length) {
             const couponMsg = "No coupons available"
             return couponMsg
         }
-        else{
+        else {
             const couponMsg = "No coupons available"
             return couponMsg
         }
@@ -456,13 +456,13 @@ const findCoupons = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-const findWalletMoney = async (req) =>{
-    try{
-      const email =  req.session.user
-      const walletMoney = await userRepository.findWalletMoney(email)
-      return walletMoney
+const findWalletMoney = async (req) => {
+    try {
+        const email = req.session.user
+        const walletMoney = await userRepository.findWalletMoney(email)
+        return walletMoney
 
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
 
 
@@ -470,14 +470,14 @@ const saveBooking = async (req) => {
     try {
         if (req.query.param) {
             var paymentMode = "razorpay"
-            var couponUsed = req.session.selected_coupon
+            var couponUsed = req.session.couponSelected
             var moneyPaid = req.query.param / 100
-            var moneyFromWallet = 0
+            var moneyFromWallet = req.session.walletMoneyUsed
         } else {
             var paymentMode = "offline"
-            var couponUsed = req.session.selected_coupon
+            var couponUsed = req.session.couponSelected
             var moneyPaid = 0
-            var moneyFromWallet = 0
+            var moneyFromWallet = req.session.walletMoneyUsed
 
         }
 
@@ -504,7 +504,7 @@ const saveBooking = async (req) => {
         var roomNumber = selectedRoom.roomNumbers[0]
         if (roomNumber) await userRepository.removeRoomNumber(roomData)
         else {
-            
+
 
             var roomNumberArray = await userRepository.findAllRoomNumber()
             console.log(roomNumberArray, "All room numbers");
@@ -543,8 +543,6 @@ const saveBooking = async (req) => {
                 return { status: 202, msg }
             }
 
-      
-
         }
 
         const newBooking = new bookings({
@@ -552,6 +550,7 @@ const saveBooking = async (req) => {
             name: name,
             roomNumber,
             email,
+            mobile: phone,
             hotel_id,
             room_id: roomData._id,
             checkin_date: startDate,
@@ -566,10 +565,13 @@ const saveBooking = async (req) => {
 
         })
         newBooking.save()
-        const newBookingHistory = new history({ 
+        const getBookingId = await userRepository.getBookingId(user,roomNumber,hotel_id,roomData._id,startDate,endDate)
+
+        const newBookingHistory = new history({
             userName: user,
             name: name,
             roomNumber,
+            booking_id:getBookingId._id,
             email,
             hotel_id,
             room_id: roomData._id,
@@ -582,8 +584,11 @@ const saveBooking = async (req) => {
                 moneyPaid,
                 moneyFromWallet
             }
-         })
+        })
         newBookingHistory.save()
+
+        await userRepository.updateUserWallet(user, moneyFromWallet)
+
         const msg = "Room booked sucessfully"
         return { status: 200, msg }
 
@@ -615,6 +620,25 @@ const updateRooms = (req, res) => {
 
     } catch (err) { console.log(err); }
 }
+
+const cancelBooking = async (req)=>{
+    try{
+        const bookingId = req.params.id
+        const bookingDetails = await userRepository.bookingDetails(bookingId)
+        const moneyFromWallet = bookingDetails.otherDetails.moneyFromWallet
+        const userName = bookingDetails.userName
+        await userRepository.updateUserWalletAdd(userName,moneyFromWallet)
+        const roomNumber = bookingDetails.roomNumber
+        const bookingsWithSameRoom = await userRepository.findAllBookingsWithRoomNumber(roomNumber)
+        if(bookingsWithSameRoom.length ==1){
+            const room_id = bookingDetails.room_id
+            await userRepository.updateRoomNumberArray(room_id,roomNumber)
+        }
+       await userRepository.findAndCancel(bookingId)
+        const msg = "Booking deleted sucessfully"
+        return {status : 200,msg}
+    }catch(err){console.log(err);}
+} 
 module.exports = {
     userAuthentication,
     verifyUser,
@@ -642,5 +666,6 @@ module.exports = {
     findCoupons,
     findCategoryOffer,
     updateRooms,
-    findWalletMoney
+    findWalletMoney,
+    cancelBooking
 }

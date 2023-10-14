@@ -274,15 +274,7 @@ const proceedBooking = async (req, res) => {
              req.session.checkout_date=checkout_date
         }
 
-        const checkRoomAvailability = await userService.checkRoomAvailability(req)
-        console.log(checkRoomAvailability,",,,,,,,,,,,,,,,");
-
-            if(!checkRoomAvailability.length){
-
-                const availablityMsg = "No rooms available in these dates,change dates or room "
-                res.redirect(`/proceedBookingPage?availablityMsg=${availablityMsg}`)
-
-            }else  res.redirect('/proceedBookingPage')
+          res.redirect('/proceedBookingPage')
 
     } catch (err) { console.log(err); }
 }
@@ -311,17 +303,7 @@ const checkInDatecheckOutDate = (req, res) => {
 const confirmBooking= async (req,res)=>{
     try{
       req.session.booking=req.body
-
-      const checkRoomAvailability = await userService.checkRoomAvailability(req)
-      console.log(checkRoomAvailability,"..................");
-      if(!checkRoomAvailability.length){
-
-          const availablityMsg = "No rooms available in these dates,change dates or room "
-          res.redirect(`/proceedBookingPage?availablityMsg=${availablityMsg}`)
-
-      }else  res.redirect('/confirmPayment')
-
-      
+      res.redirect('/confirmPayment')   
     }catch(err){console.log(err);}
 }
 
@@ -338,6 +320,7 @@ const confirmPayment= async (req,res)=>{
         const checkout_date = req.session.checkout_date
         const offer = await userService.findCategoryOffer(req)
         const walletMoney = await userService.findWalletMoney(req)
+        req.session.walletMoneyUsed = walletMoney.wallet
         console.log(walletMoney,"wallet");
         var totalAmount
         if(couponSelected && offer ){
@@ -401,17 +384,12 @@ const manageBookingsPage= async (req,res)=>{
     }catch(err){console.log(err);}
 }
 
-// const offerManagement=(req,res)=>{
-//     try{
-//         res.redirect('/owner/offerManagementPage')
-//     }catch(err){console.log(err);}
-// }
-
-// const offerManagementPage=(req,res)=>{
-//     try{
-//         res.render('ownerofferManagement')
-//     }catch(err){console.log(err);}
-// }
+const cancelBooking = async (req,res)=>{
+    try{
+      const response = await userService.cancelBooking(req)
+      if(response.status === 200 ) res.redirect(`/manageBookingsPage?msg=${response.msg}`)
+    }catch(err){console.log(err);}
+}
 
 module.exports = {
     userHome,
@@ -457,7 +435,6 @@ module.exports = {
     manageBookingsPage,
     selectedCoupon,
     removeCoupon,
-    // offerManagement,
-    // offerManagementPage
+    cancelBooking
 
 }

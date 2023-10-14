@@ -50,8 +50,7 @@ router.get('/manageBookings',controller.manageBookings)
 router.get('/manageBookingsPage',controller.manageBookingsPage)
 router.get('/selected_coupon/:coupon',controller.selectedCoupon)
 router.get('/remove_coupon',controller.removeCoupon)
-// router.get('/offer_management',controller.offerManagement)
-// router.get('/offerManagementPage',controller.offerManagementPage)
+router.get('/cancel_booking/:id',controller.cancelBooking)
 
 
 module.exports=router

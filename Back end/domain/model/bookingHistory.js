@@ -53,6 +53,11 @@ const bookingsHistorySchema = new mongoose.Schema({
     ref: 'rooms'
 
   },
+  booking_id: {
+    type:mongoose.Schema.Types.ObjectId,
+    ref: 'bookings'
+
+  },
   checkin_date: {
     type: Date,
     required: true

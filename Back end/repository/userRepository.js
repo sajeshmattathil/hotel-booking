@@ -2,6 +2,7 @@ const User = require('../domain/model/user')
 const hotels = require('../domain/model/hotel')
 const rooms = require('../domain/model/room')
 const bookings = require('../domain/model/bookings')
+const Bookinghistory = require('../domain/model/bookingHistory')
 const coupons = require('../domain/model/coupon')
 const offers = require ('../domain/model/category_offer')
 const bcrypt = require('bcryptjs')
@@ -265,11 +266,24 @@ const findWalletMoney = async (email)=>{
 // } catch (err) { console.log(err.message); }
 // }
 
+const updateUserWallet = async (user,amount) =>{
+    try{
+        return await User.updateOne({email:user},{$inc:{wallet:-amount}})
+     }catch(err){console.log(err);}
+}
+
 const  findAllRoomNumber= async ()=>{
     try{
        return await bookings.distinct("roomNumber")
     }catch(err){console.log(err);}
 }
+
+const getBookingId = async (user,roomNumber,hotel_id,room_Id,startDate,endDate) =>{
+    try{
+        return await bookings.findOne({userName:user,roomNumber:roomNumber,hotel_id:hotel_id,room_id:room_Id,checkin_date:startDate,checkout_date:endDate})
+     }catch(err){console.log(err);}
+}
+
 const findUserHistory= async (email)=>{
 try{
          return await bookings.aggregate([
@@ -301,6 +315,7 @@ try{
     {
         $project: {
             userName: 1,
+            bookingId:"$_id",
             roomNumber:"$roomNumber",
             checkin: "$checkin_date",
             checkout: "$checkout_date",
@@ -339,6 +354,39 @@ const updateNewUserWallet = async (email)=>{
         return await User.updateOne({email:email},{$inc:{wallet:50}})
     }catch(err){console.log(err);}
 }
+
+const bookingDetails = async (id)=>{
+    try{
+        return await bookings.findOne({_id:id})
+    }catch(err){console.log(err);}
+}
+
+const updateUserWalletAdd = async (user,amount) =>{
+    try{
+        return await User.updateOne({email:user},{$inc:{wallet:amount}})
+    }catch(err){console.log(err);}
+}
+
+const findAllBookingsWithRoomNumber = async (roomNumber) =>{
+    try{
+        return await bookings.find({roomNumber:roomNumber})
+    }catch(err){console.log(err);}
+}
+
+const updateRoomNumberArray = async (room_id,roomNumber)=>{
+    try{
+        return await rooms.updateOne({_id:room_id},{$push:{roomNumbers:roomNumber}})
+    }catch(err){console.log(err);}
+}
+
+
+
+const findAndCancel = async (bookingId)=>{
+    try{
+        await Bookinghistory.updateOne({booking_id:bookingId},{$set:{status:"cancelled"}})
+        return await bookings.deleteOne({_id:bookingId})
+    }catch(err){console.log(err);}
+}
 module.exports = {
     findUserByEmail,
     findAllHotels,
@@ -369,10 +417,14 @@ module.exports = {
     bothStartEndOverlaps,
     onlyEndOverlaps,
     onlyStartOverlapsRooms ,
-    findWalletMoney
-
-
-    
+    findWalletMoney,
+    updateUserWallet,
+    bookingDetails,
+    updateUserWalletAdd,
+    findAllBookingsWithRoomNumber,
+    updateRoomNumberArray,
+    findAndCancel,
+    getBookingId
 
 }
 
