@@ -1,11 +1,16 @@
 const userService = require('../../service/userService')
 
 const userHome = (req, res) => {
- res.render('user/index')
-   // res.render('product')
+   res.render('user/index')
+   //res.render('user/wallet')
+   const checkin_date = req.session.checkin_date
+   const checkout_date = req.session.checkout_date
+   //res.render('user/userHome',{checkin_date,checkout_date})
 
+    //res.render('user/invoice')
 }
 const userhotelsList = async (req, res) => {
+   const user = req.session.user
     req.session.city= req.body.city
     req.session.adult=req.body.adult
     req.session.children =req.body.children
@@ -21,8 +26,9 @@ const userhotelsList = async (req, res) => {
 const userhotelsListPage = async (req, res) => {
     const hotels = await userService.findHotels(req.session.city)
     const userName = ''
+    const user = req.session.user
     const msg = req.query.msg
-    res.render('user/hotels', { hotels, msg, userName })
+    res.render('user/hotels', { hotels, msg, userName ,user})
 }
 
 const userLogin = (req, res) => {
@@ -86,6 +92,15 @@ const userRegisterPage = (req, res) => {
     res.render('user-signup', { msg: msg })
 }
 
+const signOut = (req,res)=>{
+    try{
+        if(req.session.user){
+            delete req.session.user
+            res.redirect('/hotelsPage')
+        }
+    }catch(err){console.log(err);}
+}
+
 const userManagement = (req, res) => {
     res.redirect('/manageYourProfilePage')
 }
@@ -108,7 +123,6 @@ const manageYourProfilePage = async (req, res) => {
 const editUserName = async (req, res) => {
     try {
         const response = await userService.saveEditedUserName(req)
-        console.log(response.status + ">>>>>");
         if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
@@ -125,7 +139,6 @@ const editUserEmail = async (req, res) => {
 const editUserMobile = async (req, res) => {
     try {
         const response = await userService.saveEditedUserMobile(req)
-        console.log(response.status + ">>>>>");
         if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
@@ -135,7 +148,6 @@ const editUserMobile = async (req, res) => {
 const editUserGender = async (req, res) => {
     try {
         const response = await userService.saveEditedUserGender(req)
-        console.log(response.status + ">>>>>");
         if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
@@ -145,7 +157,6 @@ const editUserGender = async (req, res) => {
 const editUserAddress = async (req, res) => {
     try {
         const response = await userService.saveEditedUserAddress(req)
-        console.log(response.status + ">>>>>");
         if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
 
@@ -157,7 +168,6 @@ const editUserAddress = async (req, res) => {
 const editUserPassword = async (req, res) => {
     try {
         const response = await userService.saveEditedUserPassword(req)
-        console.log(response.status + ">>>>>");
         if (response.status === 400) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
@@ -225,7 +235,6 @@ const hotelDetailsPage = async (req, res) => {
         const images = await userService.roomImages(req)
         const user=req.session.user
         const msg=req.query.msg
-        console.log(images.imagesOfHotel[0]);
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
         const roomArray = await userService.roomDetails(req)
@@ -241,6 +250,14 @@ const sortHotels = async (req, res) => {
         res.render('user/hotels', { sortedHotels, userName })
         console.log(req.query);
 
+    } catch (err) { console.log(err); }
+}
+
+const filterHotels = async (req,res) =>{
+    try {
+       console.log(req.body,'filter data'); 
+       const filteredHotels = await userService.filteredData(req)
+       res.redirect('/hotelsPage')
     } catch (err) { console.log(err); }
 }
 
@@ -281,16 +298,19 @@ const proceedBooking = async (req, res) => {
 
 
 const proceedBookingPage = async (req, res) => {
-    
-   const roomData = req.session.roomData
-    const hotelData= req.session.hotelData
-    const checkin_date = req.session.checkin_date
-    const checkout_date = req.session.checkout_date
-
-    const msg = req.query.msg
-    const availablityMsg = req.query.availablityMsg
-    res.render('user/proceedBooking', { roomData, hotelData, checkin_date, checkout_date ,msg,availablityMsg})
-}
+      
+    try{
+            const roomData = req.session.roomData
+            const hotelData= req.session.hotelData
+            const checkin_date = req.session.checkin_date
+            const checkout_date = req.session.checkout_date
+            const checkRoomAvailability = await userService.checkRoomAvailability(req)
+            const msg = req.query.msg
+            const availablityMsg = checkRoomAvailability.msg
+            console.log(availablityMsg,"availablityMsg");
+            res.render('user/proceedBooking', { roomData, hotelData, checkin_date, checkout_date ,msg,availablityMsg})
+    }catch(err){console.log(err.message);}
+ }
 
 
 const checkInDatecheckOutDate = (req, res) => {
@@ -318,24 +338,51 @@ const confirmPayment= async (req,res)=>{
         const msg=req.query.msg
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
+        
+        const dateObject1 = new Date(checkin_date);
+
+        
+        const dateObject2 = new Date(checkout_date);
+        
+
+             if (!isNaN(dateObject1) && !isNaN(dateObject2)) {
+            var numberOfDays = Math.ceil((dateObject2 - dateObject1) / (1000 * 60 * 60 * 24));
+            console.log(numberOfDays); 
+            } else {
+                console.error('Invalid date format');
+            }
+        req.session.numberOfDays = numberOfDays
+        console.log(numberOfDays,"numberOfDays");
         const offer = await userService.findCategoryOffer(req)
+        req.session.offer = offer
         const walletMoney = await userService.findWalletMoney(req)
         req.session.walletMoneyUsed = walletMoney.wallet
         console.log(walletMoney,"wallet");
         var totalAmount
         if(couponSelected && offer ){
-            totalAmount = (roomData.price - (roomData.price * (offer.discount / 100))) - parseInt(couponSelected)-walletMoney.wallet + ((roomData.price - (roomData.price * (offer.discount / 100))) * 0.12);
-
+          var  amount = ((roomData.price - (roomData.price * (offer.discount / 100)))   ) 
+          totalAmount = (amount + (roomData.price  * .12)) *numberOfDays - parseInt(couponSelected) -walletMoney.wallet
+          console.log(amount,totalAmount,"11111");
         }else if(offer && !couponSelected){
-            totalAmount = (roomData.price - (roomData.price * (offer.discount / 100)))-walletMoney.wallet + ((roomData.price - (roomData.price * (offer.discount / 100))) * 0.12);
+            amount = ((roomData.price - (roomData.price * (offer.discount / 100)))  ) 
+            totalAmount = (amount + (roomData.price  * .12)) *numberOfDays -walletMoney.wallet 
+            console.log(amount,totalAmount,"222");
 
         }else if(couponSelected && !offer){
-            totalAmount=   (roomData.price) -parseInt(couponSelected)-walletMoney.wallet +(roomData.price *.12) 
-        }else {
-            totalAmount= roomData.price + (roomData.price *.12)-walletMoney.wallet
-        }
+            amount= ((roomData.price) -parseInt(couponSelected)  ) 
+            totalAmount = (amount + (roomData.price  * .12)) *numberOfDays -walletMoney.wallet
+            console.log(amount,totalAmount,"333");
 
-        res.render('user/payment',{userName,msg,checkin_date,checkout_date,booking,roomData,coupons,couponMsg,totalAmount,offer,couponSelected,walletMoney})
+        }else {
+            amount= (roomData.price + -walletMoney.wallet ) 
+            totalAmount = (amount + (roomData.price  * .12)) *numberOfDays -walletMoney.wallet
+            console.log(amount,totalAmount,"4444");
+
+        }
+          
+        
+        req.session.totalAmount = totalAmount
+        res.render('user/payment',{userName,msg,checkin_date,checkout_date,booking,roomData,coupons,couponMsg,totalAmount,offer,couponSelected,walletMoney,amount,numberOfDays})
       }catch(err){console.log(err);}
   }
 
@@ -356,11 +403,10 @@ const confirmPayment= async (req,res)=>{
 const bookNow= async (req,res)=>{
     try{
         console.log(req.query.param,"*******");
-        const saveAndConfirm= await userService.saveBooking(req)
+        var saveAndConfirm= await userService.saveBooking(req)
         if(saveAndConfirm.status === 200)  res.redirect(`/confirmPayment?msg=${saveAndConfirm.msg}`)
         if(saveAndConfirm.status === 202)  res.redirect(`/confirmPayment?msg=${saveAndConfirm.msg}`)
-        
-    
+
     }catch(err){console.log(err);}
 }
 
@@ -369,7 +415,8 @@ const manageBookings=(req,res)=>{
         if(req.session.user){
              res.redirect('/manageBookingsPage')
         }else{
-            res.redirect('/signup')
+            const msg = "Create a account "
+            res.redirect(`/signup?msg=${msg}`)
         }
     }catch(err){console.log(err);}
 }
@@ -380,7 +427,8 @@ const manageBookingsPage= async (req,res)=>{
             const hotels= await userService.findBookings(email)
             console.log(hotels);
             const msg=req.query.msg
-          res.render('user/manageBookings',{hotels,msg})     
+            
+          res.render('user/manageBookings',{hotels,msg,})     
     }catch(err){console.log(err);}
 }
 
@@ -388,6 +436,24 @@ const cancelBooking = async (req,res)=>{
     try{
       const response = await userService.cancelBooking(req)
       if(response.status === 200 ) res.redirect(`/manageBookingsPage?msg=${response.msg}`)
+    }catch(err){console.log(err);}
+}
+const wallet = async (req,res)=>{
+    try{
+      res.redirect('/walletPage')
+      }catch(err){console.log(err);}
+}
+const walletPage = async (req,res)=>{
+    try{
+        const wallet = await userService.findWalletMoney(req)
+        res.render('user/wallet',{wallet})
+        }catch(err){console.log(err);}
+}
+
+const updateBooking = async ()=>{
+    try{
+      const response = await userService.updateFinishedBooking()
+      console.log(111222333);
     }catch(err){console.log(err);}
 }
 
@@ -403,6 +469,7 @@ module.exports = {
     otpPage,
     otpAuthentication,
     userLoginHome,
+    signOut,
     userLoginHomeView,
     userManagement,
     userManagementPage,
@@ -425,6 +492,8 @@ module.exports = {
     hotelDetails,
     hotelDetailsPage,
     sortHotels,
+    filterHotels,
+
     proceedBooking,
     proceedBookingPage,
     checkInDatecheckOutDate,
@@ -435,6 +504,9 @@ module.exports = {
     manageBookingsPage,
     selectedCoupon,
     removeCoupon,
-    cancelBooking
+    cancelBooking,
+    wallet,
+    walletPage,
+    updateBooking
 
 }

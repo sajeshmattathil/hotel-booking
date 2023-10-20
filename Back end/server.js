@@ -12,17 +12,14 @@ const path = require('path')
 const userRouter = require('./interface/routes/userRoutes')
 const adminRouter = require('./interface/routes/adminRoutes')
 const ownerRouter = require('./interface/routes/ownerRoutes')
-const referal = require('../Back end/utils/referalCodeGenerator')
-
+const controller = require ('../Back end/interface/controller/userController')
 app.use(express.json())
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs')
 
-
 app.use('/static', express.static(path.join(__dirname, '../Front end/public')));
 app.set('views', path.join(__dirname, '../Front end/views'));
-
 
 app.use(session({
     secret: uuidv4(),
@@ -35,15 +32,12 @@ app.use('/', userRouter)
 app.use('/admin', adminRouter)
 app.use('/owner', ownerRouter)
 
-function removeDuplicates(firstArray, secondArray) {
-    return secondArray.filter(item => !firstArray.includes(item));
-}
+setTimeout(() => {
+    controller.updateBooking(); // Call your function here
+}, 5000);
+ 
 
-const firstArray = [1, 2, 3, 4, 5];
-const secondArray = [4, 5, 6, 7, 8];
 
-const resultArray = removeDuplicates(firstArray, secondArray);
-console.log(resultArray);
-
+console.log(controller.updateBooking(),"controller.updateBooking()")
 
 app.listen(8080, () => { console.log('Listening to the server on http://localhost:8080'); })

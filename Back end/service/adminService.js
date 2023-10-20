@@ -151,6 +151,7 @@ const authenticateOwner= async (req)=>{
                last_name,
                email,
                mobile,
+               
                password: hashPassword
           })
                newOwner.save()

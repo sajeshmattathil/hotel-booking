@@ -19,7 +19,12 @@ const otherDetailsSchema= new mongoose.Schema({
   moneyPaid:{
     type: Number,
     required: false
+  },
+  pendingAmount:{
+    type: Number,
+    required: false
   }
+
 
 })
 const currentBookingsSchema = new mongoose.Schema({

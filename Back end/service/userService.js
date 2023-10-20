@@ -1,8 +1,10 @@
 const bcrypt = require('bcryptjs')
 const userRepository = require('../repository/userRepository')
+const ownerRepository = require('../repository/ownerRepository')
+const adminRepository = require('../repository/adminRepository')
 const User = require('../domain/model/user')
 const bookings = require('../domain/model/bookings')
-const history = require('../domain/model/bookingHistory')
+const bookingHistory = require('../domain/model/bookingHistory')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
 const referalCodeGenerator = require('../utils/referalCodeGenerator')
@@ -109,7 +111,9 @@ const userAuthentication = async (req) => {
             return { status: 400, msg };
         }
         if (referal) { var verifyReferal = await userRepository.findUserByReferal(referal) }
+        // else{}
         console.log(verifyReferal, "jhgjhgjhg");
+
         if (verifyReferal) {
             await userRepository.updateReferalForExistinUser(verifyReferal._id)
             referalMoney = 50
@@ -166,12 +170,13 @@ const verifyUser = async (userData) => {
         }
         if (referal) {
             var verifyReferal = await userRepository.findUserByReferal(referal)
-        }
-        if (!verifyReferal) {
-            const msg = "No user found in this referal"
-            return { status: 400, msg };
+            if (!verifyReferal) {
+                const msg = "No user found in this referal"
+                return { status: 400, msg };
 
+            }
         }
+
         const user = await userRepository.findUserByEmail(email)
         if (user) {
             const msg = 'User already exists'
@@ -393,6 +398,13 @@ const sortHotels = async (req) => {
 
 }
 
+const filteredData = async (req) => {
+    try {
+        // const {amenities,star_rating}
+        const data = await userRepository.filerHotels()
+    } catch (err) { console.log(err); }
+}
+
 const roomDetails = async (req) => {
     try {
         const hotelId = req.session.hotelId
@@ -416,12 +428,53 @@ const checkRoomAvailability = async (req) => {
         const hotelData = req.session.hotelData
         const hotel_id = hotelData._id
         const room_id = roomData._id
-        const checkin_date = req.session.checkin_date
-        const checkout_date = req.session.checkout_date
-        console.log(hotel_id, room_id, checkin_date, checkout_date, "+++++-----");
-        const checkRoomAvailability = await userRepository.findAvailableRooms(checkin_date, checkout_date, hotel_id, room_id)
-        return checkRoomAvailability
+        const startDate = req.session.checkin_date
+        const endDate = req.session.checkout_date
+        console.log(hotel_id, room_id, startDate, endDate, "+++++-----");
 
+        let selectedRoom = await userRepository.selectedRoom(roomData)
+        var roomNumber = selectedRoom.roomNumbers[0]
+        if (roomNumber) await userRepository.removeRoomNumber(roomData)
+
+        else {
+
+            var roomNumberArray = await userRepository.findAllRoomNumber()
+            console.log(roomNumberArray, "All room numbers");
+
+            let bothStartEndOverlaps = await userRepository.bothStartEndOverlaps(startDate, endDate, hotel_id, room_id)
+            const bothStartEndOverlapsRooms = bothStartEndOverlaps.map((room) => { return room.roomNumber })
+            console.log(bothStartEndOverlapsRooms, "Room numbers having both startDate, endDate inside ");
+
+            if (bothStartEndOverlapsRooms.length) {
+                roomNumberArray = roomNumberArray.filter(item => !bothStartEndOverlapsRooms.includes(item));
+                console.log(roomNumberArray, "After first filtering");
+            }
+
+            let onlyEndOverlaps = await userRepository.onlyEndOverlaps(startDate, endDate, hotel_id, room_id)
+            const onlyEndOverlapsRooms = onlyEndOverlaps.map((room) => { return room.roomNumber })
+            console.log(onlyEndOverlapsRooms, "Room numbers having only endDate inside");
+
+            if (onlyEndOverlapsRooms.length) {
+                roomNumberArray = roomNumberArray.filter(item => !onlyEndOverlapsRooms.includes(item));
+                console.log(roomNumberArray, "After second filtering ");
+            }
+
+            let onlyStartOverlaps = await userRepository.onlyStartOverlapsRooms(startDate, endDate, hotel_id, room_id)
+            const onlyStartOverlapsRooms = onlyStartOverlaps.map((room) => { return room.roomNumber })
+            console.log(onlyStartOverlapsRooms, "Room numbers having only endDate inside");
+
+            if (onlyStartOverlapsRooms.length) {
+                roomNumberArray = roomNumberArray.filter(item => !onlyStartOverlapsRooms.includes(item));
+                console.log(roomNumberArray, "After final filtering");
+            }       
+    }
+    if (!roomNumberArray.length) {
+        const msg = "No rooms available,select another room"
+                return {msg}
+        }else {
+            const msg = " "
+            return {msg}
+        }
     } catch (err) { console.log(err); }
 }
 
@@ -468,18 +521,27 @@ const findWalletMoney = async (req) => {
 
 const saveBooking = async (req) => {
     try {
+
         if (req.query.param) {
             var paymentMode = "razorpay"
-            var couponUsed = req.session.couponSelected
             var moneyPaid = req.query.param / 100
             var moneyFromWallet = req.session.walletMoneyUsed
         } else {
             var paymentMode = "offline"
-            var couponUsed = req.session.couponSelected
             var moneyPaid = 0
             var moneyFromWallet = req.session.walletMoneyUsed
 
         }
+        if (req.session.couponSelected) var couponUsed = req.session.couponSelected
+        else couponUsed = 0
+
+        const totalAmount = req.session.totalAmount
+        const numberOfDays = req.session.numberOfDays   
+
+        if (paymentMode === "offline") var pendingAmount = totalAmount;
+        else pendingAmount = 0
+
+        console.log(pendingAmount,"pendingAmount")
 
         const { name, email, phone } = req.session.booking
         const roomData = req.session.roomData
@@ -491,7 +553,7 @@ const saveBooking = async (req) => {
         console.log(checkin_date, '====', checkout_date);
 
         const user = req.session.user
-
+        const offer = req.session.offer
         const startTime = 'T15:00:00.000Z';
         const endTime = 'T12:00:00.000Z';
         const startDateString = checkin_date + startTime
@@ -538,6 +600,7 @@ const saveBooking = async (req) => {
 
             if (roomNumberArray.length) {
                 roomNumber = roomNumberArray[0]
+                console.log(roomNumber, "selected room");
             } else {
                 const msg = "No rooms available"
                 return { status: 202, msg }
@@ -560,18 +623,20 @@ const saveBooking = async (req) => {
                 paymentMode,
                 couponUsed,
                 moneyPaid,
-                moneyFromWallet
+                moneyFromWallet,
+                pendingAmount
             }
 
         })
         newBooking.save()
-        const getBookingId = await userRepository.getBookingId(user,roomNumber,hotel_id,roomData._id,startDate,endDate)
+        console.log(newBooking._id, "newBooking...");
 
-        const newBookingHistory = new history({
+
+        const newBookingHistory = new bookingHistory({
             userName: user,
             name: name,
             roomNumber,
-            booking_id:getBookingId._id,
+            booking_id: newBooking._id,
             email,
             hotel_id,
             room_id: roomData._id,
@@ -582,12 +647,33 @@ const saveBooking = async (req) => {
                 paymentMode,
                 couponUsed,
                 moneyPaid,
-                moneyFromWallet
+                moneyFromWallet,
+                pendingAmount
             }
         })
         newBookingHistory.save()
+        console.log(newBookingHistory, "newBookingHistory...");
 
         await userRepository.updateUserWallet(user, moneyFromWallet)
+
+        if (paymentMode === "razorpay") {
+
+            const ownerAmount = totalAmount - (totalAmount * .30) - couponUsed -(roomData.price * .12 * numberOfDays)
+
+            console.log(ownerAmount, "ownerAmount");
+
+
+            const updateOwnerWallet = await ownerRepository.updateOwnerWallet(hotel_id, newBookingHistory._id, ownerAmount)
+            console.log(updateOwnerWallet, "updateOwnerWallet");
+
+            const adminAmount = totalAmount - (totalAmount * .70) - (roomData.price * .12 * numberOfDays)
+            console.log(adminAmount,"adminAmount");
+
+         
+
+            const updateAdminWallet = await adminRepository.updateAdminWallet(adminAmount)
+            console.log(updateAdminWallet, "updateAdminWallet");
+        }
 
         const msg = "Room booked sucessfully"
         return { status: 200, msg }
@@ -615,30 +701,64 @@ const findCategoryOffer = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-const updateRooms = (req, res) => {
+
+
+const cancelBooking = async (req) => {
     try {
-
-    } catch (err) { console.log(err); }
-}
-
-const cancelBooking = async (req)=>{
-    try{
         const bookingId = req.params.id
         const bookingDetails = await userRepository.bookingDetails(bookingId)
         const moneyFromWallet = bookingDetails.otherDetails.moneyFromWallet
         const userName = bookingDetails.userName
-        await userRepository.updateUserWalletAdd(userName,moneyFromWallet)
+        await userRepository.updateUserWalletAdd(userName, moneyFromWallet)
         const roomNumber = bookingDetails.roomNumber
         const bookingsWithSameRoom = await userRepository.findAllBookingsWithRoomNumber(roomNumber)
-        if(bookingsWithSameRoom.length ==1){
+        if (bookingsWithSameRoom.length == 1) {
             const room_id = bookingDetails.room_id
-            await userRepository.updateRoomNumberArray(room_id,roomNumber)
+            await userRepository.updateRoomNumberArray(room_id, roomNumber)
         }
-       await userRepository.findAndCancel(bookingId)
+        await userRepository.findAndUpdateHistory(bookingId)
+        await userRepository.findAndDelete(bookingId)
         const msg = "Booking deleted sucessfully"
-        return {status : 200,msg}
+        return { status: 200, msg }
+    } catch (err) { console.log(err); }
+}
+
+const updateFinishedBooking = async ()=>{
+    try{
+        let timer
+     const timerFor =async  ()=>{
+             const millisecondsOf24Hr =   5000              //24 * 60 * 60 * 1000
+         timer =   setInterval( async ()=>{
+            const findBookingsForUpdation = await userRepository.findBookingsForUpdation()
+            console.log(findBookingsForUpdation,"findBookingsForUpdation")
+            if(findBookingsForUpdation.length){
+                
+                findBookingsForUpdation.forEach(async (booking)=>{
+                    if(booking.otherDetails.pendingAmount){
+                        const response = await userRepository.updatePendingMoney(booking._id,booking.otherDetails.pendingAmount)
+                        console.log(booking._id,booking.otherDetails.pendingAmount,"response");
+                        console.log(response,"response");
+                    }
+                })
+                
+                const result1 = await userRepository.findAndUpdateAllHistory()
+                const result2 =  await userRepository.findAndDeleteAll()
+              
+
+                console.log(result1,result2,"updating");
+            }
+
+        },millisecondsOf24Hr)
+     }
+     timerFor()
+     function stopTimer() {
+        clearInterval(timer);
+        console.log('Timer stopped.');
+    }
+    setTimeout(stopTimer, 5000);
     }catch(err){console.log(err);}
-} 
+}
+
 module.exports = {
     userAuthentication,
     verifyUser,
@@ -665,7 +785,8 @@ module.exports = {
     findBookings,
     findCoupons,
     findCategoryOffer,
-    updateRooms,
+    
     findWalletMoney,
-    cancelBooking
+    cancelBooking,
+    updateFinishedBooking
 }

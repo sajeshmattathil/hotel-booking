@@ -2,7 +2,7 @@ const User = require('../domain/model/user')
 const hotels = require('../domain/model/hotel')
 const rooms = require('../domain/model/room')
 const bookings = require('../domain/model/bookings')
-const Bookinghistory = require('../domain/model/bookingHistory')
+const bookinghistory = require('../domain/model/bookingHistory')
 const coupons = require('../domain/model/coupon')
 const offers = require ('../domain/model/category_offer')
 const bcrypt = require('bcryptjs')
@@ -173,11 +173,8 @@ const findAvailableRooms = async (startDate, endDate, hotel_id, room_id) => {
                 {
                     checkin_date: { $lte: startDate },
                     checkout_date: { $gte: endDate }
-                }
-               
-              
+                }        
             ]
-
         })
     } catch (err) { console.log(err); }
 }
@@ -193,9 +190,7 @@ const bothStartEndOverlaps = async (startDate, endDate, hotel_id, room_id) => {
                 {
                     checkin_date: { $lte: startDate },
                     checkout_date: { $gte: endDate }
-                }
-               
-              
+                }         
             ]
 
         })
@@ -243,28 +238,7 @@ const findWalletMoney = async (email)=>{
      }catch(err){console.log(err);}
 }
 
-// const findOverlapping = async (startDate, endDate, hotel_id, room_id) => {
-//     try {
-//         console.log(startDate, endDate, hotel_id, room_id,">>>>>>>")
-//         return await  bookings.find({
-//             hotel_id: hotel_id,
-//             room_id: room_id,
-           
-//                     $nor: [
-//                         {
-//                             checkin_date: { $gte: startDate },
-//                             checkin_date: { $lte: endDate }
-//                         },
-//                         {
-//                             checkout_date: { $gte: startDate },
-//                             checkout_date: { $lte: endDate }
-//                         }
-//                     ]
-//                 }
-//         )
-             
-// } catch (err) { console.log(err.message); }
-// }
+
 
 const updateUserWallet = async (user,amount) =>{
     try{
@@ -278,15 +252,9 @@ const  findAllRoomNumber= async ()=>{
     }catch(err){console.log(err);}
 }
 
-const getBookingId = async (user,roomNumber,hotel_id,room_Id,startDate,endDate) =>{
-    try{
-        return await bookings.findOne({userName:user,roomNumber:roomNumber,hotel_id:hotel_id,room_id:room_Id,checkin_date:startDate,checkout_date:endDate})
-     }catch(err){console.log(err);}
-}
-
 const findUserHistory= async (email)=>{
 try{
-         return await bookings.aggregate([
+         return await bookinghistory.aggregate([
     {
         $match: { userName: email } 
      },
@@ -315,16 +283,19 @@ try{
     {
         $project: {
             userName: 1,
-            bookingId:"$_id",
+            status:"$status",
+            bookingId:"$booking_id",
             roomNumber:"$roomNumber",
             checkin: "$checkin_date",
             checkout: "$checkout_date",
             hotelName: "$hotelInfo.hotel_name",
             roomType: "$roomInfo.roomType",
             city:"$hotelInfo.city",
+
             hotelImage:    {  
                 $arrayElemAt: ["$hotelInfo.imagesOfHotel", 0]
-            }          
+            } ,
+            discount:"$otherDetails"         
         }
     }
 ]);
@@ -380,11 +351,51 @@ const updateRoomNumberArray = async (room_id,roomNumber)=>{
 }
 
 
-
-const findAndCancel = async (bookingId)=>{
+const findAndUpdateHistory = async (bookingId)=>{
     try{
-        await Bookinghistory.updateOne({booking_id:bookingId},{$set:{status:"cancelled"}})
+            return await bookinghistory.updateOne({booking_id:bookingId},{$set:{status:"cancelled"}})
+    }catch(err){console.log(err);}
+}
+
+
+const findAndDelete = async (bookingId)=>{
+    try{
         return await bookings.deleteOne({_id:bookingId})
+    }catch(err){console.log(err);}
+}
+
+const findBookingsForUpdation = async ()=>{
+    try{
+        const today = Date.now()
+        console.log(today,"today");
+        return await bookinghistory.find({checkout_date:{$lt:today}})
+    }catch(err){console.log();}
+}
+
+const updatePendingMoney = async (id,amount)=>{
+    try{
+        console.log(id,amount,"id,amount")
+        const today = Date.now()
+        return await bookinghistory.updateOne(
+            {"otherDetails.paymentMode":"offline",_id:id},
+             {$set:{"otherDetails.moneyPaid":amount,"otherDetails.pendingAmount":0}},
+           
+            )
+    }catch(err){console.log(err);}
+}
+const findAndUpdateAllHistory = async ()=>{
+    try{
+        const today = Date.now()
+        console.log(today,"today");
+        return await bookinghistory.updateMany({checkout_date:{$lt:today}},{$set:{status:"completed"}})
+
+    }catch(err){console.log(err);}
+}
+const findAndDeleteAll = async ()=>{
+    try{
+        const today = Date.now()
+        console.log(today,"today");
+        return await bookings.deleteMany({checkout_date:{$lt:today}})
     }catch(err){console.log(err);}
 }
 module.exports = {
@@ -405,8 +416,8 @@ module.exports = {
     selectedRoom,
     removeRoomNumber,
     findAvailableRooms,
-   // findOverlapping,
-    findUserHistory,
+  
+   findUserHistory,
     findCouponByUser,
     findAllRoomNumber,
     findOffers,
@@ -423,9 +434,13 @@ module.exports = {
     updateUserWalletAdd,
     findAllBookingsWithRoomNumber,
     updateRoomNumberArray,
-    findAndCancel,
-    getBookingId
-
+    findAndUpdateHistory,
+    findAndDelete,
+    findBookingsForUpdation,
+    findAndUpdateAllHistory,
+    findAndDeleteAll,
+    updatePendingMoney
+   
 }
 
 

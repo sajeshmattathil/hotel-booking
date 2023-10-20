@@ -19,6 +19,10 @@ const otherDetailsSchema= new mongoose.Schema({
   moneyPaid:{
     type: Number,
     required: false
+  },
+  pendingAmount:{
+    type: Number,
+    required: false
   }
 
 })
@@ -75,6 +79,6 @@ const bookingsHistorySchema = new mongoose.Schema({
   },
   otherDetails:otherDetailsSchema
   });
-const history = mongoose.model('history', bookingsHistorySchema,'Bookinghistory');
+const history = mongoose.model('history', bookingsHistorySchema,'bookinghistory');
 
 module.exports = history;

@@ -25,6 +25,10 @@ const ownerSchema=new mongoose.Schema({
         type:Boolean,
         default:true
     },
+    wallet:{
+        type:Number,
+        default:0
+    },
     isActive:{
         type:Boolean,
         default:true

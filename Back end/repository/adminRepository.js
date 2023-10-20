@@ -77,6 +77,16 @@ const findExistingCoupons=async()=>{
 }
 }
 
+const updateAdminWallet = async (adminAmout) =>{
+    try{
+        const adminData = await Admin.find({})
+        console.log(adminData,"adminData");
+        console.log(adminData[0]._id,"adminData[0]._id");
+
+        return await Admin.updateOne({_id:adminData[0]._id},{$inc:{wallet:adminAmout}})
+    }catch(err){console.log(err);}
+}
+
 module.exports={
     findAdminByEmail,
     findAdminNameByEmail,
@@ -85,5 +95,6 @@ module.exports={
     findCategoryByName,
     findSubCategoryByName,
     findOwnerByEmail,
-    findExistingCoupons
+    findExistingCoupons,
+    updateAdminWallet
 }

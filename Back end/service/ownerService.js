@@ -48,7 +48,8 @@ const authHotel = async (req) => {
      try {
           const image = req.files.map(file => file.filename);
           const owner=req.session.owner
-
+          const ownerData = await ownerRepository.findOwnerByEmail(owner)
+          const owner_id = ownerData._id
           const { hotel_name,star_rating,description, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
 
           if (!hotel_name||!star_rating ||!description|| !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
@@ -76,7 +77,8 @@ const authHotel = async (req) => {
                     pincode,
                     totalRoomsAvailable,
                     nearTouristDestination,
-                    imagesOfHotel: image
+                    imagesOfHotel: image,
+                    owner_id
                })
                newHotel.save()
                let msg = 'Hotel saved successfully'

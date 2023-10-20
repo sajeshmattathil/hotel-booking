@@ -48,6 +48,11 @@ const hotelSchema=new mongoose.Schema({
         required:true
     }
     ,
+    owner_id: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Owner'
+    
+      }, 
     isActive:{
         type:Boolean,
         default:true
