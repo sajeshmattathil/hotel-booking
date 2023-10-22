@@ -8,6 +8,8 @@ const bookingHistory = require('../domain/model/bookingHistory')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
 const referalCodeGenerator = require('../utils/referalCodeGenerator')
+const invoiceNum = require ('../utils/invoiceNumber')
+const { ObjectId } = require('mongodb');
 
 const findHotels = async (city) => {
     try {
@@ -468,6 +470,7 @@ const checkRoomAvailability = async (req) => {
                 console.log(roomNumberArray, "After final filtering");
             }       
     }
+    console.log(roomNumberArray,"roomNumberArray");
     if (!roomNumberArray.length) {
         const msg = "No rooms available,select another room"
                 return {msg}
@@ -619,6 +622,7 @@ const saveBooking = async (req) => {
             checkin_date: startDate,
             checkout_date: endDate,
             status: 'pending',
+            invoice_number:'',
             otherDetails: {
                 paymentMode,
                 couponUsed,
@@ -643,6 +647,7 @@ const saveBooking = async (req) => {
             checkin_date: startDate,
             checkout_date: endDate,
             status: 'pending',
+            invoice_number:'',
             otherDetails: {
                 paymentMode,
                 couponUsed,
@@ -662,14 +667,11 @@ const saveBooking = async (req) => {
 
             console.log(ownerAmount, "ownerAmount");
 
-
             const updateOwnerWallet = await ownerRepository.updateOwnerWallet(hotel_id, newBookingHistory._id, ownerAmount)
             console.log(updateOwnerWallet, "updateOwnerWallet");
 
             const adminAmount = totalAmount - (totalAmount * .70) - (roomData.price * .12 * numberOfDays)
             console.log(adminAmount,"adminAmount");
-
-         
 
             const updateAdminWallet = await adminRepository.updateAdminWallet(adminAmount)
             console.log(updateAdminWallet, "updateAdminWallet");
@@ -707,6 +709,7 @@ const cancelBooking = async (req) => {
     try {
         const bookingId = req.params.id
         const bookingDetails = await userRepository.bookingDetails(bookingId)
+        console.log(bookingDetails,"bookingDetails");
         const moneyFromWallet = bookingDetails.otherDetails.moneyFromWallet
         const userName = bookingDetails.userName
         await userRepository.updateUserWalletAdd(userName, moneyFromWallet)
@@ -727,7 +730,7 @@ const updateFinishedBooking = async ()=>{
     try{
         let timer
      const timerFor =async  ()=>{
-             const millisecondsOf24Hr =   5000              //24 * 60 * 60 * 1000
+             const millisecondsOf24Hr =   24 * 60 * 60 * 1000              //
          timer =   setInterval( async ()=>{
             const findBookingsForUpdation = await userRepository.findBookingsForUpdation()
             console.log(findBookingsForUpdation,"findBookingsForUpdation")
@@ -739,15 +742,11 @@ const updateFinishedBooking = async ()=>{
                         console.log(booking._id,booking.otherDetails.pendingAmount,"response");
                         console.log(response,"response");
                     }
-                })
-                
+                })                
                 const result1 = await userRepository.findAndUpdateAllHistory()
                 const result2 =  await userRepository.findAndDeleteAll()
-              
-
                 console.log(result1,result2,"updating");
             }
-
         },millisecondsOf24Hr)
      }
      timerFor()
@@ -759,6 +758,31 @@ const updateFinishedBooking = async ()=>{
     }catch(err){console.log(err);}
 }
 
+const genInvoice = async (req)=>{
+try{
+    
+let bookingId = new ObjectId("6532538c9ee72a137f638e1f");
+
+   //  bookingId =req.session.invoice 
+    const getData = await userRepository.bookingDetails(bookingId)
+    console.log(getData,"getData");
+
+    if(getData.invoice_number.trim() === ''){
+        console.log(1111111);
+        var invoiceNumber = invoiceNum()
+    console.log(invoiceNumber,"invoiceNumber");
+        await userRepository.updateInvoiceNumber(bookingId,invoiceNumber)
+    }
+    invoiceNumber = getData.invoice_number
+    console.log(invoiceNumber,"invoiceNumber");
+    if(getData && invoiceNumber) return {getData,invoiceNumber}
+    else {
+        const msg = "No invoice found"
+        return {status:201,msg} 
+    }
+
+}catch(err){console.log(err.message);}
+}
 module.exports = {
     userAuthentication,
     verifyUser,
@@ -788,5 +812,6 @@ module.exports = {
     
     findWalletMoney,
     cancelBooking,
-    updateFinishedBooking
+    updateFinishedBooking,
+    genInvoice
 }

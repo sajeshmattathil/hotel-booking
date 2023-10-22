@@ -78,6 +78,9 @@ const currentBookingsSchema = new mongoose.Schema({
     required: true
 
   },
+  invoice_number:{
+    type: String
+  },
   otherDetails:otherDetailsSchema
 
 

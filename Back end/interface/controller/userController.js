@@ -1,4 +1,5 @@
 const userService = require('../../service/userService')
+const invoice = require('../../utils/invoice')
 
 const userHome = (req, res) => {
    res.render('user/index')
@@ -362,21 +363,17 @@ const confirmPayment= async (req,res)=>{
         if(couponSelected && offer ){
           var  amount = ((roomData.price - (roomData.price * (offer.discount / 100)))   ) 
           totalAmount = (amount + (roomData.price  * .12)) *numberOfDays - parseInt(couponSelected) -walletMoney.wallet
-          console.log(amount,totalAmount,"11111");
         }else if(offer && !couponSelected){
             amount = ((roomData.price - (roomData.price * (offer.discount / 100)))  ) 
             totalAmount = (amount + (roomData.price  * .12)) *numberOfDays -walletMoney.wallet 
-            console.log(amount,totalAmount,"222");
 
         }else if(couponSelected && !offer){
             amount= ((roomData.price) -parseInt(couponSelected)  ) 
             totalAmount = (amount + (roomData.price  * .12)) *numberOfDays -walletMoney.wallet
-            console.log(amount,totalAmount,"333");
 
         }else {
             amount= (roomData.price + -walletMoney.wallet ) 
             totalAmount = (amount + (roomData.price  * .12)) *numberOfDays -walletMoney.wallet
-            console.log(amount,totalAmount,"4444");
 
         }
           
@@ -457,6 +454,26 @@ const updateBooking = async ()=>{
     }catch(err){console.log(err);}
 }
 
+const generateInvoice = async (req,res)=>{
+    try{
+        req.session.invoice = req.params.id
+        const response = await userService.genInvoice(req)
+        console.log(response,"response")
+        if(response.status === 201) res.redirect(`/manageBookingsPage?msg=${response.msg}`)
+        else {
+                console.log(7777);
+                await invoice(response.getData,response.invoiceNumber,res)
+            }
+
+    }catch(err){console.log(err);}
+}
+
+const generateInvoicePage = async (req,res)=>{
+    try{
+       
+
+    }catch(err){console.log(err);}
+}
 module.exports = {
     userHome,
     userhotelsList,
@@ -507,6 +524,9 @@ module.exports = {
     cancelBooking,
     wallet,
     walletPage,
-    updateBooking
+    updateBooking,
+    generateInvoice,
+    generateInvoicePage
+
 
 }

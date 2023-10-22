@@ -77,8 +77,13 @@ const bookingsHistorySchema = new mongoose.Schema({
     required: true
 
   },
+  invoice_number:{
+    type: String
+  },
   otherDetails:otherDetailsSchema
-  });
+  },
+  { timestamps: true }
+  );
 const history = mongoose.model('history', bookingsHistorySchema,'bookinghistory');
 
 module.exports = history;

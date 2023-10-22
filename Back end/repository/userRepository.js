@@ -6,6 +6,7 @@ const bookinghistory = require('../domain/model/bookingHistory')
 const coupons = require('../domain/model/coupon')
 const offers = require ('../domain/model/category_offer')
 const bcrypt = require('bcryptjs')
+const invoiceNumber = require('../utils/invoiceNumber')
 
 const findUserByEmail = async (email) => {
     try {
@@ -295,7 +296,7 @@ try{
             hotelImage:    {  
                 $arrayElemAt: ["$hotelInfo.imagesOfHotel", 0]
             } ,
-            discount:"$otherDetails"         
+            otherDetails:"$otherDetails"         
         }
     }
 ]);
@@ -328,7 +329,8 @@ const updateNewUserWallet = async (email)=>{
 
 const bookingDetails = async (id)=>{
     try{
-        return await bookings.findOne({_id:id})
+        console.log(id,"id");
+        return await bookinghistory.findOne({booking_id:id})
     }catch(err){console.log(err);}
 }
 
@@ -398,6 +400,63 @@ const findAndDeleteAll = async ()=>{
         return await bookings.deleteMany({checkout_date:{$lt:today}})
     }catch(err){console.log(err);}
 }
+
+const  updateInvoiceNumber = async (booking_id,invoiceNumber)=>{
+    try{
+        console.log(booking_id,invoiceNumber,"booking_id,invoiceNumber");
+       return await bookinghistory.updateOne({booking_id:booking_id},{$set:{invoice_number:invoiceNumber}})
+    }catch(err){console.log(err);}
+}
+ 
+const findBookingDetail= async (bookingId)=>{
+    try{
+        console.log(bookingId,"bookingId");
+             return await bookinghistory.aggregate([
+        {
+            $match: { booking_id:bookingId } 
+         },
+        // {
+        //     $lookup: {
+        //         from: "hotels",
+        //         localField: "hotel_id",
+        //         foreignField: "_id",
+        //         as: "hotelInfo"
+        //     }
+        //  },
+        // {
+        //     $unwind: "$hotelInfo" 
+        // },
+        // {
+        //     $lookup: {
+        //         from: "rooms",
+        //         localField: "room_id",
+        //         foreignField: "_id",
+        //         as: "roomInfo"
+        //     }
+        // },
+        // {
+        //     $unwind: "$roomInfo"
+        // },
+        // {
+        //     $project: {
+        //         userName: 1,
+        //         status:"$status",
+        //         bookingId:"$booking_id",
+        //         invoice_number:"$invoice_number",
+        //         roomNumber:"$roomNumber",
+        //         checkin: "$checkin_date",
+        //         checkout: "$checkout_date",
+        //         hotelName: "$hotelInfo.hotel_name",
+        //         roomType: "$roomInfo.roomType",
+        //         city:"$hotelInfo.city",   
+        //         amount:"$otherDetails.moneyPaid"         
+        //     }
+        // }
+    ]);  
+    }catch(err){console.log(err.message);}
+    }
+    
+
 module.exports = {
     findUserByEmail,
     findAllHotels,
@@ -439,7 +498,9 @@ module.exports = {
     findBookingsForUpdation,
     findAndUpdateAllHistory,
     findAndDeleteAll,
-    updatePendingMoney
+    updatePendingMoney,
+    updateInvoiceNumber,
+    findBookingDetail
    
 }
 

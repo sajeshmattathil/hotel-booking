@@ -1,7 +1,6 @@
 const invoiceNumber = () => {
-    let otp = String(Math.random()).slice(2,8)
-    if(String(otp).length < 10)  generateOtp()
-    else  return otp
+    let invNum = String(Math.random()).slice(2,11)
+    if(String(invNum).length < 9)  invoiceNumber()
+    else  return invNum
 }
-
 module.exports=invoiceNumber

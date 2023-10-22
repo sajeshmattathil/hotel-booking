@@ -54,6 +54,8 @@ router.get('/remove_coupon',controller.removeCoupon)
 router.get('/cancel_booking/:id',controller.cancelBooking)
 router.get('/wallet',controller.wallet)
 router.get('/walletPage',controller.walletPage)
+router.get('/generate_invoice/:id',controller.generateInvoice)
+router.get('/generateInvoicePage',controller.generateInvoicePage)
 
 
 module.exports=router

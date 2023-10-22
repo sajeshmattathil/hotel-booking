@@ -13,6 +13,8 @@ const userRouter = require('./interface/routes/userRoutes')
 const adminRouter = require('./interface/routes/adminRoutes')
 const ownerRouter = require('./interface/routes/ownerRoutes')
 const controller = require ('../Back end/interface/controller/userController')
+const invoiceNumber = require ('../Back end/utils/invoiceNumber')
+
 app.use(express.json())
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }))
@@ -32,12 +34,16 @@ app.use('/', userRouter)
 app.use('/admin', adminRouter)
 app.use('/owner', ownerRouter)
 
-setTimeout(() => {
-    controller.updateBooking(); // Call your function here
-}, 5000);
- 
+// setTimeout(() => {
+//     controller.updateBooking(); // Call your function here
+// }, 5000);
+// console.log(controller.updateBooking(),"controller.updateBooking()")
+
+const templatePath = path.join(__dirname, '../Front end/views/user/invoice.ejs');
+console.log(templatePath);
+const invoicePath = path.join(__dirname, 'invoice.pdf');
+console.log(invoicePath);
 
 
-console.log(controller.updateBooking(),"controller.updateBooking()")
 
 app.listen(8080, () => { console.log('Listening to the server on http://localhost:8080'); })
