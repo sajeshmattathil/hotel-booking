@@ -760,10 +760,8 @@ const updateFinishedBooking = async ()=>{
 
 const genInvoice = async (req)=>{
 try{
-    
-let bookingId = new ObjectId("6532538c9ee72a137f638e1f");
-
-   //  bookingId =req.session.invoice 
+    var data
+    const bookingId =req.session.invoice 
     const getData = await userRepository.bookingDetails(bookingId)
     console.log(getData,"getData");
 
@@ -772,16 +770,49 @@ let bookingId = new ObjectId("6532538c9ee72a137f638e1f");
         var invoiceNumber = invoiceNum()
     console.log(invoiceNumber,"invoiceNumber");
         await userRepository.updateInvoiceNumber(bookingId,invoiceNumber)
+        data = await userRepository.findBookingDetail(invoiceNumber)
+    }else  { 
+ 
+        invoiceNumber = getData.invoice_number
+        console.log(invoiceNumber,"invoiceNumber");
+        data = await userRepository.findBookingDetail(getData.invoice_number) 
     }
-    invoiceNumber = getData.invoice_number
-    console.log(invoiceNumber,"invoiceNumber");
-    if(getData && invoiceNumber) return {getData,invoiceNumber}
+console.log(data,"data");
+    if(data && invoiceNumber) return {data,invoiceNumber}
     else {
         const msg = "No invoice found"
         return {status:201,msg} 
     }
 
 }catch(err){console.log(err.message);}
+}
+
+const findSalesReport = async (data)=>{
+    try {
+        const startDate = new Date(data.checkin_date); 
+        const endDate = new Date(data.checkout_date);
+       
+       const salesData = await userRepository.findSalesData(startDate,endDate)
+       if(salesData) return salesData
+       else{
+        const msg = "No data found"
+        return {msg}
+       }
+    } catch (err) { console.log(err); }
+}
+
+const findSalesReportSelected = async (startDate,endDate)=>{
+    try {
+        // const startDate = new Date(data.checkin_date); 
+        // const endDate = new Date(data.checkout_date);
+       
+       const salesData = await userRepository.findSalesData(startDate,endDate)
+       if(salesData) return salesData
+       else{
+        const msg = "No data found"
+        return {msg}
+       }
+    } catch (err) { console.log(err); }
 }
 module.exports = {
     userAuthentication,
@@ -813,5 +844,7 @@ module.exports = {
     findWalletMoney,
     cancelBooking,
     updateFinishedBooking,
-    genInvoice
+    genInvoice,
+    findSalesReport,
+    findSalesReportSelected
 }

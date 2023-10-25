@@ -408,55 +408,106 @@ const  updateInvoiceNumber = async (booking_id,invoiceNumber)=>{
     }catch(err){console.log(err);}
 }
  
-const findBookingDetail= async (bookingId)=>{
+const findBookingDetail= async (invoice_number)=>{
     try{
-        console.log(bookingId,"bookingId");
+        console.log(invoice_number,"invoice_number");
              return await bookinghistory.aggregate([
         {
-            $match: { booking_id:bookingId } 
+            $match: {invoice_number:invoice_number } 
          },
-        // {
-        //     $lookup: {
-        //         from: "hotels",
-        //         localField: "hotel_id",
-        //         foreignField: "_id",
-        //         as: "hotelInfo"
-        //     }
-        //  },
-        // {
-        //     $unwind: "$hotelInfo" 
-        // },
-        // {
-        //     $lookup: {
-        //         from: "rooms",
-        //         localField: "room_id",
-        //         foreignField: "_id",
-        //         as: "roomInfo"
-        //     }
-        // },
-        // {
-        //     $unwind: "$roomInfo"
-        // },
-        // {
-        //     $project: {
-        //         userName: 1,
-        //         status:"$status",
-        //         bookingId:"$booking_id",
-        //         invoice_number:"$invoice_number",
-        //         roomNumber:"$roomNumber",
-        //         checkin: "$checkin_date",
-        //         checkout: "$checkout_date",
-        //         hotelName: "$hotelInfo.hotel_name",
-        //         roomType: "$roomInfo.roomType",
-        //         city:"$hotelInfo.city",   
-        //         amount:"$otherDetails.moneyPaid"         
-        //     }
-        // }
+        {
+            $lookup: {
+                from: "hotels",
+                localField: "hotel_id",
+                foreignField: "_id",
+                as: "hotelInfo"
+            }
+         },
+        {
+            $unwind: "$hotelInfo" 
+        },
+        {
+            $lookup: {
+                from: "rooms",
+                localField: "room_id",
+                foreignField: "_id",
+                as: "roomInfo"
+            }
+        },
+        {
+            $unwind: "$roomInfo"
+        },
+        {
+            $project: {
+                userName: 1,
+                status:"$status",
+                bookingId:"$booking_id",
+                invoice_number:"$invoice_number",
+                roomNumber:"$roomNumber",
+                checkin: "$checkin_date",
+                checkout: "$checkout_date",
+                hotelName: "$hotelInfo.hotel_name",
+                roomType: "$roomInfo.roomType",
+                city:"$hotelInfo.city",   
+                amount:"$otherDetails.moneyPaid"         
+            }
+        }
     ]);  
     }catch(err){console.log(err.message);}
     }
     
+const findSalesData = async (startDate,endDate) =>{
+    try{
+        console.log(startDate,endDate,"startDate,endDate");
+       return await bookinghistory.aggregate([
+        {
+            $match:{checkin_date:{$gte:startDate},checkout_date:{$lte:endDate}}
 
+        },
+        {
+            $lookup:{
+                        from:'hotels',
+                        localField:'hotel_id',
+                        foreignField:'_id',
+                        as:'hotelInfo'
+                                    }
+        },
+        {
+
+            $unwind:'$hotelInfo'
+        },
+        {
+            $lookup:{
+                        from:'rooms',
+                        localField:'room_id',
+                        foreignField:'_id',
+                        as:'roomInfo'
+                                    }
+        },
+        {
+
+            $unwind:'$roomInfo'
+        },
+        {
+            $project: {
+                userName: 1,
+                status:"$status",
+                checkin: "$checkin_date",
+                checkout: "$checkout_date",
+                hotelName: "$hotelInfo.hotel_name",
+                roomType: "$roomInfo.roomType",
+                city:"$hotelInfo.city",   
+                amount:"$otherDetails.moneyPaid"         
+            }
+        },{
+            $sort :{
+                checkin:1
+            }
+        }
+
+       ])
+    }catch(err){console.log(err.message);}
+}
 module.exports = {
     findUserByEmail,
     findAllHotels,
@@ -500,7 +551,8 @@ module.exports = {
     findAndDeleteAll,
     updatePendingMoney,
     updateInvoiceNumber,
-    findBookingDetail
+    findBookingDetail,
+    findSalesData
    
 }
 

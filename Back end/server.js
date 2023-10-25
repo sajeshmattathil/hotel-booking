@@ -12,8 +12,6 @@ const path = require('path')
 const userRouter = require('./interface/routes/userRoutes')
 const adminRouter = require('./interface/routes/adminRoutes')
 const ownerRouter = require('./interface/routes/ownerRoutes')
-const controller = require ('../Back end/interface/controller/userController')
-const invoiceNumber = require ('../Back end/utils/invoiceNumber')
 
 app.use(express.json())
 app.use(cookieParser());
@@ -38,11 +36,6 @@ app.use('/owner', ownerRouter)
 //     controller.updateBooking(); // Call your function here
 // }, 5000);
 // console.log(controller.updateBooking(),"controller.updateBooking()")
-
-const templatePath = path.join(__dirname, '../Front end/views/user/invoice.ejs');
-console.log(templatePath);
-const invoicePath = path.join(__dirname, 'invoice.pdf');
-console.log(invoicePath);
 
 
 

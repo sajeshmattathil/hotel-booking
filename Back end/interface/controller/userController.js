@@ -1,9 +1,10 @@
 const userService = require('../../service/userService')
 const invoice = require('../../utils/invoice')
+const report = require('../../utils/salesReport')
 
 const userHome = (req, res) => {
    res.render('user/index')
-   //res.render('user/wallet')
+   //res.render('user/sample')
    const checkin_date = req.session.checkin_date
    const checkout_date = req.session.checkout_date
    //res.render('user/userHome',{checkin_date,checkout_date})
@@ -462,18 +463,91 @@ const generateInvoice = async (req,res)=>{
         if(response.status === 201) res.redirect(`/manageBookingsPage?msg=${response.msg}`)
         else {
                 console.log(7777);
-                await invoice(response.getData,response.invoiceNumber,res)
+                await invoice(response.data,response.invoiceNumber,res)
             }
 
     }catch(err){console.log(err);}
 }
 
-const generateInvoicePage = async (req,res)=>{
+const salesReport = async (req,res)=>{
     try{
-       
+      
 
-    }catch(err){console.log(err);}
+      const data = await userService.findSalesReport(req.body)
+      console.log(data,"data");
+      if(data){
+        await report.createSalesReport(data,res)
+        
+      }else res.redirect('/admin')
+    }catch(err){console.log(err.message);}
 }
+ 
+const salesReportSelected = async (req, res) => {
+    try {
+        console.log(req.body,"req.body");
+        const {timeRange} = req.body
+
+        if(timeRange === "week"){
+            const year = 2023;
+            const startDate = new Date(year, 0, 1);      
+            const endDate = new Date(year, 11, 31);
+            let weeklyReports = [];
+    
+    
+            let currentWeekStartDate = new Date(startDate);
+            let currentWeekEndDate = new Date(startDate);
+    
+            currentWeekEndDate.setDate(currentWeekEndDate.getDate() + 6);
+            currentWeekStartDate.setHours(5, 30, 0, 0);
+            currentWeekEndDate.setHours(5, 30, 0, 0);
+          
+            while (currentWeekStartDate <= endDate) {
+                const report = await userService.findSalesReportSelected(currentWeekStartDate, currentWeekEndDate);
+                weeklyReports.push(report);
+    
+            
+                currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
+                currentWeekEndDate = new Date(currentWeekStartDate); 
+                currentWeekEndDate.setDate(currentWeekEndDate.getDate() + 6);
+            }
+            
+            weeklyReports = weeklyReports.reverse()
+            await report.salesReportWeekly(weeklyReports,res)
+        }
+        if(timeRange === "month"){
+            const year = 2023;
+            const startDate = new Date(year, 0, 1);
+            const endDate = new Date(year, 11, 31);
+            let monthlyReports = [];
+    
+            let currentMonthStartDate = new Date(startDate);
+            let currentMonthEndDate = new Date(startDate);
+    
+            currentMonthEndDate.setMonth(currentMonthEndDate.getMonth() + 1);
+            currentMonthEndDate.setDate(currentMonthEndDate.getDate() - 1);
+            currentMonthStartDate.setHours(5, 30, 0, 0);
+            currentMonthEndDate.setHours(5, 30, 0, 0);
+    
+            while (currentMonthStartDate <= endDate) {
+                const report = await userService.findSalesReportSelected(currentMonthStartDate, currentMonthEndDate);
+                monthlyReports.push(report);
+    
+                currentMonthStartDate.setMonth(currentMonthStartDate.getMonth() + 1);
+                currentMonthEndDate = new Date(currentMonthStartDate);
+                currentMonthEndDate.setMonth(currentMonthEndDate.getMonth() + 1);
+                currentMonthEndDate.setDate(currentMonthEndDate.getDate() - 1);
+            }
+    
+            monthlyReports = monthlyReports.reverse();
+            console.log(monthlyReports,"monthlyReports");
+         report.salesReportMonthly(monthlyReports, res);
+        }
+
+    } catch (err) {
+        console.log(err.message);
+    }
+}
+
 module.exports = {
     userHome,
     userhotelsList,
@@ -526,7 +600,6 @@ module.exports = {
     walletPage,
     updateBooking,
     generateInvoice,
-    generateInvoicePage
-
-
+    salesReport,
+    salesReportSelected,
 }
