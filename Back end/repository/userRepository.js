@@ -508,6 +508,52 @@ const findSalesData = async (startDate,endDate) =>{
        ])
     }catch(err){console.log(err.message);}
 }
+
+const filerHotels = async (city,body)=>{
+    try{
+        let data
+        let { amenities, star_rating } = body
+        console.log(amenities, star_rating,65465465465);
+
+       
+        if(typeof (amenities) === 'object' && typeof (star_rating) === 'string' ){
+            data = await hotels.find({city:city,amenities:{$in:amenities},star_rating:star_rating})
+            return data 
+        }
+        else if(typeof (amenities) === 'string' && typeof (star_rating) === 'object' ){
+            star_rating = {$in:star_rating}
+            data = await hotels.find({city:city,amenities:amenities,star_rating:{$in:star_rating}})
+            return data 
+        }
+        else if(typeof (amenities) === 'object' && typeof (star_rating) === 'object' ){
+           
+            data = await hotels.find({city:city,amenities:{$in:amenities},star_rating:{$in:star_rating}})
+            return data 
+        }
+
+
+        console.log(city,amenities,star_rating,"city,amenities,star_rating111")
+        return await hotels.find({city:city},{amenities:amenities,star_rating:star_rating})
+    }catch(err){console.log(err);}
+}
+const filerHotelsifOneMissing = async (city,amenities,star_rating)=>{
+    try{
+        console.log(city,amenities,star_rating,"city,amenities,star_rating2222")
+
+        const query = { city: city };
+
+        if (amenities) {
+          query.amenities = amenities;
+        }       
+        if (star_rating) {
+          query.star_rating = star_rating;
+        }       
+        return await hotels.find(query);
+        
+    }catch(err){console.log(err);}
+}
+
+
 module.exports = {
     findUserByEmail,
     findAllHotels,
@@ -552,7 +598,9 @@ module.exports = {
     updatePendingMoney,
     updateInvoiceNumber,
     findBookingDetail,
-    findSalesData
+    findSalesData,
+    filerHotelsifOneMissing,
+    filerHotels
    
 }
 

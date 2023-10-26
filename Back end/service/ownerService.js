@@ -47,6 +47,7 @@ const authHotel = async (req) => {
 
      try {
           const image = req.files.map(file => file.filename);
+          console.log(image,"imageimage");
           const owner=req.session.owner
           const ownerData = await ownerRepository.findOwnerByEmail(owner)
           const owner_id = ownerData._id
@@ -116,6 +117,7 @@ console.log(req.body);
                let message = 'fill empty fields'
                return { status: 400,message }
           }
+          amnities = amnities.split(',')
 
           const newRoom = new room({
                roomType,

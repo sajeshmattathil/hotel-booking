@@ -87,6 +87,11 @@ const updateAdminWallet = async (adminAmout) =>{
     }catch(err){console.log(err);}
 }
 
+const findAdmin = async ()=>{
+    try{
+        return await Admin.find({})
+    }catch(err){console.log(err.message);}
+}
 module.exports={
     findAdminByEmail,
     findAdminNameByEmail,
@@ -96,5 +101,6 @@ module.exports={
     findSubCategoryByName,
     findOwnerByEmail,
     findExistingCoupons,
-    updateAdminWallet
+    updateAdminWallet,
+    findAdmin
 }

@@ -16,6 +16,7 @@ const adminHome = async (req, res) => {
 try{
   const email = req.session.admin
   const name = await adminService.adminUsername(email)
+  const data = await adminService.findAlldetails()
   res.render('adminHome', { username: name })
 }catch(err){console.log(err);}
 }
@@ -118,6 +119,14 @@ const addCoupon= async (req,res)=>{
      if(response.status === 200) res.redirect(`/admin/couponManagementPage?msg=${response.msg}`)
   }catch(err){console.log(err);}
 }
+
+const signOut = (req,res)=>{
+  try{
+    delete req.session.admin
+    res.redirect('/admin')
+    
+  }catch(err){console.log(err.message);}
+}
 module.exports = {
   adminLogin,
   adminAuthentication,
@@ -134,5 +143,6 @@ module.exports = {
   addNewOwner,
   couponManagement,
   couponManagementPage,
-  addCoupon
+  addCoupon,
+  signOut
 }

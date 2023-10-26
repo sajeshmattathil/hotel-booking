@@ -87,20 +87,23 @@ const offerManagement = (req,res)=>{
 const offerManagementPage = async (req,res)=>{
     try{
         console.log(req.session.hotel_id);
-
+        let modifiedOffers
         const category= await ownerService.findCategories() 
        const offers = await ownerService.findOffers(req)  
        console.log(offers);
-       const modifiedOffers = offers.map(offer => {
-        return {
-          ...offer,
-          startingDate: offer.startingDate.toISOString().split('T')[0],
-          expiry:offer.expiry.toISOString().split('T')[0],
-          discount:offer.discount,
-          name:offer.name,
-          roomType:offer.roomType
-        };
-      });
+       if(!offers.msg){
+         modifiedOffers = offers.map(offer => {
+            return {
+              ...offer,
+              startingDate: offer.startingDate.toISOString().split('T')[0],
+              expiry:offer.expiry.toISOString().split('T')[0],
+              discount:offer.discount,
+              name:offer.name,
+              roomType:offer.roomType
+            };
+          });
+       }
+       
         console.log(offers,'777777');  
         const no_data = offers.msg
         const msg = req.query.msg

@@ -5,10 +5,11 @@ const adminRepository = require('../repository/adminRepository')
 const User = require('../domain/model/user')
 const bookings = require('../domain/model/bookings')
 const bookingHistory = require('../domain/model/bookingHistory')
+const wallet = require('../domain/model/wallet')
 const sendMail = require('../utils/mailer')
 const generatedOtp = require('../utils/otpGenerator')
 const referalCodeGenerator = require('../utils/referalCodeGenerator')
-const invoiceNum = require ('../utils/invoiceNumber')
+const invoiceNum = require('../utils/invoiceNumber')
 const { ObjectId } = require('mongodb');
 
 const findHotels = async (city) => {
@@ -17,7 +18,7 @@ const findHotels = async (city) => {
             let hotelsData = await userRepository.findAllHotels(city)
             if (!hotelsData.length) {
                 const msg = "No hotels in found in the city"
-                delete req.session.city
+                req.session.city
                 return { status: 400, msg }
             }
             return hotelsData
@@ -137,6 +138,15 @@ const userAuthentication = async (req) => {
         });
         newUser.save()
         const walletMoney = await userRepository.updateNewUserWallet(email)
+        const userId = newUser._id
+        const today = Date.now()
+        const transaction = new wallet({
+            transaction_id:userId,
+            amount:50 + referalMoney,
+            transaction_type:"credit",
+            date:today
+        }) 
+        transaction.save()
 
         delete req.session.userFormData
         if (newUser) {
@@ -400,10 +410,24 @@ const sortHotels = async (req) => {
 
 }
 
-const filteredData = async (req) => {
+const filteredData = async (body, place) => {
     try {
-        // const {amenities,star_rating}
-        const data = await userRepository.filerHotels()
+        let data
+        let { amenities, star_rating } = body
+        console.log(body, "body");
+        let city = place
+        if (amenities && star_rating) {
+            console.log(amenities, star_rating, "amenities && star_rating");
+            data = await userRepository.filerHotels(city, body)
+            return { data }
+
+        } else if (!amenities && !star_rating) return { status: 202 }
+        else {
+            data = await userRepository.filerHotelsifOneMissing(city, amenities, star_rating)
+            return { data }
+        }
+
+
     } catch (err) { console.log(err); }
 }
 
@@ -436,11 +460,13 @@ const checkRoomAvailability = async (req) => {
 
         let selectedRoom = await userRepository.selectedRoom(roomData)
         var roomNumber = selectedRoom.roomNumbers[0]
-        if (roomNumber) await userRepository.removeRoomNumber(roomData)
+        console.log(selectedRoom,roomNumber,"//////")
+        var roomNumberArray = await userRepository.findAllRoomNumber()
 
+        if (roomNumber) await userRepository.removeRoomNumber(roomData)
+       
         else {
 
-            var roomNumberArray = await userRepository.findAllRoomNumber()
             console.log(roomNumberArray, "All room numbers");
 
             let bothStartEndOverlaps = await userRepository.bothStartEndOverlaps(startDate, endDate, hotel_id, room_id)
@@ -468,15 +494,15 @@ const checkRoomAvailability = async (req) => {
             if (onlyStartOverlapsRooms.length) {
                 roomNumberArray = roomNumberArray.filter(item => !onlyStartOverlapsRooms.includes(item));
                 console.log(roomNumberArray, "After final filtering");
-            }       
-    }
-    console.log(roomNumberArray,"roomNumberArray");
-    if (!roomNumberArray.length) {
-        const msg = "No rooms available,select another room"
-                return {msg}
-        }else {
+            }
+        }
+        console.log(roomNumberArray, "roomNumberArray");
+        if (!roomNumberArray.length) {
+            const msg = "No rooms available,select another room"
+            return { msg }
+        } else {
             const msg = " "
-            return {msg}
+            return { msg }
         }
     } catch (err) { console.log(err); }
 }
@@ -539,12 +565,12 @@ const saveBooking = async (req) => {
         else couponUsed = 0
 
         const totalAmount = req.session.totalAmount
-        const numberOfDays = req.session.numberOfDays   
+        const numberOfDays = req.session.numberOfDays
 
         if (paymentMode === "offline") var pendingAmount = totalAmount;
         else pendingAmount = 0
 
-        console.log(pendingAmount,"pendingAmount")
+        console.log(pendingAmount, "pendingAmount")
 
         const { name, email, phone } = req.session.booking
         const roomData = req.session.roomData
@@ -622,7 +648,7 @@ const saveBooking = async (req) => {
             checkin_date: startDate,
             checkout_date: endDate,
             status: 'pending',
-            invoice_number:'',
+            invoice_number: '',
             otherDetails: {
                 paymentMode,
                 couponUsed,
@@ -647,7 +673,7 @@ const saveBooking = async (req) => {
             checkin_date: startDate,
             checkout_date: endDate,
             status: 'pending',
-            invoice_number:'',
+            invoice_number: '',
             otherDetails: {
                 paymentMode,
                 couponUsed,
@@ -661,20 +687,53 @@ const saveBooking = async (req) => {
 
         await userRepository.updateUserWallet(user, moneyFromWallet)
 
+       if(moneyFromWallet){
+        const userDetails = await userRepository.findUserByEmail(user)
+        const userId = userDetails._id
+        const today = Date.now()
+        const transaction = new wallet({
+            transaction_id:userId,
+            amount:moneyFromWallet,
+            transaction_type:"debit",
+            date:today
+        }) 
+        transaction.save()
+       }
+
         if (paymentMode === "razorpay") {
 
-            const ownerAmount = totalAmount - (totalAmount * .30) - couponUsed -(roomData.price * .12 * numberOfDays)
+            const ownerAmount = totalAmount - (totalAmount * .30) - couponUsed - (roomData.price * .12 * numberOfDays)
 
             console.log(ownerAmount, "ownerAmount");
 
             const updateOwnerWallet = await ownerRepository.updateOwnerWallet(hotel_id, newBookingHistory._id, ownerAmount)
             console.log(updateOwnerWallet, "updateOwnerWallet");
+            const ownerId = hotelData.owner_id
+            let today = Date.now()
+            let transaction = new wallet({
+                transaction_id:ownerId,
+                amount:ownerAmount,
+                transaction_type:"credit",
+                date:today
+            }) 
+            transaction.save()
 
             const adminAmount = totalAmount - (totalAmount * .70) - (roomData.price * .12 * numberOfDays)
-            console.log(adminAmount,"adminAmount");
+            console.log(adminAmount, "adminAmount");
 
             const updateAdminWallet = await adminRepository.updateAdminWallet(adminAmount)
             console.log(updateAdminWallet, "updateAdminWallet");
+            const adminData = await adminRepository.findAdmin()
+            const adminId = adminData[0]._id
+                today = Date.now()
+
+                transaction = new wallet({
+                transaction_id:adminId,
+                amount:adminAmount,
+                transaction_type:"credit",
+                date:today
+            }) 
+            transaction.save()
         }
 
         const msg = "Room booked sucessfully"
@@ -709,10 +768,21 @@ const cancelBooking = async (req) => {
     try {
         const bookingId = req.params.id
         const bookingDetails = await userRepository.bookingDetails(bookingId)
-        console.log(bookingDetails,"bookingDetails");
+        console.log(bookingDetails, "bookingDetails");
         const moneyFromWallet = bookingDetails.otherDetails.moneyFromWallet
         const userName = bookingDetails.userName
         await userRepository.updateUserWalletAdd(userName, moneyFromWallet)
+
+        const user = await userRepository.findUserByEmail(userName)
+        const userId = user._id
+        const today = Date.now()
+        const transaction = new wallet({
+            transaction_id:userId,
+            amount:moneyFromWallet,
+            transaction_type:"credit",
+            date:today
+        }) 
+        transaction.save()
         const roomNumber = bookingDetails.roomNumber
         const bookingsWithSameRoom = await userRepository.findAllBookingsWithRoomNumber(roomNumber)
         if (bookingsWithSameRoom.length == 1) {
@@ -726,92 +796,92 @@ const cancelBooking = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-const updateFinishedBooking = async ()=>{
-    try{
-        let timer
-     const timerFor =async  ()=>{
-             const millisecondsOf24Hr =   24 * 60 * 60 * 1000              //
-         timer =   setInterval( async ()=>{
-            const findBookingsForUpdation = await userRepository.findBookingsForUpdation()
-            console.log(findBookingsForUpdation,"findBookingsForUpdation")
-            if(findBookingsForUpdation.length){
-                
-                findBookingsForUpdation.forEach(async (booking)=>{
-                    if(booking.otherDetails.pendingAmount){
-                        const response = await userRepository.updatePendingMoney(booking._id,booking.otherDetails.pendingAmount)
-                        console.log(booking._id,booking.otherDetails.pendingAmount,"response");
-                        console.log(response,"response");
-                    }
-                })                
-                const result1 = await userRepository.findAndUpdateAllHistory()
-                const result2 =  await userRepository.findAndDeleteAll()
-                console.log(result1,result2,"updating");
-            }
-        },millisecondsOf24Hr)
-     }
-     timerFor()
-     function stopTimer() {
-        clearInterval(timer);
-        console.log('Timer stopped.');
-    }
-    setTimeout(stopTimer, 5000);
-    }catch(err){console.log(err);}
-}
-
-const genInvoice = async (req)=>{
-try{
-    var data
-    const bookingId =req.session.invoice 
-    const getData = await userRepository.bookingDetails(bookingId)
-    console.log(getData,"getData");
-
-    if(getData.invoice_number.trim() === ''){
-        console.log(1111111);
-        var invoiceNumber = invoiceNum()
-    console.log(invoiceNumber,"invoiceNumber");
-        await userRepository.updateInvoiceNumber(bookingId,invoiceNumber)
-        data = await userRepository.findBookingDetail(invoiceNumber)
-    }else  { 
- 
-        invoiceNumber = getData.invoice_number
-        console.log(invoiceNumber,"invoiceNumber");
-        data = await userRepository.findBookingDetail(getData.invoice_number) 
-    }
-console.log(data,"data");
-    if(data && invoiceNumber) return {data,invoiceNumber}
-    else {
-        const msg = "No invoice found"
-        return {status:201,msg} 
-    }
-
-}catch(err){console.log(err.message);}
-}
-
-const findSalesReport = async (data)=>{
+const updateFinishedBooking = async () => {
     try {
-        const startDate = new Date(data.checkin_date); 
-        const endDate = new Date(data.checkout_date);
-       
-       const salesData = await userRepository.findSalesData(startDate,endDate)
-       if(salesData) return salesData
-       else{
-        const msg = "No data found"
-        return {msg}
-       }
+        let timer
+        const timerFor = async () => {
+            const millisecondsOf24Hr = 24 * 60 * 60 * 1000              //
+            timer = setInterval(async () => {
+                const findBookingsForUpdation = await userRepository.findBookingsForUpdation()
+                console.log(findBookingsForUpdation, "findBookingsForUpdation")
+                if (findBookingsForUpdation.length) {
+
+                    findBookingsForUpdation.forEach(async (booking) => {
+                        if (booking.otherDetails.pendingAmount) {
+                            const response = await userRepository.updatePendingMoney(booking._id, booking.otherDetails.pendingAmount)
+                            console.log(booking._id, booking.otherDetails.pendingAmount, "response");
+                            console.log(response, "response");
+                        }
+                    })
+                    const result1 = await userRepository.findAndUpdateAllHistory()
+                    const result2 = await userRepository.findAndDeleteAll()
+                    console.log(result1, result2, "updating");
+                }
+            }, millisecondsOf24Hr)
+        }
+        timerFor()
+        function stopTimer() {
+            clearInterval(timer);
+            console.log('Timer stopped.');
+        }
+        setTimeout(stopTimer, 5000);
     } catch (err) { console.log(err); }
 }
 
-const findSalesReportSelected = async (startDate,endDate)=>{
+const genInvoice = async (req) => {
+    try {
+        var data
+        const bookingId = req.session.invoice
+        const getData = await userRepository.bookingDetails(bookingId)
+        console.log(getData, "getData");
+
+        if (getData.invoice_number.trim() === '') {
+            console.log(1111111);
+            var invoiceNumber = invoiceNum()
+            console.log(invoiceNumber, "invoiceNumber");
+            await userRepository.updateInvoiceNumber(bookingId, invoiceNumber)
+            data = await userRepository.findBookingDetail(invoiceNumber)
+        } else {
+
+            invoiceNumber = getData.invoice_number
+            console.log(invoiceNumber, "invoiceNumber");
+            data = await userRepository.findBookingDetail(getData.invoice_number)
+        }
+        console.log(data, "data");
+        if (data && invoiceNumber) return { data, invoiceNumber }
+        else {
+            const msg = "No invoice found"
+            return { status: 201, msg }
+        }
+
+    } catch (err) { console.log(err.message); }
+}
+
+const findSalesReport = async (data) => {
+    try {
+        const startDate = new Date(data.checkin_date);
+        const endDate = new Date(data.checkout_date);
+
+        const salesData = await userRepository.findSalesData(startDate, endDate)
+        if (salesData) return salesData
+        else {
+            const msg = "No data found"
+            return { msg }
+        }
+    } catch (err) { console.log(err); }
+}
+
+const findSalesReportSelected = async (startDate, endDate) => {
     try {
         // const startDate = new Date(data.checkin_date); 
         // const endDate = new Date(data.checkout_date);
-       
-       const salesData = await userRepository.findSalesData(startDate,endDate)
-       if(salesData) return salesData
-       else{
-        const msg = "No data found"
-        return {msg}
-       }
+
+        const salesData = await userRepository.findSalesData(startDate, endDate)
+        if (salesData) return salesData
+        else {
+            const msg = "No data found"
+            return { msg }
+        }
     } catch (err) { console.log(err); }
 }
 module.exports = {
@@ -832,6 +902,7 @@ module.exports = {
     authAndSavePassword,
     changePassord,
     sortHotels,
+    filteredData,
     roomDetails,
     roomImages,
     checkRoomAvailability,
@@ -840,7 +911,7 @@ module.exports = {
     findBookings,
     findCoupons,
     findCategoryOffer,
-    
+
     findWalletMoney,
     cancelBooking,
     updateFinishedBooking,

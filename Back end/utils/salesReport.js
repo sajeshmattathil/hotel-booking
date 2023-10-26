@@ -165,8 +165,6 @@ const salesReportMonthly = (report, res) => {
             })
         
     }
-    //console.log();
-
 
     workbook.xlsx.writeFile('salesmonthly.xlsx')
         .then(function () {
