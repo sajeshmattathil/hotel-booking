@@ -186,7 +186,16 @@ const addCoupon= async (req)=>{
 
 const findAlldetails = async (req,res)=>{
      try{
-         await adminRepository.f
+        const data = await adminRepository.findsales()
+        if(data.length) return data
+
+     }catch(err){console.log(err.message);}
+}
+
+const findAllUsers = async ()=>{
+     try{
+          const data = await adminRepository.findAllUsers()
+          if(data) return data
      }catch(err){console.log(err.message);}
 }
 
@@ -200,6 +209,7 @@ module.exports = {
      authenticateOwner,
      existingCoupons,
      addCoupon,
-     findAlldetails
+     findAlldetails,
+     findAllUsers
 }
 

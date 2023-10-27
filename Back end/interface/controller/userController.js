@@ -3,8 +3,8 @@ const invoice = require('../../utils/invoice')
 const report = require('../../utils/salesReport')
 
 const userHome = (req, res) => {
-    res.render('user/index')
-    //res.render('user/sample')
+    //res.render('user/index')
+    res.render('user/sample')
     const checkin_date = req.session.checkin_date
     const checkout_date = req.session.checkout_date
     //res.render('user/userHome',{checkin_date,checkout_date})
@@ -172,7 +172,8 @@ const editUserAddress = async (req, res) => {
 
 const editUserPassword = async (req, res) => {
     try {
-        const response = await userService.saveEditedUserPassword(req)
+        console.log(11111);
+        const response = await userService.saveEditedUserPassword(req,res)
         if (response.status === 400) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
@@ -450,9 +451,13 @@ const wallet = async (req, res) => {
 const walletPage = async (req, res) => {
     try {
         const wallet = await userService.findWalletMoney(req)
-        res.render('user/wallet', { wallet })
-    } catch (err) { console.log(err); }
+        const transactions = await userService.findWalletTransactions(req)
+        console.log(transactions,"transactions");
+        const msg = transactions.msg
+        res.render('user/wallet', { wallet,transactions,msg })
+    } catch (err) { console.log(err.message); }
 }
+
 
 const updateBooking = async () => {
     try {

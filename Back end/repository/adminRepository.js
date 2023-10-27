@@ -4,6 +4,8 @@ const category=require('../domain/model/category')
 const subcategory=require('../domain/model/subCategory')
 const owner=require('../domain/model/owner')
 const coupons=require('../domain/model/coupon')
+const bookingHistory = require('../domain/model/bookingHistory')
+const users = require('../domain/model/user')
 
 
 
@@ -92,6 +94,17 @@ const findAdmin = async ()=>{
         return await Admin.find({})
     }catch(err){console.log(err.message);}
 }
+
+const findsales = async()=>{
+    try{
+        return await bookingHistory.find({status:{$ne:"cancelled"}})
+    }catch(err){console.log(err.message);}
+}
+const findAllUsers = async ()=>{
+    try{
+       return await users.find({}).count()
+    }catch(err){console.log(err.message);}
+}
 module.exports={
     findAdminByEmail,
     findAdminNameByEmail,
@@ -102,5 +115,7 @@ module.exports={
     findOwnerByEmail,
     findExistingCoupons,
     updateAdminWallet,
-    findAdmin
+    findAdmin,
+    findsales,
+    findAllUsers
 }

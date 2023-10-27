@@ -297,29 +297,32 @@ const saveEditedUserAddress = async (req) => {
 
 
 
-const saveEditedUserPassword = async (req) => {
+const saveEditedUserPassword = async (req,res) => {
     try {
 
-        const { old_password } = req.body
+        const { oldPassword } = req.body
 
         const email = req.session.user
         const user = await userRepository.findUserByEmail(email)
-        const verifyOldPassword = await bcrypt.compare(old_password, user.password)
+        const verifyOldPassword = await bcrypt.compare(oldPassword, user.password)
         if (verifyOldPassword) {
 
             const updateData = await userRepository.findAndEditPassword(req)
             if (updateData) {
-                const msg = "New password added"
+                const errorMsg = "New password added sucessfully"
                 delete req.session.otp
-                return { status: 200, msg }
+            return res.json({ error: errorMsg });
 
             } else {
                 const msg = "Something went wrong"
                 return { status: 500, msg }
             }
         } else {
-            const msg = 'Old password does not match'
-            return { status: 400, msg }
+           // const msg = 'Old password does not match'
+           console.log('last');
+            const errorMsg = 'Old password does not match';
+            return res.json({ error: errorMsg });
+           // return { status: 400, msg }
         }
 
 
@@ -456,17 +459,11 @@ const checkRoomAvailability = async (req) => {
         const room_id = roomData._id
         const startDate = req.session.checkin_date
         const endDate = req.session.checkout_date
-        console.log(hotel_id, room_id, startDate, endDate, "+++++-----");
-
         let selectedRoom = await userRepository.selectedRoom(roomData)
         var roomNumber = selectedRoom.roomNumbers[0]
-        console.log(selectedRoom,roomNumber,"//////")
         var roomNumberArray = await userRepository.findAllRoomNumber()
-
-        if (roomNumber) await userRepository.removeRoomNumber(roomData)
-       
+        if (roomNumber) await userRepository.removeRoomNumber(roomData)     
         else {
-
             console.log(roomNumberArray, "All room numbers");
 
             let bothStartEndOverlaps = await userRepository.bothStartEndOverlaps(startDate, endDate, hotel_id, room_id)
@@ -884,6 +881,21 @@ const findSalesReportSelected = async (startDate, endDate) => {
         }
     } catch (err) { console.log(err); }
 }
+const findWalletTransactions = async (req)=>{
+try{
+    const email = req.session.user
+    const user = await userRepository.findUserByEmail(email)
+    const data = await userRepository.findTransactions(user._id)
+    console.log(data,"data");
+    if(data.length) return data
+    else  {
+        const msg = "No transactions made"
+        return {msg}
+    }
+
+}catch(err){console.log(err.message);}
+}
+
 module.exports = {
     userAuthentication,
     verifyUser,
@@ -917,5 +929,6 @@ module.exports = {
     updateFinishedBooking,
     genInvoice,
     findSalesReport,
-    findSalesReportSelected
+    findSalesReportSelected,
+    findWalletTransactions
 }

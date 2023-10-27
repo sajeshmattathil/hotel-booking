@@ -3,6 +3,7 @@ const hotels = require('../domain/model/hotel')
 const rooms = require('../domain/model/room')
 const bookings = require('../domain/model/bookings')
 const bookinghistory = require('../domain/model/bookingHistory')
+const walletTransaction = require('../domain/model/wallet')
 const coupons = require('../domain/model/coupon')
 const offers = require ('../domain/model/category_offer')
 const bcrypt = require('bcryptjs')
@@ -77,9 +78,9 @@ const findAndEditAddress = async (req) => {
 const findAndEditPassword = async (req) => {
     try {
         const email = req.session.user
-        const { password } = req.body
-        console.log(password);
-        const hashPassword = await bcrypt.hash(password, 10)
+        const { newPassword } = req.body
+        console.log(newPassword);
+        const hashPassword = await bcrypt.hash(newPassword, 10)
         return await User.updateOne({ email: email }, { $set: { password: hashPassword } })
     } catch (err) { console.log(err); }
 }
@@ -553,7 +554,12 @@ const filerHotelsifOneMissing = async (city,amenities,star_rating)=>{
     }catch(err){console.log(err);}
 }
 
-
+const findTransactions = async (id)=>{
+    try{
+        console.log(id,"id");
+        return await walletTransaction.find({transaction_id:id})
+    }catch(err){console.log(err.message);}
+}
 module.exports = {
     findUserByEmail,
     findAllHotels,
@@ -600,7 +606,8 @@ module.exports = {
     findBookingDetail,
     findSalesData,
     filerHotelsifOneMissing,
-    filerHotels
+    filerHotels,
+    findTransactions
    
 }
 

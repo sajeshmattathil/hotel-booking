@@ -108,6 +108,7 @@ const offerManagementPage = async (req,res)=>{
         const no_data = offers.msg
         const msg = req.query.msg
         res.render('ownerOfferManagement',{offers:modifiedOffers,msg,category,no_data})
+        req.query.msg = ''
       }catch(err){console.log(err);}
 }
 

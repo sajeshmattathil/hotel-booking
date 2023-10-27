@@ -14,10 +14,21 @@ try{
 }
 const adminHome = async (req, res) => {
 try{
+  var NoOfBookings
+  var total = 0
   const email = req.session.admin
   const name = await adminService.adminUsername(email)
   const data = await adminService.findAlldetails()
-  res.render('adminHome', { username: name })
+   data.forEach((element,index)=>{
+     total +=    (element.otherDetails.moneyPaid + element.otherDetails.pendingAmount)
+
+     NoOfBookings = index +1
+  })
+  const noOfUsers = await adminService.findAllUsers()
+ 
+  console.log(total,noOfUsers,NoOfBookings,"total,noOfUsers,NoOfBookings");
+
+  res.render('adminHome', { username: name ,noOfUsers,NoOfBookings,total})
 }catch(err){console.log(err);}
 }
 
