@@ -71,11 +71,13 @@ const generateOtpAndSend = (req) => {
     req.session.otp = otp
     req.session.otpExpireForRegister = Date.now() + 10 * 60 * 1000
 
-    const { email } = req.session?.userFormData
+    const { currentEmail } = req.body
 
     console.log(otp, 'otp');
-    sendMail(email, otp)
+    sendMail(currentEmail, otp)
+    return {status:200}
 }
+
 
 const otpAuth = async (req) => {
     const genOtp = req.session.otp
@@ -232,7 +234,7 @@ const saveEditedUserName = async (req) => {
 }
 const saveEditedUserEmail = async (req) => {
     try {
-
+        console.log(2);
         const updateData = await userRepository.findAndEditEmail(req)
         if (updateData) {
             const msg = "Email edited"
@@ -246,6 +248,40 @@ const saveEditedUserEmail = async (req) => {
     } catch (err) { console.log(err); }
 }
 
+
+const generateOtpAndSendForEmailChange = (req) => {
+    const otp = generatedOtp()
+    req.session.otpForChangeEmail = otp
+    req.session.otpExpireForChangeEmail = Date.now() + 10 * 60 * 1000
+
+    const { currentEmail } = req.body
+
+    console.log(otp, 'otp');
+    sendMail(currentEmail, otp)
+    return {status:200}
+}
+const veriftOtpForChangeEmail = (req)=>{
+    try{
+      const {otp} = req.body
+      console.log(otp,"otp");
+
+      console.log(req.session.otpForChangeEmail,req.session.otpExpireForChangeEmail,"req.session.otpExpireForChangeEmail");
+
+      if(Date.now() <req.session.otpExpireForChangeEmail){
+        if(otp ===  req.session.otpForChangeEmail ) return {status:200}
+        else  {
+            console.log(1);
+            const msg = "You enteres a wrong otp"
+            return {statud :203,msg}
+        }
+      }else{
+        console.log(2);
+
+        const msg = "Time expired,try again"
+        return {statud :204,msg}
+      }
+    }catch(err){console.log(err.message);}
+}
 const saveEditedUserMobile = async (req) => {
     try {
 
@@ -766,16 +802,16 @@ const cancelBooking = async (req) => {
         const bookingId = req.params.id
         const bookingDetails = await userRepository.bookingDetails(bookingId)
         console.log(bookingDetails, "bookingDetails");
-        const moneyFromWallet = bookingDetails.otherDetails.moneyFromWallet
+        const refundMoney = bookingDetails.otherDetails.moneyFromWallet + bookingDetails.otherDetails.moneyPaid
         const userName = bookingDetails.userName
-        await userRepository.updateUserWalletAdd(userName, moneyFromWallet)
+        await userRepository.updateUserWalletAdd(userName, refundMoney)
 
         const user = await userRepository.findUserByEmail(userName)
         const userId = user._id
         const today = Date.now()
         const transaction = new wallet({
             transaction_id:userId,
-            amount:moneyFromWallet,
+            amount:refundMoney,
             transaction_type:"credit",
             date:today
         }) 
@@ -906,6 +942,8 @@ module.exports = {
     userDetails,
     saveEditedUserName,
     saveEditedUserEmail,
+    veriftOtpForChangeEmail,
+    generateOtpAndSendForEmailChange,
     saveEditedUserMobile,
     saveEditedUserGender,
     saveEditedUserAddress,

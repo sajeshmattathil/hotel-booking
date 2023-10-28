@@ -53,6 +53,10 @@ const hotelSchema=new mongoose.Schema({
         ref: 'Owner'
     
       }, 
+      amenities:{
+        type:Array,
+        required:true
+      },
     isActive:{
         type:Boolean,
         default:true

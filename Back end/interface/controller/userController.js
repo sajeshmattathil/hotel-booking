@@ -3,12 +3,11 @@ const invoice = require('../../utils/invoice')
 const report = require('../../utils/salesReport')
 
 const userHome = (req, res) => {
-    //res.render('user/index')
-    res.render('user/sample')
+    res.render('user/index')
+    //res.render('user/sample')
     const checkin_date = req.session.checkin_date
     const checkout_date = req.session.checkout_date
     //res.render('user/userHome',{checkin_date,checkout_date})
-
     //res.render('user/invoice')
 }
 const userhotelsList = async (req, res) => {
@@ -133,11 +132,36 @@ const editUserName = async (req, res) => {
 
     } catch (err) { console.log(err); }
 }
-const editUserEmail = async (req, res) => {
+
+const generateOTP = async (req,res)=>{
+    try{
+       const response = await userService.generateOtpAndSendForEmailChange(req)
+       const msg = "Something went wrong"
+       if(response.status === 200) res.json({success:true})
+       else res.json({msg:msg})
+    }catch(err){console.log(err.message);}
+}
+const verifyOTP = async (req,res)=>{
+    try{
+        console.log("dsfsgfgfdg");
+    const response = await userService.veriftOtpForChangeEmail(req)
+    if(response.status === 200) res.json({success:true})
+    if(response.status === 203) res.json({msg:response.msg})
+    if(response.status === 204) res.json({msg:response.msg})
+    }catch(err){console.log(err.message);}
+}
+// const saveEmail = async (req,res)=>{
+//     try{
+//         const response = await userService.saveEmail(req)
+//     }catch(err){console.log(err.message);}
+// }
+
+const saveEmail = async (req, res) => {
     try {
+        console.log(1);
         const response = await userService.saveEditedUserEmail(req)
-        if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
-        if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
+        if (response.status === 200) res.json({success:response.msg})
+        if (response.status === 500) res.json({emailError:response.msg})
 
     } catch (err) { console.log(err); }
 }
@@ -578,7 +602,7 @@ module.exports = {
     manageYourProfile,
     manageYourProfilePage,
     editUserName,
-    editUserEmail,
+    //editUserEmail,
     editUserMobile,
     editUserGender,
     editUserAddress,
@@ -586,6 +610,9 @@ module.exports = {
     forgotPassword,
     forgotEmailPage,
     emailSubmit,
+    generateOTP,
+    verifyOTP,
+    saveEmail,
     resendOtp,
     otpVerificationPage,
     otpForgotSubmit,

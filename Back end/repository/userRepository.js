@@ -44,6 +44,7 @@ const findAndEditName = async (req) => {
 }
 const findAndEditEmail = async (req) => {
     try {
+        console.log(3);
         const email = req.session.user
         const newEmail = req.body.email
         req.session.user = newEmail
@@ -455,8 +456,7 @@ const findBookingDetail= async (invoice_number)=>{
         }
     ]);  
     }catch(err){console.log(err.message);}
-    }
-    
+    }  
 const findSalesData = async (startDate,endDate) =>{
     try{
         console.log(startDate,endDate,"startDate,endDate");
@@ -471,10 +471,9 @@ const findSalesData = async (startDate,endDate) =>{
                         localField:'hotel_id',
                         foreignField:'_id',
                         as:'hotelInfo'
-                                    }
+                                 }
         },
         {
-
             $unwind:'$hotelInfo'
         },
         {

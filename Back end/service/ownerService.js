@@ -51,6 +51,7 @@ const authHotel = async (req) => {
           const owner=req.session.owner
           const ownerData = await ownerRepository.findOwnerByEmail(owner)
           const owner_id = ownerData._id
+          let {amenities} = req.body
           const { hotel_name,star_rating,description, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
 
           if (!hotel_name||!star_rating ||!description|| !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
@@ -67,6 +68,7 @@ const authHotel = async (req) => {
 
           }
           else {
+             if(amenities.includes(','))  amenities = amenities.split(',')
                const newHotel = new hotel({
                     owner_id:owner,
                     hotel_name,
@@ -76,6 +78,7 @@ const authHotel = async (req) => {
                     address,
                     city,
                     pincode,
+                    amenities,
                     totalRoomsAvailable,
                     nearTouristDestination,
                     imagesOfHotel: image,
