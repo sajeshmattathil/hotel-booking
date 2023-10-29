@@ -93,7 +93,8 @@ const userRegisterView = (req, res) => {
 }
 const userRegisterPage = (req, res) => {
     const msg = req.query.msg
-    res.render('user-signup', { msg: msg })
+    const user = req.session.user
+    res.render('user-signup', { msg: msg ,user})
 }
 
 const signOut = (req, res) => {
@@ -106,11 +107,14 @@ const signOut = (req, res) => {
 }
 
 const userManagement = (req, res) => {
-    res.redirect('/manageYourProfilePage')
+    if(req.session.user) res.redirect('/manageYourProfilePage')
+    else res.redirect('/login')
 }
 
 const userManagementPage = (req, res) => {
-    res.render('user/userManagement')
+    const user = req.session.user
+
+    res.render('user/userManagement',{user})
 }
 
 const manageYourProfile = (req, res) => {
@@ -445,7 +449,8 @@ const manageBookings = (req, res) => {
             res.redirect('/manageBookingsPage')
         } else {
             const msg = "Create a account "
-            res.redirect(`/signup?msg=${msg}`)
+
+            res.redirect(`/login?msg=${msg}`)
         }
     } catch (err) { console.log(err); }
 }
@@ -456,8 +461,8 @@ const manageBookingsPage = async (req, res) => {
         const hotels = await userService.findBookings(email)
         console.log(hotels);
         const msg = req.query.msg
-
-        res.render('user/manageBookings', { hotels, msg, })
+        const user = req.session.user
+        res.render('user/manageBookings', { hotels, msg,user })
     } catch (err) { console.log(err); }
 }
 
@@ -494,13 +499,21 @@ const generateInvoice = async (req, res) => {
     try {
         req.session.invoice = req.params.id
         const response = await userService.genInvoice(req)
+
         console.log(response, "response")
         if (response.status === 201) res.redirect(`/manageBookingsPage?msg=${response.msg}`)
         else {
             console.log(7777);
+            console.log(response.data[0].checkout,"response.data.checkout_date");
+
+            const currentDate = new Date().toISOString().split('T')[0];
+            response.data[0].date = currentDate
+            response.data[0].checkout = response.data[0].checkout.toISOString().split('T')[0];
+
+            
+            console.log(response.data[0].checkout,"response.data.checkout_date");
             await invoice(response.data, response.invoiceNumber, res)
         }
-
     } catch (err) { console.log(err); }
 }
 

@@ -18,7 +18,8 @@ console.log(bookingDetails, invoiceNumber,"bookingDetails, invoiceNumber");
         room:bookingDetails[0].roomType,
         hotelName:bookingDetails[0].hotelName,
         checkout:bookingDetails[0].checkout,
-        checkin:bookingDetails[0].checkin
+        checkin:bookingDetails[0].checkin,
+        date:bookingDetails[0].date
     };
     console.log(invoiceData,"invoiceData");
     const templatePath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Front end/views/user/invoice.ejs'
@@ -37,7 +38,7 @@ console.log(bookingDetails, invoiceNumber,"bookingDetails, invoiceNumber");
         template = template.replace('{{hotelName}}', invoiceData.hotelName);
         template = template.replace('{{checkout}}', invoiceData.checkout);
         template = template.replace('{{checkin}}', invoiceData.checkin);
-
+        template = template.replace('{{Date}}', invoiceData.date)
 
         pdf.create(template).toFile('invoice.pdf', (err, response) => {
             if (err) {

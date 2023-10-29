@@ -108,19 +108,24 @@ const sortBy = async (req) => {
 }
 const roomDetails = async (hotelId) => {
     try {
+        console.log(hotelId,"hotelId");
         const roomArray = await rooms.aggregate([
+
             {
-                $group: {
-                    _id: "$roomType",
-                    price: { $addToSet: "$price" }
-                }
+                $match:{hotel:hotelId}
             },
-            {
-                $project: {
-                    type: "$roomType",
-                    price: 1
-                }
-            }
+            // {
+            //     $group: {
+            //         _id: "$roomType",
+            //         price: { $addToSet: "$price" }
+            //     }
+            // },
+            // {
+            //     $project: {
+            //         type: "$roomType",
+            //         price: 1
+            //     }
+            // }
         ]);
         console.log(roomArray);
 
