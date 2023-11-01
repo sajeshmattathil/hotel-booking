@@ -12,6 +12,15 @@ const referalCodeGenerator = require('../utils/referalCodeGenerator')
 const invoiceNum = require('../utils/invoiceNumber')
 const { ObjectId } = require('mongodb');
 
+
+
+const findUser = async (email)=>{
+    try {
+        const data = await userRepository.findUserByEmail(email)
+        return data
+    }catch(err){console.log(err.message);}
+}
+
 const findHotels = async (city) => {
     try {
         if (city) {
@@ -487,10 +496,11 @@ const roomImages = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-const checkRoomAvailability = async (req) => {
+const checkRoomAvailability = async (req,noOfRooms) => {
     try {
         const roomData = req.session.roomData
         const hotelData = req.session.hotelData
+        console.log(roomData,hotelData,"***")
         const hotel_id = hotelData._id
         const room_id = roomData._id
         const startDate = req.session.checkin_date
@@ -530,7 +540,10 @@ const checkRoomAvailability = async (req) => {
             }
         }
         console.log(roomNumberArray, "roomNumberArray");
-        if (!roomNumberArray.length) {
+        console.log(roomNumberArray.length >=noOfRooms);
+
+        if (roomNumberArray.length <=noOfRooms) {
+            console.log('/////');
             const msg = "No rooms available,select another room"
             return { msg }
         } else {
@@ -890,33 +903,7 @@ const genInvoice = async (req) => {
     } catch (err) { console.log(err.message); }
 }
 
-const findSalesReport = async (data) => {
-    try {
-        const startDate = new Date(data.checkin_date);
-        const endDate = new Date(data.checkout_date);
 
-        const salesData = await userRepository.findSalesData(startDate, endDate)
-        if (salesData) return salesData
-        else {
-            const msg = "No data found"
-            return { msg }
-        }
-    } catch (err) { console.log(err); }
-}
-
-const findSalesReportSelected = async (startDate, endDate) => {
-    try {
-        // const startDate = new Date(data.checkin_date); 
-        // const endDate = new Date(data.checkout_date);
-
-        const salesData = await userRepository.findSalesData(startDate, endDate)
-        if (salesData) return salesData
-        else {
-            const msg = "No data found"
-            return { msg }
-        }
-    } catch (err) { console.log(err); }
-}
 const findWalletTransactions = async (req)=>{
 try{
     const email = req.session.user
@@ -933,6 +920,7 @@ try{
 }
 
 module.exports = {
+    findUser,
     userAuthentication,
     verifyUser,
     generateOtpAndSend,
@@ -966,7 +954,7 @@ module.exports = {
     cancelBooking,
     updateFinishedBooking,
     genInvoice,
-    findSalesReport,
-    findSalesReportSelected,
+    // findSalesReport,
+    // findSalesReportSelected,
     findWalletTransactions
 }

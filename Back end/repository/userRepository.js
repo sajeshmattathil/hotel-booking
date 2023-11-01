@@ -109,24 +109,25 @@ const sortBy = async (req) => {
 const roomDetails = async (hotelId) => {
     try {
         console.log(hotelId,"hotelId");
-        const roomArray = await rooms.aggregate([
+        // const roomArray = await rooms.aggregate([
 
-            {
-                $match:{hotel:hotelId}
-            },
-            // {
-            //     $group: {
-            //         _id: "$roomType",
-            //         price: { $addToSet: "$price" }
-            //     }
-            // },
-            // {
-            //     $project: {
-            //         type: "$roomType",
-            //         price: 1
-            //     }
-            // }
-        ]);
+        //     {
+        //         $match:{hotel:hotelId}
+        //     },
+        //     // {
+        //     //     $group: {
+        //     //         _id: "$roomType",
+        //     //         price: { $addToSet: "$price" }
+        //     //     }
+        //     // },
+        //     // {
+        //     //     $project: {
+        //     //         type: "$roomType",
+        //     //         price: 1
+        //     //     }
+        //     // }
+        // ]);
+        const roomArray  = await rooms.find({hotel:hotelId})
         console.log(roomArray);
 
         return roomArray;
@@ -462,57 +463,6 @@ const findBookingDetail= async (invoice_number)=>{
     ]);  
     }catch(err){console.log(err.message);}
     }  
-const findSalesData = async (startDate,endDate) =>{
-    try{
-        console.log(startDate,endDate,"startDate,endDate");
-       return await bookinghistory.aggregate([
-        {
-            $match:{checkin_date:{$gte:startDate},checkout_date:{$lte:endDate}}
-
-        },
-        {
-            $lookup:{
-                        from:'hotels',
-                        localField:'hotel_id',
-                        foreignField:'_id',
-                        as:'hotelInfo'
-                                 }
-        },
-        {
-            $unwind:'$hotelInfo'
-        },
-        {
-            $lookup:{
-                        from:'rooms',
-                        localField:'room_id',
-                        foreignField:'_id',
-                        as:'roomInfo'
-                                    }
-        },
-        {
-
-            $unwind:'$roomInfo'
-        },
-        {
-            $project: {
-                userName: 1,
-                status:"$status",
-                checkin: "$checkin_date",
-                checkout: "$checkout_date",
-                hotelName: "$hotelInfo.hotel_name",
-                roomType: "$roomInfo.roomType",
-                city:"$hotelInfo.city",   
-                amount:"$otherDetails.moneyPaid"         
-            }
-        },{
-            $sort :{
-                checkin:1
-            }
-        }
-
-       ])
-    }catch(err){console.log(err.message);}
-}
 
 const filerHotels = async (city,body)=>{
     try{
@@ -608,7 +558,7 @@ module.exports = {
     updatePendingMoney,
     updateInvoiceNumber,
     findBookingDetail,
-    findSalesData,
+    //findSalesData,
     filerHotelsifOneMissing,
     filerHotels,
     findTransactions

@@ -20,6 +20,9 @@ router.get('/coupon-management',jwt.verifyToken,admincontroller.couponManagement
 router.get('/couponManagementPage',jwt.verifyToken,admincontroller.couponManagementPage)
 router.post('/add_coupon',jwt.verifyToken,admincontroller.addCoupon)
 router.get('/sign_out',jwt.verifyToken,admincontroller.signOut)
+router.post('/sales_report',jwt.verifyToken,admincontroller.salesReport)
+router.post('/sales_report_selected',jwt.verifyToken,admincontroller.salesReportSelected)
+router.post('/show_graph',jwt.verifyToken,admincontroller.salesRevenueInGraph)
 
 module.exports = router
 

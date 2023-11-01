@@ -1,4 +1,5 @@
 const adminService = require('../../service/adminService')
+const report = require('../../utils/salesReport')
 
 const adminLogin = (req, res) => {
   const msg=req.query.msg
@@ -145,6 +146,152 @@ const signOut = (req,res)=>{
     
   }catch(err){console.log(err.message);}
 }
+
+const salesReport = async (req, res) => {
+  try {
+
+
+      const data = await adminService.findSalesReport(req.body)
+      console.log(data, "data");
+      if (data) {
+          await report.createSalesReport(data, res)
+
+      } else res.redirect('/admin')
+  } catch (err) { console.log(err.message); }
+}
+
+const salesReportSelected = async (req, res) => {
+  try {
+      console.log(req.body, "req.body");
+      const { timeRange } = req.body
+
+      if (timeRange === "week") {
+          const year = 2023;
+          const startDate = new Date(year, 0, 1);
+          const endDate = new Date(year, 11, 31);
+          let weeklyReports = [];
+
+
+          let currentWeekStartDate = new Date(startDate);
+          let currentWeekEndDate = new Date(startDate);
+
+          currentWeekEndDate.setDate(currentWeekEndDate.getDate() + 6);
+          currentWeekStartDate.setHours(5, 30, 0, 0);
+          currentWeekEndDate.setHours(5, 30, 0, 0);
+
+          while (currentWeekStartDate <= endDate) {
+              const report = await adminService.findSalesReportSelected(currentWeekStartDate, currentWeekEndDate);
+              weeklyReports.push(report);
+
+
+              currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
+              currentWeekEndDate = new Date(currentWeekStartDate);
+              currentWeekEndDate.setDate(currentWeekEndDate.getDate() + 6);
+          }
+
+          weeklyReports = weeklyReports.reverse()
+          await report.salesReportWeekly(weeklyReports, res)
+      }
+      if (timeRange === "month") {
+          const year = 2023;
+          const startDate = new Date(year, 0, 1);
+          const endDate = new Date(year, 11, 31);
+          let monthlyReports = [];
+
+          let currentMonthStartDate = new Date(startDate);
+          let currentMonthEndDate = new Date(startDate);
+
+          currentMonthEndDate.setMonth(currentMonthEndDate.getMonth() + 1);
+          currentMonthEndDate.setDate(currentMonthEndDate.getDate() - 1);
+          currentMonthStartDate.setHours(5, 30, 0, 0);
+          currentMonthEndDate.setHours(5, 30, 0, 0);
+
+          while (currentMonthStartDate <= endDate) {
+              const report = await adminService.findSalesReportSelected(currentMonthStartDate, currentMonthEndDate);
+              monthlyReports.push(report);
+
+              currentMonthStartDate.setMonth(currentMonthStartDate.getMonth() + 1);
+              currentMonthEndDate = new Date(currentMonthStartDate);
+              currentMonthEndDate.setMonth(currentMonthEndDate.getMonth() + 1);
+              currentMonthEndDate.setDate(currentMonthEndDate.getDate() - 1);
+          }
+
+          monthlyReports = monthlyReports.reverse();
+          console.log(monthlyReports, "monthlyReports");
+          report.salesReportMonthly(monthlyReports, res);
+      }
+
+  } catch (err) {
+      console.log(err.message);
+  }
+}
+
+const salesRevenueInGraph = async (req, res) => {
+  try {
+    console.log(11111111111111111)
+      console.log(req.body, "req.body1111");
+      const { timeRange } = req.body
+
+      if (timeRange === "week") {
+          const year = 2023;
+          const startDate = new Date(year, 0, 1);
+          const endDate = new Date(year, 11, 31);
+          let weeklyReports = [];
+
+
+          let currentWeekStartDate = new Date(startDate);
+          let currentWeekEndDate = new Date(startDate);
+
+          currentWeekEndDate.setDate(currentWeekEndDate.getDate() + 6);
+          currentWeekStartDate.setHours(5, 30, 0, 0);
+          currentWeekEndDate.setHours(5, 30, 0, 0);
+
+          while (currentWeekStartDate <= endDate) {
+              const report = await adminService.findSalesReportSelected(currentWeekStartDate, currentWeekEndDate);
+              weeklyReports.push(report);
+
+
+              currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
+              currentWeekEndDate = new Date(currentWeekStartDate);
+              currentWeekEndDate.setDate(currentWeekEndDate.getDate() + 6);
+          }
+
+          weeklyReports = weeklyReports.reverse()
+          res.json({success:weeklyReports})
+      }
+      if (timeRange === "month") {
+          const year = 2023;
+          const startDate = new Date(year, 0, 1);
+          const endDate = new Date(year, 11, 31);
+          let monthlyReports = [];
+
+          let currentMonthStartDate = new Date(startDate);
+          let currentMonthEndDate = new Date(startDate);
+
+          currentMonthEndDate.setMonth(currentMonthEndDate.getMonth() + 1);
+          currentMonthEndDate.setDate(currentMonthEndDate.getDate() - 1);
+          currentMonthStartDate.setHours(5, 30, 0, 0);
+          currentMonthEndDate.setHours(5, 30, 0, 0);
+
+          while (currentMonthStartDate <= endDate) {
+              const report = await adminService.findSalesReportSelected(currentMonthStartDate, currentMonthEndDate);
+              monthlyReports.push(report);
+
+              currentMonthStartDate.setMonth(currentMonthStartDate.getMonth() + 1);
+              currentMonthEndDate = new Date(currentMonthStartDate);
+              currentMonthEndDate.setMonth(currentMonthEndDate.getMonth() + 1);
+              currentMonthEndDate.setDate(currentMonthEndDate.getDate() - 1);
+          }
+
+         
+          console.log(monthlyReports, "monthlyReports");
+          res.json({success:monthlyReports})
+      }
+
+  } catch (err) {
+      console.log(err.message);
+  }
+}
 module.exports = {
   adminLogin,
   adminAuthentication,
@@ -162,5 +309,8 @@ module.exports = {
   couponManagement,
   couponManagementPage,
   addCoupon,
-  signOut
+  signOut,
+  salesReportSelected,
+  salesReport,
+  salesRevenueInGraph
 }

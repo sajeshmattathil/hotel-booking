@@ -1,12 +1,12 @@
 const userService = require('../../service/userService')
 const invoice = require('../../utils/invoice')
-const report = require('../../utils/salesReport')
+
 
 const userHome = (req, res) => {
-    res.render('user/index')
-    //res.render('user/sample')
-    const checkin_date = req.session.checkin_date
-    const checkout_date = req.session.checkout_date
+    // res.render('user/index')
+    res.render('user/sample')
+    // const checkin_date = req.session.checkin_date
+    // const checkout_date = req.session.checkout_date
     //res.render('user/userHome',{checkin_date,checkout_date})
     //res.render('user/invoice')
 }
@@ -266,14 +266,16 @@ const hotelDetails = (req, res) => {
 
 const hotelDetailsPage = async (req, res) => {
     try {
+
         const images = await userService.roomImages(req)
         const user = req.session.user
         const msg = req.query.msg
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
         const roomArray = await userService.roomDetails(req)
+        let no_ofRooms =  req.session.noOfRooms
 
-        res.render('user/rooms', { roomArray, images, checkin_date, checkout_date, user, msg })
+        res.render('user/rooms', {no_ofRooms, roomArray, images, checkin_date, checkout_date, user, msg })
 
     } catch (err) { console.log(err); }
 }
@@ -337,18 +339,38 @@ const proceedBooking = async (req, res) => {
 const proceedBookingPage = async (req, res) => {
 
     try {
+        const user = req.session.user
+        const userData = await userService.findUser(user)
         const roomData = req.session.roomData
         const hotelData = req.session.hotelData
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
-        const checkRoomAvailability = await userService.checkRoomAvailability(req)
+        const noOfRooms = req.session.noOfRooms
+        const dateObject1 = new Date(checkin_date);
+        const dateObject2 = new Date(checkout_date);
+        if (!isNaN(dateObject1) && !isNaN(dateObject2)) {
+            var numberOfDays = Math.ceil((dateObject2 - dateObject1) / (1000 * 60 * 60 * 24));
+            console.log(numberOfDays);
+        } else {
+            console.error('Invalid date format');
+        }
+        console.log(numberOfDays,"numberOfDays");
+        const totalAmount =numberOfDays * noOfRooms * roomData.price
+        const checkRoomAvailability = await userService.checkRoomAvailability(req,noOfRooms)
         const msg = req.query.msg
         const availablityMsg = checkRoomAvailability.msg
         console.log(availablityMsg, "availablityMsg");
-        res.render('user/proceedBooking', { roomData, hotelData, checkin_date, checkout_date, msg, availablityMsg })
+        res.render('user/proceedBooking', {user,userData,numberOfDays, roomData, hotelData, checkin_date, checkout_date,totalAmount,noOfRooms, msg, availablityMsg })
     } catch (err) { console.log(err.message); }
 }
 
+const getRooms=(req,res)=>{
+    try{
+        console.log(req.body.num_rooms);
+        req.session.noOfRooms = req.body.num_rooms
+        res.json({sucess:req.session.noOfRooms})
+    }catch(err){console.log(err.message);}
+}
 
 const checkInDatecheckOutDate = (req, res) => {
     const { checkin_date, checkout_date } = req.body
@@ -517,84 +539,7 @@ const generateInvoice = async (req, res) => {
     } catch (err) { console.log(err); }
 }
 
-const salesReport = async (req, res) => {
-    try {
 
-
-        const data = await userService.findSalesReport(req.body)
-        console.log(data, "data");
-        if (data) {
-            await report.createSalesReport(data, res)
-
-        } else res.redirect('/admin')
-    } catch (err) { console.log(err.message); }
-}
-
-const salesReportSelected = async (req, res) => {
-    try {
-        console.log(req.body, "req.body");
-        const { timeRange } = req.body
-
-        if (timeRange === "week") {
-            const year = 2023;
-            const startDate = new Date(year, 0, 1);
-            const endDate = new Date(year, 11, 31);
-            let weeklyReports = [];
-
-
-            let currentWeekStartDate = new Date(startDate);
-            let currentWeekEndDate = new Date(startDate);
-
-            currentWeekEndDate.setDate(currentWeekEndDate.getDate() + 6);
-            currentWeekStartDate.setHours(5, 30, 0, 0);
-            currentWeekEndDate.setHours(5, 30, 0, 0);
-
-            while (currentWeekStartDate <= endDate) {
-                const report = await userService.findSalesReportSelected(currentWeekStartDate, currentWeekEndDate);
-                weeklyReports.push(report);
-
-
-                currentWeekStartDate.setDate(currentWeekStartDate.getDate() + 7);
-                currentWeekEndDate = new Date(currentWeekStartDate);
-                currentWeekEndDate.setDate(currentWeekEndDate.getDate() + 6);
-            }
-
-            weeklyReports = weeklyReports.reverse()
-            await report.salesReportWeekly(weeklyReports, res)
-        }
-        if (timeRange === "month") {
-            const year = 2023;
-            const startDate = new Date(year, 0, 1);
-            const endDate = new Date(year, 11, 31);
-            let monthlyReports = [];
-
-            let currentMonthStartDate = new Date(startDate);
-            let currentMonthEndDate = new Date(startDate);
-
-            currentMonthEndDate.setMonth(currentMonthEndDate.getMonth() + 1);
-            currentMonthEndDate.setDate(currentMonthEndDate.getDate() - 1);
-            currentMonthStartDate.setHours(5, 30, 0, 0);
-            currentMonthEndDate.setHours(5, 30, 0, 0);
-
-            while (currentMonthStartDate <= endDate) {
-                const report = await userService.findSalesReportSelected(currentMonthStartDate, currentMonthEndDate);
-                monthlyReports.push(report);
-
-                currentMonthStartDate.setMonth(currentMonthStartDate.getMonth() + 1);
-                currentMonthEndDate = new Date(currentMonthStartDate);
-                currentMonthEndDate.setMonth(currentMonthEndDate.getMonth() + 1);
-                currentMonthEndDate.setDate(currentMonthEndDate.getDate() - 1);
-            }
-
-            monthlyReports = monthlyReports.reverse();
-            console.log(monthlyReports, "monthlyReports");
-            report.salesReportMonthly(monthlyReports, res);
-        }
-
-    } catch (err) {
-        console.log(err.message);
-    }
-}
 
 module.exports = {
     userHome,
@@ -635,7 +580,7 @@ module.exports = {
     hotelDetailsPage,
     sortHotels,
     filterHotels,
-
+    getRooms,
     proceedBooking,
     proceedBookingPage,
     checkInDatecheckOutDate,
@@ -651,6 +596,6 @@ module.exports = {
     walletPage,
     updateBooking,
     generateInvoice,
-    salesReport,
-    salesReportSelected,
+    // salesReport,
+    // salesReportSelected,
 }

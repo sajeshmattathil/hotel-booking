@@ -105,6 +105,59 @@ const findAllUsers = async ()=>{
        return await users.find({}).count()
     }catch(err){console.log(err.message);}
 }
+
+const findSalesData = async (startDate,endDate) =>{
+    try{
+        console.log(startDate,endDate,"startDate,endDate");
+       return await bookingHistory.aggregate([
+        {
+            $match:{checkin_date:{$gte:startDate},checkout_date:{$lte:endDate}}
+
+        },
+        {
+            $lookup:{
+                        from:'hotels',
+                        localField:'hotel_id',
+                        foreignField:'_id',
+                        as:'hotelInfo'
+                                 }
+        },
+        {
+            $unwind:'$hotelInfo'
+        },
+        {
+            $lookup:{
+                        from:'rooms',
+                        localField:'room_id',
+                        foreignField:'_id',
+                        as:'roomInfo'
+                                    }
+        },
+        {
+
+            $unwind:'$roomInfo'
+        },
+        {
+            $project: {
+                userName: 1,
+                status:"$status",
+                checkin: "$checkin_date",
+                checkout: "$checkout_date",
+                hotelName: "$hotelInfo.hotel_name",
+                roomType: "$roomInfo.roomType",
+                city:"$hotelInfo.city",   
+                amount:"$otherDetails.moneyPaid"         
+            }
+        },{
+            $sort :{
+                checkin:1
+            }
+        }
+
+       ])
+    }catch(err){console.log(err.message);}
+}
+
 module.exports={
     findAdminByEmail,
     findAdminNameByEmail,
@@ -117,5 +170,6 @@ module.exports={
     updateAdminWallet,
     findAdmin,
     findsales,
-    findAllUsers
+    findAllUsers,
+    findSalesData
 }

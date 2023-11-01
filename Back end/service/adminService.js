@@ -35,8 +35,11 @@ const auth = async (req) => {
 const adminUsername = async (email) => {
      try {
           const adminData = await adminRepository.findAdminNameByEmail(email)
-          const name = adminData.name
-          return name
+          if(adminData){
+               const name = adminData.name
+               return name
+          }else return null
+          
      } catch (err) { console.log(err); }
 }
 
@@ -198,6 +201,33 @@ const findAllUsers = async ()=>{
           if(data) return data
      }catch(err){console.log(err.message);}
 }
+const findSalesReport = async (data) => {
+     try {
+         const startDate = new Date(data.checkin_date);
+         const endDate = new Date(data.checkout_date);
+ 
+         const salesData = await adminRepository.findSalesData(startDate, endDate)
+         if (salesData) return salesData
+         else {
+             const msg = "No data found"
+             return { msg }
+         }
+     } catch (err) { console.log(err); }
+ }
+ 
+ const findSalesReportSelected = async (startDate, endDate) => {
+     try {
+         // const startDate = new Date(data.checkin_date); 
+         // const endDate = new Date(data.checkout_date);
+ 
+         const salesData = await adminRepository.findSalesData(startDate, endDate)
+         if (salesData) return salesData
+         else {
+             const msg = "No data found"
+             return { msg }
+         }
+     } catch (err) { console.log(err.message); }
+ }
 
 module.exports = {
      auth,
@@ -210,6 +240,8 @@ module.exports = {
      existingCoupons,
      addCoupon,
      findAlldetails,
-     findAllUsers
+     findAllUsers,
+     findSalesReport,
+     findSalesReportSelected
 }
 

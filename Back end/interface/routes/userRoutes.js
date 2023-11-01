@@ -47,6 +47,8 @@ router.post('/filter_hotels',controller.filterHotels)
 router.get('/proceedBooking/:roomType',controller.proceedBooking)
 router.get('/proceedBookingPage',controller.proceedBookingPage)
 router.post('/checkInDate-checkOutDate',controller.checkInDatecheckOutDate)
+router.post('/getNoOfRooms',controller.getRooms)
+
 router.post('/confirmBooking',controller.confirmBooking)
 router.get('/confirmPayment',controller.confirmPayment)
 router.get('/bookNow',controller.bookNow)
@@ -59,8 +61,6 @@ router.get('/cancel_booking/:id',controller.cancelBooking)
 router.get('/wallet',controller.wallet)
 router.get('/walletPage',controller.walletPage)
 router.get('/generate_invoice/:id',controller.generateInvoice)
-router.post('/sales_report',controller.salesReport)
-router.post('/sales_report_selected',controller.salesReportSelected)
 
 
 module.exports=router
