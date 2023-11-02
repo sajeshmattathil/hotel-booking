@@ -11,14 +11,17 @@ const userHome = (req, res) => {
     //res.render('user/invoice')
 }
 const userhotelsList = async (req, res) => {
+console.log(req.body,"req.body");
+
     const user = req.session.user
+
     req.session.city = req.body.city
-    req.session.adult = req.body.adult
+    req.session.num_adults = req.body.adult
     req.session.children = req.body.children
     req.session.checkin_date = req.body.checkin_date
     req.session.checkout_date = req.body.checkout_date
 
-    console.log(req.session.city, "oooooooo");
+    console.log(req.session.city,req.session.num_adults,req.session.checkin_date,req.session.checkout_date, "oooooooo");
     const hotels = await userService.findHotels(req.session.city)
     if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
     else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
@@ -273,9 +276,11 @@ const hotelDetailsPage = async (req, res) => {
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
         const roomArray = await userService.roomDetails(req)
+        console.log(roomArray,"roomArray");
         let no_ofRooms =  req.session.noOfRooms
+       let no_ofAdults = req.session.num_adults
 
-        res.render('user/rooms', {no_ofRooms, roomArray, images, checkin_date, checkout_date, user, msg })
+        res.render('user/rooms', {no_ofAdults,no_ofRooms, roomArray, images, checkin_date, checkout_date, user, msg })
 
     } catch (err) { console.log(err); }
 }
@@ -300,6 +305,20 @@ const filterHotels = async (req, res) => {
        res.redirect('/hotelsPage')
     } catch (err) { console.log(err); }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 const proceedBooking = async (req, res) => {
     try {
         req.session.roomType = req.params.roomType
@@ -318,7 +337,7 @@ const proceedBooking = async (req, res) => {
             checkin_date = today
             req.session.checkin_date = checkin_date
 
-            console.log(checkin_date);
+            console.log(checkin_date,"checkin_date");
 
         }
         if (!checkout_date) {
@@ -328,6 +347,7 @@ const proceedBooking = async (req, res) => {
             const tomorrowString = tomorrow.toISOString().split('T')[0];
             checkout_date = tomorrowString
             req.session.checkout_date = checkout_date
+            console.log(checkout_date,"checkout_date")
         }
 
         res.redirect('/proceedBookingPage')
@@ -346,6 +366,8 @@ const proceedBookingPage = async (req, res) => {
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
         const noOfRooms = req.session.noOfRooms
+        const noOfAdults = req.session.no_ofAdults
+     
         const dateObject1 = new Date(checkin_date);
         const dateObject2 = new Date(checkout_date);
         if (!isNaN(dateObject1) && !isNaN(dateObject2)) {
@@ -356,19 +378,40 @@ const proceedBookingPage = async (req, res) => {
         }
         console.log(numberOfDays,"numberOfDays");
         const totalAmount =numberOfDays * noOfRooms * roomData.price
-        const checkRoomAvailability = await userService.checkRoomAvailability(req,noOfRooms)
+       // const checkRoomAvailability = await userService.checkRoomAvailability(req,noOfRooms)
         const msg = req.query.msg
-        const availablityMsg = checkRoomAvailability.msg
-        console.log(availablityMsg, "availablityMsg");
-        res.render('user/proceedBooking', {user,userData,numberOfDays, roomData, hotelData, checkin_date, checkout_date,totalAmount,noOfRooms, msg, availablityMsg })
+       // const availablityMsg = checkRoomAvailability.msg
+       // console.log(availablityMsg, "availablityMsg");
+        res.render('user/proceedBooking', {user,userData,numberOfDays, roomData, hotelData, checkin_date, checkout_date,totalAmount,noOfRooms, msg,noOfAdults })
     } catch (err) { console.log(err.message); }
 }
 
 const getRooms=(req,res)=>{
     try{
-        console.log(req.body.num_rooms);
+        console.log(req.body.num_rooms,"num_rooms");
         req.session.noOfRooms = req.body.num_rooms
         res.json({sucess:req.session.noOfRooms})
+    }catch(err){console.log(err.message);}
+}
+const getAdults=(req,res)=>{
+    try{
+        console.log(req.body,"req.body")
+        const {num_adults,numRooms,expectesRoomNumber} = req.body
+        console.log(req.body.num_adults,"num_adults");
+        req.session.num_adults = num_adults
+        console.log(req.session.num_adults,"req.session.num_adults,")
+
+        if(expectesRoomNumber >= numRooms) req.session.noOfRooms = expectesRoomNumber
+        res.json({sucess:req.session.num_adults})
+    }catch(err){console.log(err.message);}
+}
+
+
+const verifyRoomAvailability = async (req,res)=>{
+    try{
+        const response = await userService.checkRoomAvailability(req)
+        if(response.msg === " ") res.json({success:"ok"})
+        else res.json({success:"no"})
     }catch(err){console.log(err.message);}
 }
 
@@ -596,6 +639,8 @@ module.exports = {
     walletPage,
     updateBooking,
     generateInvoice,
+    getAdults,
+    verifyRoomAvailability,
     // salesReport,
     // salesReportSelected,
 }

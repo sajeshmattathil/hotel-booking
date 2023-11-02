@@ -496,20 +496,94 @@ const roomImages = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-const checkRoomAvailability = async (req,noOfRooms) => {
+// const checkRoomAvailability = async (req,noOfRooms) => {
+//     try {
+//         const roomData = req.session.roomData
+//         const hotelData = req.session.hotelData
+//         console.log(roomData,hotelData,"***")
+//         const hotel_id = hotelData._id
+//         const room_id = roomData._id
+//         const startDate = req.session.checkin_date
+//         const endDate = req.session.checkout_date
+
+
+//         let selectedRoom = await userRepository.selectedRoom(roomData)
+//         var roomNumber = selectedRoom.roomNumbers[0]
+//         var roomNumberArray = await userRepository.findAllRoomNumber()
+//         if (roomNumber) await userRepository.removeRoomNumber(roomData)     
+//         else {
+//             console.log(roomNumberArray, "All room numbers");
+
+//             let bothStartEndOverlaps = await userRepository.bothStartEndOverlaps(startDate, endDate, hotel_id, room_id)
+//             const bothStartEndOverlapsRooms = bothStartEndOverlaps.map((room) => { return room.roomNumber })
+//             console.log(bothStartEndOverlapsRooms, "Room numbers having both startDate, endDate inside ");
+
+//             if (bothStartEndOverlapsRooms.length) {
+//                 roomNumberArray = roomNumberArray.filter(item => !bothStartEndOverlapsRooms.includes(item));
+//                 console.log(roomNumberArray, "After first filtering");
+//             }
+
+//             let onlyEndOverlaps = await userRepository.onlyEndOverlaps(startDate, endDate, hotel_id, room_id)
+//             const onlyEndOverlapsRooms = onlyEndOverlaps.map((room) => { return room.roomNumber })
+//             console.log(onlyEndOverlapsRooms, "Room numbers having only endDate inside");
+
+//             if (onlyEndOverlapsRooms.length) {
+//                 roomNumberArray = roomNumberArray.filter(item => !onlyEndOverlapsRooms.includes(item));
+//                 console.log(roomNumberArray, "After second filtering ");
+//             }
+
+//             let onlyStartOverlaps = await userRepository.onlyStartOverlapsRooms(startDate, endDate, hotel_id, room_id)
+//             const onlyStartOverlapsRooms = onlyStartOverlaps.map((room) => { return room.roomNumber })
+//             console.log(onlyStartOverlapsRooms, "Room numbers having only endDate inside");
+
+//             if (onlyStartOverlapsRooms.length) {
+//                 roomNumberArray = roomNumberArray.filter(item => !onlyStartOverlapsRooms.includes(item));
+//                 console.log(roomNumberArray, "After final filtering");
+//             }
+//         }
+//         console.log(roomNumberArray, "roomNumberArray");
+//         console.log(roomNumberArray.length >=noOfRooms);
+
+//         if (roomNumberArray.length <=noOfRooms) {
+//             console.log('/////');
+//             const msg = "No rooms available,select another room"
+//             return { msg }
+//         } else {
+//             const msg = " "
+//             return { msg }
+//         }
+//     } catch (err) { console.log(err); }
+// }
+
+const checkRoomAvailability = async (req) => {
     try {
-        const roomData = req.session.roomData
-        const hotelData = req.session.hotelData
-        console.log(roomData,hotelData,"***")
-        const hotel_id = hotelData._id
-        const room_id = roomData._id
+       const {numRooms,roomId} = req.body
+       console.log(req.body,"req.body");
+
         const startDate = req.session.checkin_date
         const endDate = req.session.checkout_date
-        let selectedRoom = await userRepository.selectedRoom(roomData)
-        var roomNumber = selectedRoom.roomNumbers[0]
-        var roomNumberArray = await userRepository.findAllRoomNumber()
-        if (roomNumber) await userRepository.removeRoomNumber(roomData)     
+        const room_id = roomId
+        console.log(startDate,endDate,"startDate,endDate");
+
+        let selectedRoom = await userRepository.getRoom(roomId)
+        console.log(selectedRoom,"selectedRoom");
+        var roomNumber = selectedRoom.roomNumbers
+        const hotel_id = selectedRoom.hotel
+        if (roomNumber.length) {
+           // await userRepository.removeRoomNumber(roomData) 
+           console.log('room number is present');
+           if (roomNumber.length <=numRooms) {
+            console.log('/////');
+            const msg = "No rooms available,select another room"
+            return { msg }
+        } else {
+            const msg = " "
+            return { msg }
+        }
+        }    
         else {
+           var  roomNumberArray = await userRepository.findAllRoomNumber()
+
             console.log(roomNumberArray, "All room numbers");
 
             let bothStartEndOverlaps = await userRepository.bothStartEndOverlaps(startDate, endDate, hotel_id, room_id)
@@ -538,11 +612,12 @@ const checkRoomAvailability = async (req,noOfRooms) => {
                 roomNumberArray = roomNumberArray.filter(item => !onlyStartOverlapsRooms.includes(item));
                 console.log(roomNumberArray, "After final filtering");
             }
-        }
+        
         console.log(roomNumberArray, "roomNumberArray");
-        console.log(roomNumberArray.length >=noOfRooms);
+        console.log(roomNumberArray.length >=numRooms);
+        console.log(numRooms,"numRooms");
 
-        if (roomNumberArray.length <=noOfRooms) {
+        if (roomNumberArray.length <=numRooms) {
             console.log('/////');
             const msg = "No rooms available,select another room"
             return { msg }
@@ -550,8 +625,12 @@ const checkRoomAvailability = async (req,noOfRooms) => {
             const msg = " "
             return { msg }
         }
+    }
     } catch (err) { console.log(err); }
 }
+
+
+
 
 const selectedRoom = async (req, res) => {
     try {

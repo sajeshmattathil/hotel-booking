@@ -48,6 +48,8 @@ router.get('/proceedBooking/:roomType',controller.proceedBooking)
 router.get('/proceedBookingPage',controller.proceedBookingPage)
 router.post('/checkInDate-checkOutDate',controller.checkInDatecheckOutDate)
 router.post('/getNoOfRooms',controller.getRooms)
+router.post('/getNoOfAdults',controller.getAdults)
+router.post('/verifyRoomAvailability',controller.verifyRoomAvailability)
 
 router.post('/confirmBooking',controller.confirmBooking)
 router.get('/confirmPayment',controller.confirmPayment)

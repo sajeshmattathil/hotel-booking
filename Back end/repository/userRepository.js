@@ -161,6 +161,11 @@ const selectedRoom = async (roomData) => {
         return await rooms.findOne({ _id: roomData._id })
     } catch (err) { console.log(err); }
 }
+const getRoom = async (roomId) => {
+    try {
+        return await rooms.findOne({ _id: roomId })
+    } catch (err) { console.log(err); }
+}
   
 const findCouponByUser=async (email)=>{
     try{
@@ -561,7 +566,8 @@ module.exports = {
     //findSalesData,
     filerHotelsifOneMissing,
     filerHotels,
-    findTransactions
+    findTransactions,
+    getRoom
    
 }
 
