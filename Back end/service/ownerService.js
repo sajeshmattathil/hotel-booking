@@ -51,9 +51,11 @@ const authHotel = async (req) => {
           const owner=req.session.owner
           const ownerData = await ownerRepository.findOwnerByEmail(owner)
           const owner_id = ownerData._id
-          let {amenities} = req.body
+          let {amenities,cancellationPolicy} = req.body
           const { hotel_name,star_rating,description, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
-
+          
+          if(!cancellationPolicy) cancellationPolicy =" "
+          
           if (!hotel_name||!star_rating ||!description|| !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
                console.log("fill empty fields");
                let msg = 'fill empty fields'
@@ -82,7 +84,8 @@ const authHotel = async (req) => {
                     totalRoomsAvailable,
                     nearTouristDestination,
                     imagesOfHotel: image,
-                    owner_id
+                    owner_id,
+                    cancellationPolicy
                })
                newHotel.save()
                let msg = 'Hotel saved successfully'

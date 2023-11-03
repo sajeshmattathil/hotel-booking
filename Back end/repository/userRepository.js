@@ -519,7 +519,20 @@ const findTransactions = async (id)=>{
         return await walletTransaction.find({transaction_id:id})
     }catch(err){console.log(err.message);}
 }
+
+const findHotel = async (id)=>{
+    try{
+        return await hotels.findOne({_id:id})
+    }catch(err){console.log(err.message);}
+}
+const findRoom = async (id)=>{
+    try{
+        return await rooms.findOne({_id:id})
+    }catch(err){console.log(err.message);}
+}
 module.exports = {
+    findHotel,
+    findRoom,
     findUserByEmail,
     findAllHotels,
     findAndEditName,

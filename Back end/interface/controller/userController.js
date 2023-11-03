@@ -4,7 +4,7 @@ const invoice = require('../../utils/invoice')
 
 const userHome = (req, res) => {
     // res.render('user/index')
-    res.render('user/sample')
+    res.render('user/bookingFinalPage')
     // const checkin_date = req.session.checkin_date
     // const checkout_date = req.session.checkout_date
     //res.render('user/userHome',{checkin_date,checkout_date})
@@ -21,7 +21,6 @@ console.log(req.body,"req.body");
     req.session.checkin_date = req.body.checkin_date
     req.session.checkout_date = req.body.checkout_date
 
-    console.log(req.session.city,req.session.num_adults,req.session.checkin_date,req.session.checkout_date, "oooooooo");
     const hotels = await userService.findHotels(req.session.city)
     if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
     else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
@@ -31,7 +30,6 @@ const userhotelsListPage = async (req, res) => {
     let hotels = await userService.findHotels(req.session.city)
     if(req.session.filtered) hotels = req.session.filtered
 
-    console.log(hotels,req.session.filtered,"hotels,req.session.filtered");
     const userName = ''
     const user = req.session.user
     const msg = req.query.msg
@@ -273,8 +271,30 @@ const hotelDetailsPage = async (req, res) => {
         const images = await userService.roomImages(req)
         const user = req.session.user
         const msg = req.query.msg
-        const checkin_date = req.session.checkin_date
-        const checkout_date = req.session.checkout_date
+       
+
+        let checkin_date = req.session.checkin_date
+        let checkout_date = req.session.checkout_date
+
+        if (!checkin_date) {
+            const today = new Date().toISOString().split('T')[0];
+            checkin_date = today
+            req.session.checkin_date = checkin_date
+
+            console.log(checkin_date,"checkin_date");
+
+        }
+        if (!checkout_date) {
+            const today = new Date()
+            const tomorrow = new Date(today);
+            tomorrow.setDate(today.getDate() + 1);
+            const tomorrowString = tomorrow.toISOString().split('T')[0];
+            checkout_date = tomorrowString
+            req.session.checkout_date = checkout_date
+            console.log(checkout_date,"checkout_date")
+        }
+
+
         const roomArray = await userService.roomDetails(req)
         console.log(roomArray,"roomArray");
         let no_ofRooms =  req.session.noOfRooms
@@ -366,7 +386,7 @@ const proceedBookingPage = async (req, res) => {
         const checkin_date = req.session.checkin_date
         const checkout_date = req.session.checkout_date
         const noOfRooms = req.session.noOfRooms
-        const noOfAdults = req.session.no_ofAdults
+        const noOfAdults = req.session.num_adults
      
         const dateObject1 = new Date(checkin_date);
         const dateObject2 = new Date(checkout_date);
@@ -378,6 +398,7 @@ const proceedBookingPage = async (req, res) => {
         }
         console.log(numberOfDays,"numberOfDays");
         const totalAmount =numberOfDays * noOfRooms * roomData.price
+        req.session.totalAmount_first = totalAmount
        // const checkRoomAvailability = await userService.checkRoomAvailability(req,noOfRooms)
         const msg = req.query.msg
        // const availablityMsg = checkRoomAvailability.msg
@@ -431,6 +452,7 @@ const confirmBooking = async (req, res) => {
 
 const confirmPayment = async (req, res) => {
     try {
+        const user  = req.session.user
         const booking = req.session.booking
         const roomData = req.session.roomData
         const coupons = await userService.findCoupons(req)
@@ -454,33 +476,44 @@ const confirmPayment = async (req, res) => {
             console.error('Invalid date format');
         }
         req.session.numberOfDays = numberOfDays
+        var noOfRooms = req.session.noOfRooms
         console.log(numberOfDays, "numberOfDays");
         const offer = await userService.findCategoryOffer(req)
         req.session.offer = offer
         const walletMoney = await userService.findWalletMoney(req)
         req.session.walletMoneyUsed = walletMoney.wallet
         console.log(walletMoney, "wallet");
-        var totalAmount
+        var totalAmount =  req.session.totalAmount_first
+
+        console.log(totalAmount,"totalAmount-first");
         if (couponSelected && offer) {
-            var amount = ((roomData.price - (roomData.price * (offer.discount / 100))))
-            totalAmount = (amount + (roomData.price * .12)) * numberOfDays - parseInt(couponSelected) - walletMoney.wallet
+            console.log(111);
+            var amount = (totalAmount- ((roomData.price * (offer.discount / 100)) * noOfRooms )) - parseInt(couponSelected) - walletMoney.wallet
+            totalAmount = amount + (amount * 0.12)
         } else if (offer && !couponSelected) {
-            amount = ((roomData.price - (roomData.price * (offer.discount / 100))))
-            totalAmount = (amount + (roomData.price * .12)) * numberOfDays - walletMoney.wallet
+            console.log(222);
+            console.log(totalAmount,roomData.price ,offer.discount,noOfRooms,walletMoney.wallet,"datas");
+            amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms )) - walletMoney.wallet
+            totalAmount = amount + (amount * 0.12)
 
         } else if (couponSelected && !offer) {
-            amount = ((roomData.price) - parseInt(couponSelected))
-            totalAmount = (amount + (roomData.price * .12)) * numberOfDays - walletMoney.wallet
+            console.log(333);
+
+            amount = (totalAmount - parseInt(couponSelected))- walletMoney.wallet
+            totalAmount = amount + (amount * 0.12)
 
         } else {
-            amount = (roomData.price + -walletMoney.wallet)
-            totalAmount = (amount + (roomData.price * .12)) * numberOfDays - walletMoney.wallet
+            console.log(444);
+
+            amount = (totalAmount -walletMoney.wallet)
+            totalAmount = amount + (amount * 0.12)
 
         }
 
+        console.log(totalAmount,"totalAmount-last");
 
         req.session.totalAmount = totalAmount
-        res.render('user/payment', { userName, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, walletMoney, amount, numberOfDays })
+        res.render('user/payment', { user,userName, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, walletMoney, amount, numberOfDays ,noOfRooms})
     } catch (err) { console.log(err); }
 }
 
@@ -502,10 +535,31 @@ const bookNow = async (req, res) => {
     try {
         console.log(req.query.param, "*******");
         var saveAndConfirm = await userService.saveBooking(req)
-        if (saveAndConfirm.status === 200) res.redirect(`/confirmPayment?msg=${saveAndConfirm.msg}`)
+        if (saveAndConfirm.status === 200) res.redirect('/bookingConfirmed')
         if (saveAndConfirm.status === 202) res.redirect(`/confirmPayment?msg=${saveAndConfirm.msg}`)
 
     } catch (err) { console.log(err); }
+}
+
+const bookingConfirmed = (req,res)=>{
+    try{
+      res.redirect('/bookingConfirmedPage')
+    }catch(err){console.log(err.message);}
+}
+const bookingConfirmedPage = async (req,res)=>{
+    try{
+        const user = req.session.user
+        const booking = req.session.bookingData
+        console.log(booking,"booking");
+        booking.checkin_date =  booking.checkin_date.split('T')[0]
+        booking.checkout_date =  booking.checkout_date.split('T')[0]
+
+        console.log(booking,"booking");
+        const hotel = await userService.findHotel(booking.hotel_id)
+        const room = await userService.findRoom(booking.room_id)
+console.log(hotel,room,"hotel,room")
+        res.render('user/bookingFinalPage',{user,booking,hotel,room})
+    }catch(err){console.log(err.message);}
 }
 
 const manageBookings = (req, res) => {
@@ -544,11 +598,12 @@ const wallet = async (req, res) => {
 }
 const walletPage = async (req, res) => {
     try {
+        const user = req.session.user
         const wallet = await userService.findWalletMoney(req)
         const transactions = await userService.findWalletTransactions(req)
         console.log(transactions,"transactions");
         const msg = transactions.msg
-        res.render('user/wallet', { wallet,transactions,msg })
+        res.render('user/wallet', { user,wallet,transactions,msg })
     } catch (err) { console.log(err.message); }
 }
 
@@ -641,6 +696,8 @@ module.exports = {
     generateInvoice,
     getAdults,
     verifyRoomAvailability,
+    bookingConfirmed,
+    bookingConfirmedPage
     // salesReport,
     // salesReportSelected,
 }

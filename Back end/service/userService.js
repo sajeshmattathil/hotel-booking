@@ -572,7 +572,7 @@ const checkRoomAvailability = async (req) => {
         if (roomNumber.length) {
            // await userRepository.removeRoomNumber(roomData) 
            console.log('room number is present');
-           if (roomNumber.length <=numRooms) {
+           if (roomNumber.length <numRooms) {
             console.log('/////');
             const msg = "No rooms available,select another room"
             return { msg }
@@ -617,7 +617,7 @@ const checkRoomAvailability = async (req) => {
         console.log(roomNumberArray.length >=numRooms);
         console.log(numRooms,"numRooms");
 
-        if (roomNumberArray.length <=numRooms) {
+        if (roomNumberArray.length <numRooms) {
             console.log('/////');
             const msg = "No rooms available,select another room"
             return { msg }
@@ -809,6 +809,7 @@ const saveBooking = async (req) => {
         })
         newBookingHistory.save()
         console.log(newBookingHistory, "newBookingHistory...");
+        req.session.bookingData = newBookingHistory
 
         await userRepository.updateUserWallet(user, moneyFromWallet)
 
@@ -997,9 +998,23 @@ try{
 
 }catch(err){console.log(err.message);}
 }
+const findHotel = async (id)=>{
+    try{
+      const data = await userRepository.findHotel(id)
+      return data
+    }catch(err){console.log(err.message);}
+}
+const findRoom = async (id)=>{
+    try{
+      const data = await userRepository.findRoom(id)
+      return data
+    }catch(err){console.log(err.message);}
+}
 
 module.exports = {
     findUser,
+    findHotel,
+    findRoom,
     userAuthentication,
     verifyUser,
     generateOtpAndSend,

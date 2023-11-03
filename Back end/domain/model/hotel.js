@@ -43,6 +43,10 @@ const hotelSchema=new mongoose.Schema({
         type:String,
         required:true
     },
+    cancellationPolicy:{
+        type:String,
+        required:false
+    },
     imagesOfHotel:{
         type:Array,
         required:true

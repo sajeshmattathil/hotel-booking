@@ -54,6 +54,9 @@ router.post('/verifyRoomAvailability',controller.verifyRoomAvailability)
 router.post('/confirmBooking',controller.confirmBooking)
 router.get('/confirmPayment',controller.confirmPayment)
 router.get('/bookNow',controller.bookNow)
+router.get('/bookingConfirmed',controller.bookingConfirmed)
+router.get('/bookingConfirmedPage',controller.bookingConfirmedPage)
+
 router.post('/createOrder', paymentController.createOrder);
 router.get('/manageBookings',controller.manageBookings)
 router.get('/manageBookingsPage',controller.manageBookingsPage)

@@ -32,6 +32,7 @@ var revenue = []
      NoOfBookings = index +1
 
   })
+  total = total.toFixed(2)
   const noOfUsers = await adminService.findAllUsers()
  
   console.log(dates,revenue,"dates");

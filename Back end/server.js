@@ -12,6 +12,7 @@ const path = require('path')
 const userRouter = require('./interface/routes/userRoutes')
 const adminRouter = require('./interface/routes/adminRoutes')
 const ownerRouter = require('./interface/routes/ownerRoutes')
+const controller =require('../Back end/interface/controller/userController')
 
 app.use(express.json())
 app.use(cookieParser());
@@ -32,10 +33,10 @@ app.use('/', userRouter)
 app.use('/admin', adminRouter)
 app.use('/owner', ownerRouter)
 
-// setTimeout(() => {
-//     controller.updateBooking(); // Call your function here
-// }, 5000);
-// console.log(controller.updateBooking(),"controller.updateBooking()")
+setTimeout(() => {
+    controller.updateBooking(); // Call your function here
+}, 5000);
+//console.log(controller.updateBooking(),"controller.updateBooking()")
 
 
 
