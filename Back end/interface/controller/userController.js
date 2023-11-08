@@ -481,39 +481,64 @@ const confirmPayment = async (req, res) => {
         const offer = await userService.findCategoryOffer(req)
         req.session.offer = offer
         const walletMoney = await userService.findWalletMoney(req)
-        req.session.walletMoneyUsed = walletMoney.wallet
+       let wallet = walletMoney.wallet
         console.log(walletMoney, "wallet");
         var totalAmount =  req.session.totalAmount_first
-
+        let diff
         console.log(totalAmount,"totalAmount-first");
         if (couponSelected && offer) {
             console.log(111);
-            var amount = (totalAmount- ((roomData.price * (offer.discount / 100)) * noOfRooms )) - parseInt(couponSelected) - walletMoney.wallet
-            totalAmount = amount + (amount * 0.12)
+            var amount = (totalAmount- ((roomData.price * (offer.discount / 100)) * noOfRooms )) - parseInt(couponSelected) 
+           totalAmount = amount + (amount * 0.12)
+           if(totalAmount < walletMoney.wallet){
+            diff = totalAmount - walletMoney.wallet
+            wallet = diff
+            walletMoney.wallet = walletMoney.wallet - diff
+            totalAmount = totalAmount -  walletMoney.wallet
+           }
         } else if (offer && !couponSelected) {
             console.log(222);
             console.log(totalAmount,roomData.price ,offer.discount,noOfRooms,walletMoney.wallet,"datas");
-            amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms )) - walletMoney.wallet
+            amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms )) 
             totalAmount = amount + (amount * 0.12)
 
+            if(totalAmount < walletMoney.wallet){
+                diff = walletMoney.wallet - totalAmount 
+                wallet = diff
+                walletMoney.wallet = walletMoney.wallet - diff
+               }
+               totalAmount = totalAmount -  walletMoney.wallet
         } else if (couponSelected && !offer) {
             console.log(333);
 
-            amount = (totalAmount - parseInt(couponSelected))- walletMoney.wallet
+            amount = (totalAmount - parseInt(couponSelected))
             totalAmount = amount + (amount * 0.12)
+            if(totalAmount < walletMoney.wallet){
+                diff =walletMoney.wallet - totalAmount 
+                wallet = diff
+                walletMoney.wallet = walletMoney.wallet - diff
+               }
+               totalAmount = totalAmount -  walletMoney.wallet
 
         } else {
             console.log(444);
 
-            amount = (totalAmount -walletMoney.wallet)
+            amount = totalAmount 
             totalAmount = amount + (amount * 0.12)
+            if(totalAmount < walletMoney.wallet){
+                diff = walletMoney.wallet - totalAmount 
+                wallet = diff
+                walletMoney.wallet = walletMoney.wallet - diff
+               }
+               totalAmount = totalAmount -  walletMoney.wallet
+
 
         }
 
         console.log(totalAmount,"totalAmount-last");
-
+        req.session.walletMoneyUsed = walletMoney.wallet
         req.session.totalAmount = totalAmount
-        res.render('user/payment', { user,userName, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, walletMoney, amount, numberOfDays ,noOfRooms})
+        res.render('user/payment', { user,userName, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, wallet, amount, numberOfDays ,noOfRooms})
     } catch (err) { console.log(err); }
 }
 
