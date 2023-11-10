@@ -7,7 +7,9 @@
     <div class="form-container">
      
       <div class="form-inner">
-         <form action="/signup-submit" class="signup" method="post">
+         <form  autocomplete="off" action="/signup-submit" onsubmit="return validateForm( )" class="signup" method="post">
+      <h4  class="message text-success"><%= msg %></h4>
+
           <div class="field">
             <input type="text" placeholder="First Name" name="first_name" required>
           </div>
@@ -15,16 +17,23 @@
             <input type="text" placeholder="Last Name" name="last_name" required>
           </div>
           <div class="field">
-            <input type="text" placeholder="Email Address" name="email" required>
+            <div id="emailError" style="color: red;"></div>
+
+            <input type="email" id="email" placeholder="Email Address" name="email" oninput="validateEmail()" required>
           </div>
           <div class="field">
-            <input type="" placeholder="Mobile Number" name="mobile" required>
+            <div  id="mobileError" style="color: red;"></div>
+
+            <input type="text" id="mobile" placeholder="Mobile Number" name="mobile" oninput="validateMobile()" required minlength="10" maxlength="10">
           </div>
           <div class="field">
-            <input type="password" placeholder="Password" name="password" required>
+            <input type="password" placeholder="Password" name="password" required minlength="6">
           </div>
           <div class="field">
             <input type="password" placeholder="Confirm password" name="confirm" required>
+          </div>
+          <div class="field">
+            <input type="text" placeholder="Enter your referal code" name="referal" minlength="6" >
           </div>
           <div class="field btn">
             <div class="btn-layer"></div>

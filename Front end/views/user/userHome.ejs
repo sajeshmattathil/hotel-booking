@@ -1,0 +1,215 @@
+
+<%-include('header')-%>
+
+   <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .banner {
+            background-image: url('banner.jpg'); 
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            text-align: center;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .search-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .search-bar {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-right: 10px;
+            width: 300px;
+        }
+
+        .city-images {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .city-image {
+            width: 150px;
+            height: 150px;
+            background-color: #f4f4f4;
+            border-radius: 50%;
+            margin: 10px;
+            cursor: pointer;
+        }
+        
+        .city-image {
+    width: 150px;
+    height: 150px;
+    background-color: #f4f4f4;
+    border-radius: 50%;
+    margin: 10px;
+    cursor: pointer;
+    background-size: cover;
+    background-position: center;
+}
+
+.city-image:nth-child(1) {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg/800px-The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg'); /* Replace with the image URL for Paris */
+}
+
+.city-image:nth-child(2) {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg/800px-The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg'); /* Replace with the image URL for New York */
+}
+
+.city-image:nth-child(3) {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg/800px-The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg'); /* Replace with the image URL for Tokyo */
+}
+.city-image:nth-child(4) {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg/800px-The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg'); /* Replace with the image URL for Tokyo */
+}
+.city-image:nth-child(5) {
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg/800px-The_main_gateway_%28darwaza%29_to_the_Taj_Mahal.jpg'); /* Replace with the image URL for Tokyo */
+}
+.navbar {
+    background-color: #003b95;
+   
+}
+
+.navbar-brand {
+    font-size: 2em;
+    color: #fff;   
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    height: 30vh; 
+}
+.navbar-brand {
+    text-align:center; 
+  
+margin-left: 30px;    
+}
+
+</style>
+
+    <nav class="navbar">
+        <div class="container">
+            <a class="navbar-brand" >Travel Nest</a>
+        </div>
+    </nav>
+    <div class="banner">
+        <h1>Welcome to Travel Website</h1>
+        <p>Explore the best hotels in your favorite cities</p>
+    </div>
+
+    <section class="section bg-light pb-0" style="padding-top:22%;border-bottom: #003b95;" >
+        <div class="container">       
+          <div class="row check-availabilty" id="next">
+            <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
+              <form action="/searchHotels" method="post" class="d-flex align-items-end">
+                <div class="col-md-3 mb-lg-0">
+                  <div class="field-icon-wrap">
+                    <label for="myInput" class="font-weight-bold text-light">Where do you want to go</label>
+                    <div class="icon"><span class="icon-calendar"></span></div>
+                    <input type="text" id="myInput" oninput="capitalizeFirstLetter()" name="city" class="form-control" placeholder="Where do you want to go" required>
+                  </div>
+                </div>
+                <div class="col-md-2 mb-lg-0">
+                
+                  <div class="field-icon-wrap d-flex align-items-center mr-3">
+                    <div class="icon"><span class="icon-calendar"></span></div>
+                    <input type="date" id="checkin" name="checkin_date" class="form-control small-input" placeholder="<%=checkin_date || 'Check In'%>" required>
+                </div>
+                </div>
+                <div class="col-md-2 mb-lg-0">
+                
+
+                  <div class="field-icon-wrap d-flex align-items-center mr-3">
+                    <div class="icon"><span class="icon-calendar"></span></div>
+                    <input type="date" id="checkout" name="checkout_date" class="form-control small-input" placeholder="<%=checkout_date || 'Check Out'%>" required>
+                </div>
+                </div>
+                <div class="col-md-1 mb-md-0">
+                  <label for="adults" class="font-weight-bold text-dark">Adults</label>
+                  <div class="field-icon-wrap">
+                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                    <select name="adult" id="adults" class="form-control">
+                      <option value="">1</option>
+                      <option value="">2</option>
+                      <option value="">3</option>
+                      <option value="">4+</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-1 mb-md-0">
+                  <label for="children" class="font-weight-bold text-dark">Children</label>
+                  <div class="field-icon-wrap">
+                    <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                    <select name="children" id="children" class="form-control">
+                      <option value="">1</option>
+                      <option value="">2</option>
+                      <option value="">3</option>
+                      <option value="">4+</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <button class="btn btn-primary btn-block text-white mt-3" style="background-color: #003b95;">Check Availability</button>
+                </div>
+              </form>
+            </div>
+          </div>
+       </div>
+    </section>
+       
+
+    <div class="city-images">
+        <div class="city-image" onclick="redirectToCity('paris')"> </div> 
+        <div class="city-image" onclick="redirectToCity('new-york')"></div>
+        <div class="city-image" onclick="redirectToCity('tokyo')"></div>
+        <div class="city-image" onclick="redirectToCity('tokyo')"></div>
+        
+
+        <!-- Add more city images as needed -->
+    </div>
+
+    <script>
+        function redirectToCity(city) {
+            window.location.href = `city/${city}.html`;
+        }
+    </script>
+     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+     <script>
+        document.addEventListener('DOMContentLoaded', function() {
+        const checkinInput = document.getElementById('checkin');
+        const checkoutInput = document.getElementById('checkout');
+        const submitButton = document.getElementById('submit');
+    
+        const today = new Date().toISOString().split('T')[0];
+        
+        checkinInput.min = today;
+        checkoutInput.min = today;
+    
+        submitButton.addEventListener('click', function() {
+            const checkinDate = checkinInput.value;
+            const checkoutDate = checkoutInput.value;
+    
+            if (checkinDate && checkoutDate) {
+                alert(`Check-In Date: ${checkinDate}\nCheck-Out Date: ${checkoutDate}`);
+            } else {
+                alert('Please select both check-in and check-out dates.');
+            }
+        });
+    });
+    
+    </script>
+     <%-include('footer')-%>

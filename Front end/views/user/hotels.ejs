@@ -1,0 +1,469 @@
+<%-include('header')-%>
+
+  <style>
+    .left-links a {
+      margin-right: 10px;
+
+    }
+  </style>
+
+
+
+  <header class="site-header js-site-header py-3" style="background-color: #003b95; height: 15%;">
+    <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
+      <div class="container-fluid">
+        <a class="navbar-brand text-light">TravelNest</a>
+        <form class="d-flex">
+          <a href="" class=" me-2 text-light"></a>
+        </form>
+        <div class="left-links">
+          <a href="/userManagement" class="text-light">Profile Management</a>
+          <a href="/manageBookings" class="text-light">Manage Bookings</a>
+          <% if(user) { %>
+            <a href="/wallet" class="text-light">Wallet</a>
+            <a href="/sign_out" class="text-light">Sign Out</a>
+            <% } else { %>
+              <a href="/login" class="text-light">Log in/Sign up</a>
+              <% } %>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+
+
+  <section class="section bg-light m-3 pb-0" style="padding-top:22%;border-bottom: #003b95;">
+    <div class="container">
+      <div class="row check-availabilty" id="next">
+        <div class="block-32" data-aos="fade-up" data-aos-offset="-200">
+          <form action="/searchHotels" method="post">
+            <div class="row">
+              <div class="col-md-6  mb-lg-0 col-lg-3">
+                <div class="field-icon-wrap">
+                  <label for="adults" class="font-weight-bold text-light">Where do you want to go</label>
+                  <div class="icon"><span class="icon-calendar"></span></div>
+                  <input type="text" id="myInput" oninput="capitalizeFirstLetter()" name="city" class="form-control"
+                    placeholder="Where do you want to go" required>
+                </div>
+              </div>
+              <div class="col-md-6  mb-lg-0 col-lg-3">
+                <div class="field-icon-wrap">
+                  <label for="checkin_date" class="font-weight-bold text-light">Check In</label>
+                  <div class="icon"><span class="icon-calendar"></span></div>
+                  <input type="date" id="checkin" name="checkin_date" class="form-control" placeholder="Check In">
+                </div>
+              </div>
+
+
+
+
+              <div class="col-md-6  mb-lg-0 col-lg-3">
+                <div class="field-icon-wrap">
+                  <label for="checkout_date" class="font-weight-bold text-light">Check Out</label>
+
+                  <div class="icon"><span class="icon-calendar"></span></div>
+                  <input type="date" id="checkout" name="checkout_date" class="form-control" placeholder="Check Out">
+                </div>
+              </div>
+              <div class="col-md-6  mb-md-0 col-lg-3">
+                <div class="row">
+                  <div class="col-md-6  mb-md-0">
+                    <label for="adults" class="font-weight-bold text-dark">Adults</label>
+                    <div class="field-icon-wrap">
+                      <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                      <select name="adult" id="adults" class="form-control">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="" 8>8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+
+                      </select>
+                    </div>
+                  </div>
+                  <div class="col-md-6  mb-md-0">
+                    <label for="children" class="font-weight-bold text-dark">Children</label>
+                    <div class="field-icon-wrap">
+                      <div class="icon"><span class="ion-ios-arrow-down"></span></div>
+                      <select name="children" id="children" class="form-control">
+                        <option value="">0</option>
+                        <option value="">1</option>
+                        <option value="">2</option>
+                        <option value="">3</option>
+                        <option value="">4+</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-md-6 col-lg-3 align-self-end">
+                <button class="btn btn-primary btn-block text-white mt-3" id="submitButton" type="submit"
+                  style="background-color: #003b95;">Check Availabilty</button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+
+  <div class="containers flex-item  mx-5">
+    <div class="row">
+      <div class="col-md-3 ">
+        <div class="filter-options py-3">
+
+          <style>
+            .custom-filter-form {
+              display: flex;
+              align-items: center;
+            }
+
+            .custom-filter-option {
+              margin-right: 10px;
+            }
+
+            .custom-label {
+              font-weight: bold;
+            }
+
+            .custom-select {
+              padding: 5px;
+              border-radius: 5px;
+              border: 1px solid #ccc;
+            }
+
+            .custom-filter-button {
+              background-color: #003b95;
+              border-radius: 5px;
+              color: white;
+              border: none;
+              padding: 8px 16px;
+              cursor: pointer;
+              margin-top: 10%;
+            }
+
+            .custom-filter-button:hover {
+              background-color: #001f4d;
+            }
+          </style>
+          <!-- <form action="/sortHotels" method="get" class="custom-filter-form">
+      <div class="custom-filter-option">
+        <label for="sort" class="custom-label">Sort By:</label>
+        <select name="sort" id="sort" class="custom-select">
+          <option value="customer_rating">Highest Customer Rating</option>
+          <option value="low">Price (Low - High)</option>
+          <option value="high">Price (High - Low)</option>
+          <option value="our_top_picks">Our Top Picks</option>
+        </select>
+      </div>
+      <button class="custom-btn custom-filter-button" type="submit">Sort</button>
+    </form> -->
+
+          <form id="amenitiesForm" action="/filter_hotels" method="post">
+            <h3>Filter Hotels</h3>
+
+            <h5>Amenities</h5>
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="amenities" value="gym">
+                <span class="checkmark"></span>
+              </label>
+              Gym
+            </div>
+
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="amenities" value="spa">
+                <span class="checkmark"></span>
+              </label>
+              Spa
+            </div>
+
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="amenities" value="kitchen">
+                <span class="checkmark"></span>
+              </label>
+              Kitchen
+            </div>
+
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="amenities" value="breakfast">
+                <span class="checkmark"></span>
+              </label>
+              Breakfast
+            </div>
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="amenities" value="pool">
+                <span class="checkmark"></span>
+              </label>
+              Pool
+            </div>
+
+
+
+
+            <h5>Star Rating</h5>
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="star_rating" value="1">
+                <span class="checkmark"></span>
+              </label>
+              1
+            </div>
+
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="star_rating" value="2">
+                <span class="checkmark"></span>
+              </label>
+              2
+            </div>
+
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="star_rating" value="3">
+                <span class="checkmark"></span>
+              </label>
+              3
+            </div>
+
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="star_rating" value="4">
+                <span class="checkmark"></span>
+              </label>
+              4
+            </div>
+
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="star_rating" value="5">
+                <span class="checkmark"></span>
+              </label>
+              5
+            </div>
+            <div class="customCheckboxContainer">
+              <label class="customCheckbox">
+                <input type="checkbox" name="star_rating" value="none">
+                <span class="checkmark"></span>
+              </label>
+
+            </div>
+
+            <button class="bbtn   text-light" style="background-color: #003b95;border-radius: 5px;"
+              type="submit">Submit</button>
+          </form>
+
+        </div>
+      </div>
+
+      <style>
+        .hotel-lists {
+          border: 2px solid rgba(49, 52, 53, 0.397);
+          border-radius: 5px;
+        }
+
+        .col-md-3 {
+          border: 2px solid rgba(49, 52, 53, 0.397);
+          border-radius: 5px;
+        }
+
+        .filter-option {
+          margin-bottom: 12px;
+        }
+
+        label[for="price-range"] {
+          font-size: 18px;
+          display: block;
+          margin-bottom: 5px;
+        }
+
+        #price-range {
+          font-size: 16px;
+          padding: 8px;
+          border: 1px solid #ccc;
+          border-radius: 5px;
+          width: 100%;
+          max-width: 300px;
+        }
+
+        #price-range option {
+          font-size: 16px;
+        }
+
+
+        .image-container {
+          width: 200px;
+          height: 200px;
+          overflow: hidden;
+        }
+
+        .image-container img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          border-radius: 20px;
+        }
+      </style>
+
+
+
+
+
+      <div class="col-md-9">
+        <!-- Hotel list and details go here -->
+        <div class="hotel-lists px-5 py-3">
+          <h2 class="text-center mb-4">Hotels</h2>
+          <!-- ... more hotel items go here ... -->
+          <div id="hotels" data-hotels="<%= JSON.stringify(hotels) %>">
+
+          </div>
+          <div id="hotel-container" class="hotel-container">
+
+          </div>
+
+          <% hotels.forEach((item)=> { %>
+            <div class="hotel-items mb-4">
+              <div class="row">
+                <div class="col-md-4" style="border-radius: 5px;">
+                  <div class="image-container">
+                    <img class="img-fluid" src="/static/himages/<%=item.imagesOfHotel[0]%>" alt="Hotel image">
+                  </div>
+                </div>
+                <div class="col-md-8">
+                  <div class="hotel-items-details">
+                    <h3 class="hotel-items-name">
+                      <%=item.hotel_name%>
+                    </h3>
+                    <p class="hotel-items-rating">
+                      <%=item.star_rating%> stars
+                    </p>
+                    <p class="hotel-items-rating">
+                      <%=item.cancellationPolicy%>
+                    </p>
+
+                    <p class="hotel-items-description">
+                      <%=item.description%>
+                    </p>
+                    <a href="/hoteldetails/<%= item._id %>" class="btn btn-primary text-light"
+                      style="background-color: #003b95;">Search Availability</a>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <% }) %>
+
+              <div class="pagination">
+                <button id="prev">Previous</button>
+                <span id="page-num"></span>
+                <button type="" id="nextPage">Next</button>
+              </div>
+        </div>
+      </div>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          var currentPage = 1;
+          let totalpage // Initialize current page
+          // updatePage()
+          const prevBtn = document.getElementById('prev');
+          const nextBtn = document.getElementById('nextPage');
+
+          prevBtn.addEventListener('click', function () {
+            console.log(currentPage, "prevBtn")
+
+            if (currentPage > 1) {
+              currentPage--;
+              updatePage(currentpage);
+            }
+          });
+
+          nextBtn.addEventListener('click', function () {
+            console.log(currentPage, "nextBtn")
+            currentPage++;
+            updatePage(currentPage);
+
+          });
+          console.log(currentPage,"8888")
+         
+          function updatePage(page) {
+            console.log(page, "currentpage")
+            window.location.href = `/hotelsPage?page=${page}`;
+            console.log( `/hotelsPage?page=${page}`)
+
+          }
+         
+        })
+      </script>
+
+
+      <footer class="section footer-section " style="width: 100%;">
+        <div class="container">
+          <div class="row mb-4">
+            <div class="col-md-3 mb-5">
+              <ul class="list-unstyled link">
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Terms &amp; Conditions</a></li>
+                <li><a href="#">Privacy Policy</a></li>
+                <li><a href="#">Rooms</a></li>
+              </ul>
+            </div>
+            <div class="col-md-3 mb-5">
+              <ul class="list-unstyled link">
+                <li><a href="#">The Rooms &amp; Suites</a></li>
+                <li><a href="#">About Us</a></li>
+                <li><a href="#">Contact Us</a></li>
+                <li><a href="#">Restaurant</a></li>
+              </ul>
+            </div>
+            <div class="col-md-3 mb-5 pr-md-5 contact-info">
+              <!-- <li>198 West 21th Street, <br> Suite 721 New York NY 10016</li> -->
+              <p><span class="d-block"><span class="ion-ios-location h5 mr-3 text-primary"></span>Address:</span> <span>
+                  198 West 21th Street, <br> Suite 721 New York NY 10016</span></p>
+              <p><span class="d-block"><span class="ion-ios-telephone h5 mr-3 text-primary"></span>Phone:</span> <span>
+                  (+1) 435 3533</span></p>
+              <p><span class="d-block"><span class="ion-ios-email h5 mr-3 text-primary"></span>Email:</span> <span>
+                  info@domain.com</span></p>
+            </div>
+            <div class="col-md-3 mb-5">
+              <p>Sign up for our newsletter</p>
+              <form action="#" class="footer-newsletter">
+                <div class="form-group">
+                  <input type="email" class="form-control" placeholder="Email...">
+                  <button type="submit" class="btn"><span class="fa fa-paper-plane"></span></button>
+                </div>
+              </form>
+            </div>
+          </div>
+          <div class="row pt-5">
+            <p class="col-md-6 text-left">
+              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+              Copyright &copy;
+              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
+              with <i class="icon-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com"
+                target="_blank">Colorlib</a>
+              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+            </p>
+
+            <p class="col-md-6 text-right social">
+              <a href="#"><span class="fa fa-tripadvisor"></span></a>
+              <a href="#"><span class="fa fa-facebook"></span></a>
+              <a href="#"><span class="fa fa-twitter"></span></a>
+              <a href="#"><span class="fa fa-linkedin"></span></a>
+              <a href="#"><span class="fa fa-vimeo"></span></a>
+            </p>
+          </div>
+        </div>
+
+
+        <%-include('footer')-%>

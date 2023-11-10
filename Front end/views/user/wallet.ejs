@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Nest</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+   <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .btn-primary {
+        background-color: #003b95;
+        border-color: #003b95;
+    }
+
+    .btn-primary:hover {
+        background-color: #007bff;
+        border-color: #003b95;
+    }
+
+
+</style>
+
+<header class="site-header js-site-header py-3" style="background-color: #003b95; height: 15%;">
+    <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
+      <div class="container-fluid">
+          <a class="navbar-brand text-light">TravelNest</a>
+          <form class="d-flex">
+              <a href="" class=" me-2 text-light"></a>
+          </form>
+          <div class="left-links">
+              <a href="/userManagement" class="text-light">Profile Management</a>
+              <a href="/manageBookings" class="text-light">Manage Bookings</a>
+              <% if(user) { %>
+                  <a href="/wallet" class="text-light">Wallet</a>
+                  <a href="/sign_out" class="text-light">Sign Out</a>
+              <% } else { %>
+                  <a href="/login" class="text-light">Log in/Sign up</a>
+              <% } %>
+          </div>
+      </div>   
+    </nav>
+  </header>
+  
+
+<!-- <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
+    <div class="container-fluid">
+        <a class="navbar-brand text-light">Travel Nest</a>
+        <form class="d-flex">
+            <a href="" class=" me-2 text-light"></a>
+        </form>
+        <div class="dropdown">
+          
+          <a class="btn  dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
+          </a>
+        
+          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+            <li><a class="dropdown-item" href="/userManagement">Profile Management</a></li>
+            <li><a class="dropdown-item" href="#">Bookings</a></li>
+            <li><a class="dropdown-item" href="#">Something else here</a></li>
+          </ul>
+        </div>
+        
+    </div>
+    
+</nav> -->
+
+
+
+<style>
+    /* Add this CSS to your existing styles or in a separate styles.css file */
+
+.wallet-container {
+    margin-top: 50px;
+}
+
+.wallet-card {
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.wallet-card-header {
+    background-color: #007bff;
+    color: #fff;
+    font-weight: bold;
+    padding: 10px 20px;
+    border-radius: 10px 10px 0 0;
+}
+
+.wallet-card-body {
+    margin-top: 20px;
+}
+
+.wallet-balance {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.add-money-button {
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-money-button:hover {
+    background-color: #0056b3;
+}
+
+</style>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    Wallet Information
+                </div>
+                <div class="card-body">
+                    <p class="text-dark">Your current wallet balance is: <%= wallet.wallet || 0 %></p>
+                    <button class="btn btn-primary">Add Money to Wallet</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-body">
+      <h4 class="card-title">Wallet transactions</h4>
+      <h1  class="text-success"><%= msg %></h1>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            
+            <th>Sl No.</th>
+            <th>Amount</th>
+            <th>Type</th>
+            <th>Date</th>
+            <th> </th>
+            <th> </th>
+           
+          </tr>
+        </thead>
+        <tbody>   
+            <% if(transactions.length) { %>      
+          <% transactions.forEach((data,index) => { %>   
+          <tr>
+              <td><%= index+1 %></td>
+              <td>₹<%= data.amount %></td>
+              <% if(data.transaction_type === "credit") { %>  
+                <td class="text-success"><%= data.transaction_type %></td>
+              <% } %> 
+              <% if(data.transaction_type === "debit") { %>  
+                <td class="text-danger"><%= data.transaction_type %></td>
+              <% } %> 
+              <td><%= data.date %></td>
+          </tr>
+
+          <% }) %>   
+          <% } %>             
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

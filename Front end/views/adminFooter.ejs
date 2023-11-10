@@ -1,5 +1,74 @@
 </body>
 
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const checkinInput = document.getElementById('checkin');
+    const checkoutInput = document.getElementById('checkout');
+    const submitButton = document.getElementById('submit');
+
+    document.getElementById('checkin').value = checkinInput;
+  document.getElementById('checkout').value = checkoutInput;
+  
+    const today = new Date().toISOString().split('T')[0];
+    
+    checkinInput.max = today;
+    checkoutInput.max = today;
+  
+    submitButton.addEventListener('click', function() {
+        const checkinDate = checkinInput.value;
+        const checkoutDate = checkoutInput.value;
+  
+        if (checkinDate && checkoutDate) {
+            alert(`Check-In Date: ${checkinDate}\nCheck-Out Date: ${checkoutDate}`);
+        } else {
+            alert('Please select both check-in and check-out dates.');
+        }
+    });
+  });
+  
+  </script>
+
+  <script>
+    document.getElementById('downloadReport').addEventListener('click', function() {
+  // Get the selected time range value
+  const selectedRange = document.getElementById('timeRange').value;
+
+  // Get the start and end dates based on the selected range
+  let startDate, endDate;
+
+  const currentDate = new Date();
+
+  switch (selectedRange) {
+    case 'week':
+      startDate = new Date(currentDate);
+      startDate.setDate(currentDate.getDate() - 6);
+      endDate = currentDate;
+      break;
+    case 'month':
+      startDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
+      endDate = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
+      break;
+    case 'year':
+      startDate = new Date(currentDate.getFullYear(), 0, 1);
+      endDate = new Date(currentDate.getFullYear(), 11, 31);
+      break;
+    default:
+      break;
+  }
+
+  // Convert the dates to a format suitable for your backend
+  const formattedStartDate = startDate.toISOString().slice(0, 10);
+  const formattedEndDate = endDate.toISOString().slice(0, 10);
+
+  // Send the selected dates to your backend for generating the report
+  // (You'll need to implement this part based on your backend technology)
+
+  // For testing, you can log the selected dates
+  console.log('Start Date:', formattedStartDate);
+  console.log('End Date:', formattedEndDate);
+});
+
+  </script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>

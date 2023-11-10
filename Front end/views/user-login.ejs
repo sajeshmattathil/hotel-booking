@@ -7,13 +7,14 @@
     <div class="form-container">
       <div class="form-inner">
         <form action="/login-submit" class="login" method="post">
+          <h4  class="message text-success"><%= msg %></h4>
           <div class="field">
             <input type="text" placeholder="Email Address" name="email" required>
           </div>
           <div class="field">
             <input type="password" placeholder="Password" name="password" required minlength="6">
           </div>
-          <div class="pass-link"><a href="#">Forgot password?</a></div>
+          <div class="pass-link"><a href="/forgotPassword">Forgot password?</a></div>
           <div class="field btn">
             <div class="btn-layer"></div>
             <input type="submit" value="Login">

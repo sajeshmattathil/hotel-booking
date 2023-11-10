@@ -1,0 +1,67 @@
+ 
+</body>
+<script src="/static/user/js/jquery-3.3.1.min.js"></script>
+<script src="/static/user/js/jquery-migrate-3.0.1.min.js"></script>
+<script src="/static/user/js/popper.min.js"></script>
+<script src="/static/user/js/bootstrap.min.js"></script>
+<script src="/static/user/js/owl.carousel.min.js"></script>
+<script src="/static/user/js/jquery.stellar.min.js"></script>
+<script src="/static/user/js/jquery.fancybox.min.js"></script>
+
+
+
+<script src="/static/user/js/aos.js"></script>
+
+<script src="/static/user/js/bootstrap-datepicker.js"></script> 
+<script src="/static/user/js/jquery.timepicker.min.js"></script> 
+
+<script src="/static/user/js/main.js"></script>
+
+
+
+<script>
+    function capitalizeFirstLetter() {
+        let input = document.getElementById("myInput");
+        let inputValue = input.value;
+        console.log(inputValue);
+        inputValue = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
+        input.value = inputValue;
+    }
+</script>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+    const checkinInput = document.getElementById('checkin');
+    const checkoutInput = document.getElementById('checkout');
+    const submitButton = document.getElementById('submit');
+
+   
+  
+    const today = new Date().toISOString().split('T')[0];
+    
+    checkinInput.min = today;
+    checkoutInput.min = today;
+    submitButton.addEventListener('click', function() {
+        const checkinDate = checkinInput.value;
+        const checkoutDate = checkoutInput.value;
+  
+        if (checkinDate && checkoutDate) {
+            document.getElementById('checkin').value = checkinInput;
+            document.getElementById('checkout').value = checkoutInput;
+            alert(`Check-In Date: ${checkinDate}\nCheck-Out Date: ${checkoutDate}`);
+        } else {
+            alert('Please select both check-in and check-out dates.');
+        }
+    });
+  });
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.10.2/umd/popper.min.js" integrity="sha384-fC5pyI7gBz8X0fyTn5MgnhK9LOmklqO0l5RE2U4+6w1Pn1A50gme9nBae3exA1hO" crossorigin="anonymous"></script>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha384-xe09FuTddOTBFOid8Pv38Hm4abYaL13jyDP3OpHT99zgtbFz/6CsMz7x8zXff0OK" crossorigin="anonymous"></script>
+
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.2/js/bootstrap.bundle.min.js" integrity="sha384-c7MYDiLdw8fMSPhg1jFdKoLdP3W2D8Lp9WTlaBw6Fn/Dg3xpK1lF86PWoLUvO6Zb" crossorigin="anonymous"></script>
+
+
+
+
+</html>

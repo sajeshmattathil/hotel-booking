@@ -25,19 +25,16 @@ app.set('views', path.join(__dirname, '../Front end/views'));
 app.use(session({
     secret: uuidv4(),
     resave: false,
-    saveUninitialized: true,
-    cookie:{maxAge:6000000}
+    saveUninitialized: true
 }))
 app.use(nocache())
 app.use('/', userRouter)
 app.use('/admin', adminRouter)
 app.use('/owner', ownerRouter)
 
+//BOOKING UPDATION FOR COMPLETE 
 setTimeout(() => {
-    controller.updateBooking(); // Call your function here
+    controller.updateBooking(); 
 }, 5000);
-//console.log(controller.updateBooking(),"controller.updateBooking()")
-
-
 
 app.listen(8080, () => { console.log('Listening to the server on http://localhost:8080'); })

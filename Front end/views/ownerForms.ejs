@@ -273,17 +273,26 @@
               <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
+                    <h1  class="text-success"><%= msg %></h1>
                     <h4 class="card-title">Add your Hotel</h4>
                     <p class="card-description"> Add your Hotel</p>
-                    <form class="forms-sample" action="/owner/add-hotel" method="post">
+                    <form class="forms-sample" action="/owner/add-hotel" method="post" enctype="multipart/form-data">
 
-                      <div class="form-group">
+                      <!-- <div class="form-group">
                         <label for="exampleInputEmail2">Owner id</label>
                         <input type="email" class="form-control" name="owner_id" id="exampleInputEmail2" placeholder="Owner id">
-                      </div>
+                      </div> -->
                       <div class="form-group">
                         <label for="exampleInputUsername1">Hotel Name</label>
                         <input type="text" class="form-control" name="hotel_name" id="exampleInputUsername1" placeholder="Hotel Name">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Star</label>
+                        <input type="text" class="form-control" name="star_rating" id="exampleInputUsername1" placeholder="Star">
+                      </div>
+                      <div class="form-group">
+                        <label for="exampleInputUsername1">Description</label>
+                        <input type="text" class="form-control" name="description" id="exampleInputUsername1" placeholder="Description">
                       </div>
                       <div class="form-group">
                         <label for="exampleInputPassword1">Email</label>
@@ -303,6 +312,10 @@
                         <input type="text" class="form-control" name="pincode" id="exampleInputPassword1" placeholder="PIN CODE" required minlength="6">
                       </div>
                       <div class="form-group">
+                        <label for="exampleInputPassword1">Amenities (Use comma to add more)</label>
+                        <input type="text" class="form-control" name="amenities" id="exampleInputPassword1" placeholder="amenities" required minlength="">
+                      </div>
+                      <div class="form-group">
                         <label for="exampleInputPassword1">Total Rooms</label>
                         <input type="number" class="form-control" name="totalRoomsAvailable" id="exampleInputPassword1" placeholder="Total Rooms" required minlength="6">
                       </div>
@@ -310,10 +323,15 @@
                         <label for="exampleInputConfirmPassword1">Tourist destination nearby</label>
                         <input type="text" class="form-control" name="nearTouristDestination" id="exampleInputConfirmPassword1" placeholder="Tourist destination nearby">
                       </div>
-                      <!-- <div class="form-check form-check-flat form-check-primary">
-                        <label class="form-check-label">
-                          <input type="checkbox" class="form-check-input"> Remember me </label>
-                      </div> -->
+                      <div class="form-group">
+                        <label for="exampleInputConfirmPassword1">Cancellation Policy</label>
+                        <input type="text" class="form-control" name="cancellationPolicy" id="exampleInputConfirmPassword1" placeholder="Cancellation Policy">
+                      </div>
+                      <div  class="form-group   d-flex align-items-center">
+                        <input type="file" name="images" id="images" accept="image/*" multiple>
+                        <!-- <button type="submit"  class="btn btn-gradient-primary me-2">Upload</button> -->
+                      </div>
+                     
                       <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
                     </form>
                     
@@ -322,12 +340,12 @@
 
        <!-- upload image -->
 
-              <form action="/owner/upload" method="post" enctype="multipart/form-data">
+              <!-- <form action="/owner/upload" method="post" enctype="multipart/form-data">
                 <div  class="form-group   d-flex align-items-center">
                   <input type="file" name="images" multiple>
                   <button type="submit"  class="btn btn-gradient-primary me-2">Upload</button>
                 </div>
-                
+                 -->
               </form>
               
 
@@ -339,59 +357,10 @@
 
   
 
-<!-- 
-              
-              <div class="col-md-6 grid-margin stretch-card">
-                <div class="card">
-                  <div class="card-body">
-                    <h4 class="card-title">Horizontal Form</h4>
-                    <p class="card-description"> Horizontal form layout </p>
-                    <form class="forms-sample">
-                      <div class="form-group row">
-                        <label for="exampleInputUsername2" class="col-sm-3 col-form-label">Email</label>
-                        <div class="col-sm-9">
-                          <input type="text" class="form-control" id="exampleInputUsername2" placeholder="Username">
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="exampleInputEmail2" class="col-sm-3 col-form-label">Email</label>
-                        <div class="col-sm-9">
-                          <input type="email" class="form-control" id="exampleInputEmail2" placeholder="Email">
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="exampleInputMobile" class="col-sm-3 col-form-label">Mobile</label>
-                        <div class="col-sm-9">
-                          <input type="text" class="form-control" id="exampleInputMobile" placeholder="Mobile number">
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="exampleInputPassword2" class="col-sm-3 col-form-label">Password</label>
-                        <div class="col-sm-9">
-                          <input type="password" class="form-control" id="exampleInputPassword2" placeholder="Password">
-                        </div>
-                      </div>
-                      <div class="form-group row">
-                        <label for="exampleInputConfirmPassword2" class="col-sm-3 col-form-label">Re Password</label>
-                        <div class="col-sm-9">
-                          <input type="password" class="form-control" id="exampleInputConfirmPassword2" placeholder="Password">
-                        </div>
-                      </div>
-                      <div class="form-check form-check-flat form-check-primary">
-                        <label class="form-check-label">
-                          <input type="checkbox" class="form-check-input"> Remember me </label>
-                      </div>
-                      <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
-                      <button class="btn btn-light">Cancel</button>
-                    </form>
-                  </div>
-                </div>
-              </div> -->
-
 
 
               
-              <div class="col-12 grid-margin stretch-card">
+              <!-- <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
                     <h4 class="card-title">Basic form elements</h4>
@@ -842,7 +811,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
           <!-- content-wrapper ends -->
           <!-- partial:../../partials/_footer.html -->
           <footer class="footer">

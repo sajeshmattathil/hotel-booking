@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Nest</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+   <style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        background-color: #ffffff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .card {
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        margin-bottom: 20px;
+    }
+
+    .btn {
+        background-color: #003b95;
+        border-color: #003b95;
+    }
+
+    .btn :hover {
+        background-color: #003b95;
+        border-color: #003b95;
+    }
+
+
+</style>
+
+<header class="site-header js-site-header py-3" style="background-color: #003b95; height: 15%;">
+    <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
+      <div class="container-fluid">
+          <a class="navbar-brand text-light">TravelNest</a>
+          <form class="d-flex">
+              <a href="" class=" me-2 text-light"></a>
+          </form>
+          <div class="left-links">
+              <a href="/userManagement" class="text-light">Profile Management</a>
+              <a href="/manageBookings" class="text-light">Manage Bookings</a>
+              <% if(user) { %>
+                  <a href="/wallet" class="text-light">Wallet</a>
+                  <a href="/sign_out" class="text-light">Sign Out</a>
+              <% } else { %>
+                  <a href="/login" class="text-light">Log in/Sign up</a>
+              <% } %>
+          </div>
+      </div>   
+    </nav>
+  </header>
+  
+
+
+<div class="container mt-5">
+   <h3 class="text-success"><%=msg%></h3> 
+
+    <div class="row">
+        <!-- Left Section -->
+        <div class="col-md-6">
+            <form action="/confirmBooking" method="post">
+
+                <div class="form-group">
+                    <label for="name">Full Name</label>
+                    <input type="text" class="form-control" id="name" name="name" value="<%=userData.first_name %>" maxlength="20" required>
+                </div>
+                <div class="form-group">
+                    <div id="emailError" style="color: red;"></div>
+
+                    <label for="email">Email Address</label>
+                    <input type="email" class="form-control" id="email" name="email" value="<%=userData.email %>" oninput="validateEmail()" maxlength="20" required>
+                </div>
+                <div class="form-group">
+                    <div  id="mobileError" style="color: red;"></div>
+
+                    <label for="phone">Phone Number</label>
+                    <input type="tel" class="form-control" id="mobile" name="phone" value="<%=userData.mobile %> " oninput="validateMobile()" minlength="10" maxlength="10" required>
+                </div>
+               
+                    <button type="submit" class="btn text-light " >Confirm Booking</button>
+                  
+
+            </form>
+        </div>
+
+        <!-- Right Section -->
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title"><strong>Room Details</strong> </h5>
+                    <p class="card-text"><strong>Room Type: <%=roomData.roomType%></strong></p>
+                    <p class="card-text"><strong>Check-in Date: <%=checkin_date %></strong></p>
+                    <p class="card-text"><strong>Check-out Date: <%=checkout_date %></strong></p>
+                    <p class="card-text"><strong>No. of People: <%=noOfAdults || 1 %></strong>   </p>
+
+                    <p class="card-text"><strong>No. of Rooms: <%=noOfRooms%></strong>   </p>
+                    <p class="card-text"><strong>No. of Days: <%=numberOfDays%></strong>   </p>
+                    <p class="card-text"><strong>Price per Night: ₹ <%=roomData.price%></strong> </p>
+                    <p class="card-text"><strong>Total Price: ₹ <%=totalAmount%> + GST</strong></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function validateMobile() {
+      var mobile = document.getElementById('mobile').value;
+      var mobileError = document.getElementById('mobileError');
+      const numberRegex = /^[7-9][0-9]*$/;
+
+
+      if (!numberRegex.test(mobile)) {
+        mobileError.textContent = 'Please enter a valid mobile number.';
+      } else {
+        mobileError.textContent = '';
+      }
+  }
+ function validateEmail() {
+    var email = document.getElementById('email').value;
+    var emailError = document.getElementById('emailError');
+
+    var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        emailError.textContent = 'Please enter a valid email address.';
+    } else {
+        emailError.textContent = '';
+    }
+}</script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

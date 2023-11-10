@@ -1,14 +1,43 @@
 <%- include('header') -%>
 
+<style>
+.otp-input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.btn-layer {
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-layer:hover {
+  background-color: #0056b3;
+}
+
+</style>
+
+
+
 <div class="wrapper">
     <div class="title-text">
       <div class="title login">Submit your OTP</div>
+      
     </div>
     <div class="form-container">
       <div class="form-inner">
         <div class="otp-container ">
+          <h5><%= msg %></h5>
           <form action="/otp-submit" method="post">
-            <input class="otp-input" name="otp"  type="text" maxlength="" />
+            <input class="otp-input" name="otp"  type="text" minlength="6" maxlength="6" />
             <button class=" btn-layer" type="submit" >Submit</button>
           </form>
         </div>

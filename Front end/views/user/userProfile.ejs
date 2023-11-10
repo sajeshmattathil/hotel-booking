@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href=""stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css" integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+</head>
+
+<body>
+  <header class="site-header js-site-header py-3" style="background-color: #003b95; height: 15%;">
+    <nav class="navbar navbar-light " style="background-color: #003b95; height: 10%;">
+      <div class="container-fluid">
+          <a class="navbar-brand text-light">TravelNest</a>
+          <form class="d-flex">
+              <a href="" class=" me-2 text-light"></a>
+          </form>
+          <div class="left-links">
+              <a href="/userManagement" class="text-light  px-2">Profile Management</a>
+              <a href="/manageBookings" class="text-light  px-2">Manage Bookings</a>
+              <% if(user) { %>
+                  <a href="/wallet" class="text-light  px-2">Wallet</a>
+                  <a href="/sign_out" class="text-light  px-2">Sign Out</a>
+              <% } else { %>
+                  <a href="/login" class="text-light px-2">Log in/Sign up</a>
+              <% } %>
+          </div>
+      </div>   
+    </nav>
+  </header>
+    <style>
+        .container {
+            display: flex;
+        }
+
+        .sidebar {
+            background-color:white;
+            padding: 20px;
+            max-width: 200px;
+            border: 2px solid #494646;
+            border-radius: 8px;
+        }
+
+        .sidebar a {
+            display: block;
+            margin-bottom: 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 1em;
+        }
+
+        th,
+        td {
+            padding: 8px 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .edit-button {
+            background-color: white;
+            color: #003b95;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+ 
+
+        .form-body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    text-align: center;
+  }
+
+  .form-container {
+    max-width: 400px;
+    margin: 50px auto;
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .form-group input {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+
+  .form-group input:focus {
+    outline: none;
+    border-color: #007bff;
+  }
+
+  .form-group button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .form-group button:hover {
+    background-color: #0056b3;
+  }
+
+
+
+  
+/* Style for the form elements */
+.form-container {
+    text-align: center;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+label {
+    font-weight: bold;
+}
+
+input[type="password"],
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+/* Style for the Verify with email button */
+.btn-verify-email {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+/* Style for the collapse element */
+.collapse {
+    margin-top: 10px;
+}
+
+/* Style for the OTP input and Submit button */
+.otp-input {
+    width: 60px; /* Adjust width as needed */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.btn-layer {
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+.modal {
+    overflow-y: hidden;
+}
+
+    </style>
+
+
+
+
+
+    </head>
+
+    <body>
+
+        <div class="container my-5 ">
+            <!-- <div class="text-sucess">
+                <h5><%= msg %></h5>
+            </div> -->
+           
+            <!-- <div class="sidebar px-5 mx-5 ">
+                <a href="#">Profile Management</a>
+                <a href="#">Security</a>
+                <a href="#">Privacy</a>
+            </div> -->
+            <table>
+                <tbody>
+                    <tr>
+                        <td>Name</td>
+                        <td>
+                            <%=user.first_name%>
+                                <%=user.last_name%>
+                        </td>
+                        <td><button type="button" class="edit-button " data-toggle="modal" data-target="#exampleModalCenter-Name" >Edit</button></td> 
+
+                        <!-- <td><button class="edit-button">Edit</button></td> -->
+                    </tr>
+                    <tr>
+                        <td>Email address</td>
+                        <td>
+                            <%=user.email%>
+                        </td>
+                        <td><button type="button" class="edit-button " data-toggle="modal" data-target="#exampleModalCenter-email" >Edit</button></td> 
+                    </tr>
+                    <tr>
+                        <td>Phone Number</td>
+                        <td>
+                            <%=user.mobile%>
+                        </td>
+                        <td><button type="button" class="edit-button " data-toggle="modal" data-target="#exampleModalCenter-mobile" >Edit</button></td> 
+                    </tr>
+                    <tr>
+                        <td>Gender</td>
+                        <td>
+                            <%= user.gender || 'Select your gender' %>
+                        </td>
+                        <td><button type="button" class="edit-button " data-toggle="modal" data-target="#exampleModalCenter-gender" >Edit</button></td> 
+                    </tr>
+                    <tr>
+                        <!-- <td>Address</td>
+                        <td>
+                            <%= user.addressDetails.address || 'Add your address' %>
+                        </td>
+                        <td><button type="button" class="edit-button " data-toggle="modal" data-target="#exampleModalCenter-address" >Edit</button></td>  -->
+
+                        <tr>
+                          <td>Password</td>
+                          <td>
+                              <%=  '*******' %>
+                          </td>
+                          <td><button type="button" class="edit-button " data-toggle="modal" data-target="#exampleModalCenter-password" >Edit</button></td> 
+  
+                      
+           
+                        <!-- Name Modal -->
+                       <div class="modal fade" id="exampleModalCenter-Name" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                         <div class="modal-dialog modal-dialog-centered" role="document">
+                           <div class="modal-content">
+                             <div class="modal-header">
+                               <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                 <span aria-hidden="true">&times;</span>
+                               </button>
+                             </div>
+                             <div class="modal-body">
+                                <div class="form-container">
+                                    <form action="/edit-userName" method="post">
+                                      <div class="form-group">
+                                        <label for="firstName">First Name:</label>
+                                        <input type="text" id="first_name" name="first_name" placeholder="<%=user.first_name%>" required>
+                                      </div>
+                                      <div class="form-group">
+                                        <label for="lastName">Last Name:</label>
+                                        <input type="text" id="last_name" name="last_name" placeholder="<%=user.last_name%>" required>
+                                      </div>
+                                      <div class="form-group">
+                                        <button type="submit">Submit</button>
+                                      </div>
+                                    </form>
+                                  </div>
+                             </div>
+                             <div class="modal-footer">
+                             <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                             <!-- <a href=""><button type="button" class="btn btn-primary" >Save</button></a> -->
+                             </div>
+                           </div>
+                         </div>
+                       </div>
+
+
+ <!-- email Modal -->
+ <div class="modal fade" id="exampleModalCenter-email" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+           <div class="form-container">
+
+               <form action="" id="changeEmail" onsubmit="" method="post">
+                 <div class="form-group">
+                  <div class="text-sucess" id="sucess"></div>
+                  <div class="text-danger" id="emailError"></div>
+
+                   <label for="firstName">Email Address:</label>
+                   <div  id="emailError" style="color: red;"></div>
+                   <input type="email" id="email" name="email" oninput="validateEmail()" required placeholder="<%=user.email%>">
+                   <input type="text" id="otp" placeholder="OTP" style="display:none;">
+
+                  </div>
+                
+                 <div class="form-group">
+                   <button type="submit" id="emailSubmit">Submit</button>
+                 </div>
+               </form>
+             </div>
+        </div>
+        <div class="modal-footer">
+       
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- mobile Modal -->
+ <div class="modal fade" id="exampleModalCenter-mobile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+           <div class="form-container">
+
+               <form action="/edit-userMobile" method="post" onsubmit="return validateMobile()">
+                 <div class="form-group">
+                   <label for="firstName">Phone Number:</label>
+                   <div id="validationMessage"></div>
+                   <div  id="mobileError" style="color: red;"></div>
+
+                   <input type="text" id="mobileNumber" oninput="validateMobile()" name="mobile" required placeholder="<%=user.mobile%>" minlength="10" maxlength="10" >
+                 </div>
+                
+                 <div class="form-group">
+                   <button type="submit"  >Submit</button>
+                 </div>
+               </form>
+             </div>
+        </div>
+      
+      </div>
+    </div>
+  </div>
+ 
+  <!-- gender Modal-->
+ <div class="modal fade" id="exampleModalCenter-gender" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+           <div class="form-container">
+            <form action="/edit-userGender" method="post">
+              <div class="form-group">
+                  <label for="Brands">Select your gender:</label>
+                  <select name="gender" id="Select_your_gender">                 
+                      <option value="Man">I'm a man</option>   
+                      <option value="Woman">I'm a woman</option> 
+                      <option value="Non-Binary">I'm non-binary</option> 
+                      <option value="Not prefer to say" selected>I prefer not to say</option>                     
+                  </select>
+              </div>
+              <div class="form-group">
+                <button type="submit">Submit</button>
+              </div>
+            </form>
+             </div>
+        </div>
+        <div class="modal-footer">
+            </div>
+      </div>
+    </div>
+  </div>
+
+
+    <!-- Address Modal-->
+ <div class="modal fade" id="exampleModalCenter-address" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+         <div class="form-container">
+          <form action="/edit-userAddress" onsubmit="return validatePin()" method="post">
+            <div class="form-group">
+              <label for="firstName">Address:</label>
+              <input type="text" id="address" name="address" placeholder="<%=user.addressDetails.address || 'Address'%>" maxlength="30" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">City:</label>
+              <input type="text" id="city" name="city" placeholder="<%=user.addressDetails.city || 'City'%>" required>
+            </div>
+            <div class="form-group">
+              <label for="lastName">PIN:</label>
+
+              <div  id="pinError" style="color: red;"></div>
+              <input type="tel" id="pin" oninput=" validatePin()" name="pin" placeholder="<%=user.addressDetails.pin || 'PIN'%>" maxlength="6" minlength="6" required>
+            </div>
+            <div class="form-group">
+              <button type="submit">Submit</button>
+            </div>
+          </form>
+           </div>
+      </div>
+      <div class="modal-footer">
+          </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- Password Modal-->
+    <div class="modal fade" id="exampleModalCenter-password" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+             <div class="form-container">
+              <form action="/edit-userPassword" method="post" id="changePassword" >
+                <div class="" id="error"></div>
+                <div class="form-group">
+                  <label for="firstName">Old Password:</label>
+                  <input type="password" id="old_password" name="old_password" minlength="6" maxlength="" required>
+                </div>
+                <div class="form-group">
+                  <label for="firstName">New Password:</label>
+                  <input type="password" id="password" name="password" minlength="6" maxlength="" required>
+                </div>
+                <div class="form-group">
+                  <label for="firstName">Confirm Password:</label>
+                  <input type="password" id="confirm" name="confirm" minlength="6" maxlength="" required>
+                </div>
+               
+                <div class="form-group">
+                  <button type="submit">Submit</button>
+                </div>
+              </form>
+               </div>
+          </div>
+          <div class="modal-footer">
+              </div>
+        </div>
+      </div>
+    </div>
+  
+                    </tr>
+
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+        </div>
+
+    </body>
+   
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    
+
+<script>
+  document.getElementById('emailSubmit').addEventListener('click', function(event) {
+    event.preventDefault();
+    var currentEmail = document.getElementById('email').value;
+    var otp = document.getElementById('otp').value;
+
+        var emailError = document.getElementById('emailError');
+        var emailRegex = /^[^\s@]+@[^\s@]+\.[a-zA-Z]{2,}$/;
+
+       // var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+\.com$/;
+        if (!emailRegex.test(currentEmail)) {
+            emailError.textContent = 'Please enter a valid email address.';
+            console.log(8888)
+            return
+        } else {
+            emailError.textContent = '';
+        }
+        console.log("kuhdfkdashkfhfj");
+        console.log(otp);
+    if (otp) {
+        fetch('/verifyOTP', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ otp: otp })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+              console.log(3444);
+                saveEmail(currentEmail);
+            } else {
+              console.log(8888883);
+              document.getElementById('emailError').innerHTML = data.msg
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    } else {
+        fetch('/generateOTP', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ currentEmail: currentEmail })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log(data,"data")
+            if (data.success === true) {
+                document.getElementById('sucess').innerHTML = "OTP sent to your email";
+                document.getElementById('otp').style.display = 'block';
+            }else{
+              document.getElementById('emailError').innerHTML = "Something went wrong,try again";
+
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
+
+function saveEmail(email) {
+    fetch('/saveEmail', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ email: email })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+          document.getElementById('sucess').innerHTML = "Email changed sucessfully";
+          document.getElementById('otp').style.display = 'none';
+          otp = ''
+        } else {
+          document.getElementById('emailError').innerHTML = "Something went wrong,try again";
+
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+</script>
+
+
+<script>
+document.getElementById('changePassword').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    const oldPassword = document.getElementById('old_password').value;
+    const newPassword = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirm').value;
+console.log(9);
+    if(newPassword !== confirmPassword) {
+      console.log(10);
+
+        document.getElementById('error').innerHTML = "Password and confirm password do not match";
+    } else {
+      console.log(11);
+
+       // document.getElementById('error').innerHTML = " ";
+
+        fetch('/edit-userPassword', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                oldPassword,
+                newPassword,
+                confirmPassword
+            })
+        })
+        .then(response => response.json())
+        .then(data => {
+          if (data.msg) {
+              console.log(data,"data");
+                document.getElementById('error').innerHTML = data.msg;
+            }
+            if (data.error) {
+              console.log(data,"data");
+                document.getElementById('error').innerHTML = data.error;
+            } else {
+                document.getElementById('error').innerHTML = ""; // Clear any previous errors
+            }
+        })
+        .catch(error => console.error('Error:', error));
+    }
+});
+
+</script>
+   
+      <script>
+      function validatePassword(){
+        var password=document.getElementById("password").value
+        var confirm=document.getElementById("confirm").value
+
+        if(password !== confirm) {
+          validationResult.innerHTML="Password and confirm password doesnot match"
+          return false
+        
+          validationResult.innerHTML=""
+          return true
+        }
+      }
+  </script>
+  <script>
+    function validateMobile() {
+        var mobile = document.getElementById('mobileNumber').value;
+        var mobileError = document.getElementById('mobileError');
+        const numberRegex = /^[7-9][0-9]*$/;
+  
+  
+        if (!numberRegex.test(mobile)) {
+          mobileError.textContent = 'Please enter a valid mobile number.';
+          return false
+        } else {
+          mobileError.textContent = '';
+          return true
+        }
+    }
+  
+    function validateEmail() {
+        var email = document.getElementById('email').value;
+        var emailError = document.getElementById('emailError');
+
+     var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            emailError.textContent = 'Please enter a valid email address.';
+            console.log(55555555)
+        } else {
+            emailError.textContent = '';
+        }
+    }
+    function validatePin(){
+      var pin = document.getElementById('pin').value;
+        var pinError = document.getElementById('pinError');
+  
+        if (pin === 0) {
+          pinError.textContent = 'Please enter a valid PIN code.';
+            return false
+        } else {
+          pinError.textContent = '';
+          return true
+        }
+    }
+  
+  </script>
+ 
+
+</html>

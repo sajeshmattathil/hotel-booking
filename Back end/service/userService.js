@@ -21,10 +21,10 @@ const findUser = async (email)=>{
     }catch(err){console.log(err.message);}
 }
 
-const findHotels = async (city) => {
+const findHotels = async (city,page) => {
     try {
         if (city) {
-            let hotelsData = await userRepository.findAllHotels(city)
+            let hotelsData = await userRepository.findAllHotels(city,page)
             if (!hotelsData.length) {
                 const msg = "No hotels in found in the city"
                 req.session.city

@@ -1,4 +1,33 @@
 </body>
 <script  src="/static/style.js"></script>
+<script>
+  function validateMobile() {
+      var mobile = document.getElementById('mobile').value;
+      var mobileError = document.getElementById('mobileError');
+      const numberRegex = /^[7-9][0-9]*$/;
+
+
+      if (!numberRegex.test(mobile)) {
+        mobileError.textContent = 'Please enter a valid mobile number.';
+        return false
+      } else {
+        mobileError.textContent = '';
+        return true
+      }
+  }
+
+  function validateEmail() {
+      var email = document.getElementById('email').value;
+      var emailError = document.getElementById('emailError');
+
+      var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+          emailError.textContent = 'Please enter a valid email address.';
+      } else {
+          emailError.textContent = '';
+      }
+  }
+
+</script>
 
 </html>

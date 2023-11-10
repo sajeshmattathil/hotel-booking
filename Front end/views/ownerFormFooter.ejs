@@ -1,2 +1,19 @@
 </body>
+<script>
+     function validateOffer() {
+      var offer = document.getElementById('offer').value;
+      var offerError = document.getElementById('offerError');
+
+
+      if (offer>100 || offer< 0 || isNaN(offer) ) {
+        offerError.textContent = 'Please enter a correct input';
+        return false
+      } else {
+        offerError.textContent = '';
+        return true
+      }
+  }
+
+</script>
+
 </html>

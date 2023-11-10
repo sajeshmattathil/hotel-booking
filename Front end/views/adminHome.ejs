@@ -23,7 +23,7 @@
     <!-- partial:partials/_navbar.html -->
     <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
       <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
-        <a class="navbar-brand brand-logo" href="/static/index.html"><img src="assets/images/logo.svg" alt="logo" /></a>
+        <a class="navbar-brand brand-logo" href="/static/index.html"><img src="/static/assets/images/logo.svg" alt="logo" /></a>
         <a class="navbar-brand brand-logo-mini" href="/static/index.html"><img src="/static/assets/images/logo-mini.svg" alt="logo" /></a>
       </div>
       <div class="navbar-menu-wrapper d-flex align-items-stretch">
@@ -55,7 +55,7 @@
               <a class="dropdown-item" href="#">
                 <i class="mdi mdi-cached me-2 text-success"></i> Activity Log </a>
               <div class="dropdown-divider"></div>
-              <a class="dropdown-item" href="#">
+              <a class="dropdown-item" href="/admin/sign_out">
                 <i class="mdi mdi-logout me-2 text-primary"></i> Signout </a>
             </div>
           </li>
@@ -153,7 +153,7 @@
             </div>
           </li>
           <li class="nav-item nav-logout d-none d-lg-block">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="/admin/sign_out">
               <i class="mdi mdi-power"></i>
             </a>
           </li>
@@ -194,77 +194,38 @@
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" href="#ui-basic" aria-expanded="false" aria-controls="ui-basic">
-              <span class="menu-title">Management</span>
-              <i class="menu-arrow"></i>
-              <i class="mdi mdi-crosshairs-gps menu-icon"></i>
-            </a>
-            <div class="collapse" id="ui-basic">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/static/pages/ui-features/buttons.html">Hotel Management</a></li>
-                <li class="nav-item"> <a class="nav-link" href="/static/pages/ui-features/typography.html">Owner Management</a></li>
-              </ul>
-            </div>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/static/pages/icons/mdi.html">
-              <span class="menu-title">Icons</span>
-              <i class="mdi mdi-contacts menu-icon"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/static/pages/forms/basic_elements.html">
-              <span class="menu-title">Forms</span>
-              <i class="mdi mdi-format-list-bulleted menu-icon"></i>
-            </a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/static/pages/charts/chartjs.html">
-              <span class="menu-title">Charts</span>
+            <a class="nav-link" href="/admin/category-management">
+              <span class="menu-title">Category Management</span>
               <i class="mdi mdi-chart-bar menu-icon"></i>
             </a>
           </li>
+         
           <li class="nav-item">
             <!-- <a class="nav-link" href="/static/pages/tables/basic-table.html"> -->
               <a class="nav-link" href="/admin/approval-requests">
 
-              <span class="menu-title">Tables</span>
+              <span class="menu-title">Requests</span>
+              <i class="mdi mdi-table-large menu-icon"></i>
+            </a>
+          </li>
+          
+          <li class="nav-item">
+            <!-- <a class="nav-link" href="/static/pages/tables/basic-table.html"> -->
+              <a class="nav-link" href="/admin/owner-management">
+
+              <span class="menu-title">Owner Management</span>
               <i class="mdi mdi-table-large menu-icon"></i>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="collapse" href="#general-pages" aria-expanded="false" aria-controls="general-pages">
-              <span class="menu-title">Sample Pages</span>
-              <i class="menu-arrow"></i>
-              <i class="mdi mdi-medical-bag menu-icon"></i>
+            <!-- <a class="nav-link" href="/static/pages/tables/basic-table.html"> -->
+              <a class="nav-link" href="/admin/coupon-management">
+
+              <span class="menu-title">Coupon Management</span>
+              <i class="mdi mdi-table-large menu-icon"></i>
             </a>
-            <div class="collapse" id="general-pages">
-              <ul class="nav flex-column sub-menu">
-                <li class="nav-item"> <a class="nav-link" href="/static/pages/samples/blank-page.html"> Blank Page </a></li>
-                <li class="nav-item"> <a class="nav-link" href="/static/pages/samples/login.html"> Login </a></li>
-                <li class="nav-item"> <a class="nav-link" href="/static/pages/samples/register.html"> Register </a></li>
-                <li class="nav-item"> <a class="nav-link" href="/static/pages/samples/error-404.html"> 404 </a></li>
-                <li class="nav-item"> <a class="nav-link" href="/static/pages/samples/error-500.html"> 500 </a></li>
-              </ul>
-            </div>
           </li>
-          <li class="nav-item sidebar-actions">
-            <span class="nav-link">
-              <div class="border-bottom">
-                <h6 class="font-weight-normal mb-3">Projects</h6>
-              </div>
-              <button class="btn btn-block btn-lg btn-gradient-primary mt-4">+ Add a project</button>
-              <div class="mt-4">
-                <div class="border-bottom">
-                  <p class="text-secondary">Categories</p>
-                </div>
-                <ul class="gradient-bullet-list mt-4">
-                  <li>Free</li>
-                  <li>Pro</li>
-                </ul>
-              </div>
-            </span>
-          </li>
+
         </ul>
       </nav>
       <!-- partial -->
@@ -284,310 +245,149 @@
               </ul>
             </nav>
           </div>
-          <div class="row">
-            <div class="col-md-4 stretch-card grid-margin">
-              <div class="card bg-gradient-danger card-img-holder text-white">
-                <div class="card-body">
-                  <img src="/static/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                  <h4 class="font-weight-normal mb-3">Weekly Sales <i class="mdi mdi-chart-line mdi-24px float-right"></i>
-                  </h4>
-                  <h2 class="mb-5">$ 15,0000</h2>
-                  <h6 class="card-text">Increased by 60%</h6>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 stretch-card grid-margin">
-              <div class="card bg-gradient-info card-img-holder text-white">
-                <div class="card-body">
-                  <img src="/static/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                  <h4 class="font-weight-normal mb-3">Weekly Orders <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
-                  </h4>
-                  <h2 class="mb-5">45,6334</h2>
-                  <h6 class="card-text">Decreased by 10%</h6>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-4 stretch-card grid-margin">
-              <div class="card bg-gradient-success card-img-holder text-white">
-                <div class="card-body">
-                  <img src="/static/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
-                  <h4 class="font-weight-normal mb-3">Visitors Online <i class="mdi mdi-diamond mdi-24px float-right"></i>
-                  </h4>
-                  <h2 class="mb-5">95,5741</h2>
-                  <h6 class="card-text">Increased by 5%</h6>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-md-7 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <div class="clearfix">
-                    <h4 class="card-title float-left">Visit And Sales Statistics</h4>
-                    <div id="visit-sale-chart-legend" class="rounded-legend legend-horizontal legend-top-right float-right"></div>
-                  </div>
-                  <canvas id="visit-sale-chart" class="mt-4"></canvas>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-5 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Traffic Sources</h4>
-                  <canvas id="traffic-chart"></canvas>
-                  <div id="traffic-chart-legend" class="rounded-legend legend-vertical legend-bottom-left pt-4"></div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col-12 grid-margin">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Recent Tickets</h4>
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th> Assignee </th>
-                          <th> Subject </th>
-                          <th> Status </th>
-                          <th> Last Update </th>
-                          <th> Tracking ID </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td>
-                            <img src="/static/assets/images/faces/face1.jpg" class="me-2" alt="image"> David Grey
-                          </td>
-                          <td> Fund is not recieved </td>
-                          <td>
-                            <label class="badge badge-gradient-success">DONE</label>
-                          </td>
-                          <td> Dec 5, 2017 </td>
-                          <td> WD-12345 </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <img src="/static/assets/images/faces/face2.jpg" class="me-2" alt="image"> Stella Johnson
-                          </td>
-                          <td> High loading time </td>
-                          <td>
-                            <label class="badge badge-gradient-warning">PROGRESS</label>
-                          </td>
-                          <td> Dec 12, 2017 </td>
-                          <td> WD-12346 </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <img src="/static/assets/images/faces/face3.jpg" class="me-2" alt="image"> Marina Michel
-                          </td>
-                          <td> Website down for one week </td>
-                          <td>
-                            <label class="badge badge-gradient-info">ON HOLD</label>
-                          </td>
-                          <td> Dec 16, 2017 </td>
-                          <td> WD-12347 </td>
-                        </tr>
-                        <tr>
-                          <td>
-                            <img src="/static/assets/images/faces/face4.jpg" class="me-2" alt="image"> John Doe
-                          </td>
-                          <td> Loosing control on server </td>
-                          <td>
-                            <label class="badge badge-gradient-danger">REJECTED</label>
-                          </td>
-                          <td> Dec 3, 2017 </td>
-                          <td> WD-12348 </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
+
+
+        <style>
+          .sales-form-container {
+              display: flex;
+              align-items: center;
+              margin-bottom: 20px;
+          }
+      
+          .sales-form-container label {
+              font-weight: bold;
+              margin-right: 10px;
+              color: #003b95;
+          }
+      
+          .sales-form-container .form-field {
+              display: flex;
+              align-items: center;
+
+          }
+      
+          .sales-form-container .form-field input[type="date"] {
+              font-size: 16px;
+              border-radius: 5px;
+          }
+      
+          .sales-form-container .submit-btn {
+              background-color: #003b95;
+              color: #fff;
+              border: none;
+              border-radius: 5px;
+              padding: 10px 20px;
+              font-size: 16px;
+              cursor: pointer;
+          }
+         
+    .sales-report-form-container {
+        display: flex;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .sales-report-form-container label {
+        font-weight: bold;
+        margin-right: 10px;
+        color: #003b95;
+    }
+
+    .sales-report-form-container select {
+        font-size: 16px;
+        border-radius: 5px;
+
+    }
+
+    .sales-report-form-container button {
+        background-color: #003b95;
+        border-radius: 5px;
+        color: #fff;
+        border: none;
+        padding: 10px 20px;
+        font-size: 16px;
+        cursor: pointer;
+    }
+</style>
+
+      
+
+      
+      <div class="row">
+        <div class="col-md-4 stretch-card grid-margin">
+          <div class="card bg-gradient-danger card-img-holder text-white">
+            <div class="card-body">
+              <img src="/static/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+              <h4 class="font-weight-normal mb-3">Total Revenue <i class="mdi mdi-chart-line mdi-24px float-right"></i>
+              </h4>
+              <h2 class="mb-5"><%= total || 0 %></h2>
+              <h6 class="card-text"></h6>
             </div>
           </div>
-          <div class="row">
-            <div class="col-12 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Recent Updates</h4>
-                  <div class="d-flex">
-                    <div class="d-flex align-items-center me-4 text-muted font-weight-light">
-                      <i class="mdi mdi-account-outline icon-sm me-2"></i>
-                      <span>jack Menqu</span>
-                    </div>
-                    <div class="d-flex align-items-center text-muted font-weight-light">
-                      <i class="mdi mdi-clock icon-sm me-2"></i>
-                      <span>October 3rd, 2018</span>
-                    </div>
-                  </div>
-                  <div class="row mt-3">
-                    <div class="col-6 pe-1">
-                      <img src="/static/assets/images/dashboard/img_1.jpg" class="mb-2 mw-100 w-100 rounded" alt="image">
-                      <img src="/static/assets/images/dashboard/img_4.jpg" class="mw-100 w-100 rounded" alt="image">
-                    </div>
-                    <div class="col-6 ps-1">
-                      <img src="/static/assets/images/dashboard/img_2.jpg" class="mb-2 mw-100 w-100 rounded" alt="image">
-                      <img src="/static/assets/images/dashboard/img_3.jpg" class="mw-100 w-100 rounded" alt="image">
-                    </div>
-                  </div>
-                  <div class="d-flex mt-5 align-items-top">
-                    <img src="/static/assets/images/faces/face3.jpg" class="img-sm rounded-circle me-3" alt="image">
-                    <div class="mb-0 flex-grow">
-                      <h5 class="me-2 mb-2">School Website - Authentication Module.</h5>
-                      <p class="mb-0 font-weight-light">It is a long established fact that a reader will be distracted by the readable content of a page.</p>
-                    </div>
-                    <div class="ms-auto">
-                      <i class="mdi mdi-heart-outline text-muted"></i>
-                    </div>
-                  </div>
-                </div>
-              </div>
+        </div>
+        <div class="col-md-4 stretch-card grid-margin">
+          <div class="card bg-gradient-info card-img-holder text-white">
+            <div class="card-body">
+              <img src="/static/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+              <h4 class="font-weight-normal mb-3">Total Bookings <i class="mdi mdi-bookmark-outline mdi-24px float-right"></i>
+              </h4>
+              <h2 class="mb-5"><%= NoOfBookings || 0 %></h2>
+              <h6 class="card-text"></h6>
             </div>
           </div>
-          <div class="row">
-            <div class="col-md-7 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title">Project Status</h4>
-                  <div class="table-responsive">
-                    <table class="table">
-                      <thead>
-                        <tr>
-                          <th> # </th>
-                          <th> Name </th>
-                          <th> Due Date </th>
-                          <th> Progress </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <tr>
-                          <td> 1 </td>
-                          <td> Herman Beck </td>
-                          <td> May 15, 2015 </td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td> 2 </td>
-                          <td> Messsy Adam </td>
-                          <td> Jul 01, 2015 </td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-danger" role="progressbar" style="width: 75%" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td> 3 </td>
-                          <td> John Richards </td>
-                          <td> Apr 12, 2015 </td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-warning" role="progressbar" style="width: 90%" aria-valuenow="90" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td> 4 </td>
-                          <td> Peter Meggik </td>
-                          <td> May 15, 2015 </td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-primary" role="progressbar" style="width: 50%" aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td> 5 </td>
-                          <td> Edward </td>
-                          <td> May 03, 2015 </td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-danger" role="progressbar" style="width: 35%" aria-valuenow="35" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
-                        </tr>
-                        <tr>
-                          <td> 5 </td>
-                          <td> Ronald </td>
-                          <td> Jun 05, 2015 </td>
-                          <td>
-                            <div class="progress">
-                              <div class="progress-bar bg-gradient-info" role="progressbar" style="width: 65%" aria-valuenow="65" aria-valuemin="0" aria-valuemax="100"></div>
-                            </div>
-                          </td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </div>
-            </div>
-            <div class="col-md-5 grid-margin stretch-card">
-              <div class="card">
-                <div class="card-body">
-                  <h4 class="card-title text-white">Todo</h4>
-                  <div class="add-items d-flex">
-                    <input type="text" class="form-control todo-list-input" placeholder="What do you need to do today?">
-                    <button class="add btn btn-gradient-primary font-weight-bold todo-list-add-btn" id="add-task">Add</button>
-                  </div>
-                  <div class="list-wrapper">
-                    <ul class="d-flex flex-column-reverse todo-list todo-list-custom">
-                      <li>
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input class="checkbox" type="checkbox"> Meeting with Alisa </label>
-                        </div>
-                        <i class="remove mdi mdi-close-circle-outline"></i>
-                      </li>
-                      <li class="completed">
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input class="checkbox" type="checkbox" checked> Call John </label>
-                        </div>
-                        <i class="remove mdi mdi-close-circle-outline"></i>
-                      </li>
-                      <li>
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input class="checkbox" type="checkbox"> Create invoice </label>
-                        </div>
-                        <i class="remove mdi mdi-close-circle-outline"></i>
-                      </li>
-                      <li>
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input class="checkbox" type="checkbox"> Print Statements </label>
-                        </div>
-                        <i class="remove mdi mdi-close-circle-outline"></i>
-                      </li>
-                      <li class="completed">
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input class="checkbox" type="checkbox" checked> Prepare for presentation </label>
-                        </div>
-                        <i class="remove mdi mdi-close-circle-outline"></i>
-                      </li>
-                      <li>
-                        <div class="form-check">
-                          <label class="form-check-label">
-                            <input class="checkbox" type="checkbox"> Pick up kids from school </label>
-                        </div>
-                        <i class="remove mdi mdi-close-circle-outline"></i>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
+        </div>
+        <div class="col-md-4 stretch-card grid-margin">
+          <div class="card bg-gradient-success card-img-holder text-white">
+            <div class="card-body">
+              <img src="/static/assets/images/dashboard/circle.svg" class="card-img-absolute" alt="circle-image" />
+              <h4 class="font-weight-normal mb-3">Total Users <i class="mdi mdi-diamond mdi-24px float-right"></i>
+              </h4>
+              <h2 class="mb-5"><%= noOfUsers || 0 %></h2>
+              <h6 class="card-text"></h6>
             </div>
           </div>
+        </div>
+      </div>
+
+      
+      <form action="/admin/sales_report" class="sales-form-container" method="post">
+          
+          <div class="form-field">
+              <label for="checkin_date">Starting date</label>
+              <div class="icon"><span class="icon-calendar"></span></div>
+              <input type="date" id="checkin" name="checkin_date" class="form-control small-input" required placeholder="Starting date">
+          </div>
+          <div class="form-field">
+              <label for="checkout_date">End date</label>
+              <div class="icon"><span class="icon-calendar"></span></div>
+              <input type="date" id="checkout" name="checkout_date" class="form-control small-input" placeholder="End date" required>
+          </div>
+          <button type="submit" class="submit-btn m-3">Download a sales report</button>
+      </form>
+      <form id="graph" class="sales-report-form-container p-5 m-3" method="post">
+        <label for="timeRange"></label>
+        <select name="timeRange" id="timeRange">
+            <option value="week"> Week wise</option>
+            <option value="month">Month wise</option>
+            <!-- <option value="year">This Year</option> -->
+        </select>
+        <button class="mx-3" type="submit" id="downloadReport">Show Graph</button>
+    </form>
+        <div>
+            <canvas id="revenueChart" width="300" height="100"></canvas>
+        </div>
+        
+      <form action="/admin/sales_report_selected" class="sales-report-form-container p-5 m-3" method="post">
+          <label for="timeRange">Select Time Range:</label>
+          <select name="timeRange" id="timeRange">
+              <option value="week"> Week wise</option>
+              <option value="month">Month wise</option>
+              <!-- <option value="year">This Year</option> -->
+          </select>
+          <button class="mx-3" type="submit" id="downloadReport">Download Report</button>
+      </form>
+      
+    
         </div>
         <!-- content-wrapper ends -->
         <!-- partial:partials/_footer.html -->
@@ -620,6 +420,200 @@
   <script src="/static/assets/js/dashboard.js"></script>
   <script src="/static/assets/js/todolist.js"></script>
   <!-- End custom js for this page -->
+
+
+  <script>
+
+var months = [
+            "January", "February", "March", "April",
+            "May", "June", "July", "August",
+            "September", "October", "November", "December"
+        ];
+ var weeksOfYear = [
+    "Week 1", "Week 2", "Week 3", "Week 4",
+    "Week 5", "Week 6", "Week 7", "Week 8",
+    "Week 9", "Week 10", "Week 11", "Week 12",
+    "Week 13", "Week 14", "Week 15", "Week 16",
+    "Week 17", "Week 18", "Week 19", "Week 20",
+    "Week 21", "Week 22", "Week 23", "Week 24",
+    "Week 25", "Week 26", "Week 27", "Week 28",
+    "Week 29", "Week 30", "Week 31", "Week 32",
+    "Week 33", "Week 34", "Week 35", "Week 36",
+    "Week 37", "Week 38", "Week 39", "Week 40",
+    "Week 41", "Week 42", "Week 43", "Week 44",
+    "Week 45", "Week 46", "Week 47", "Week 48",
+    "Week 49", "Week 50", "Week 51", "Week 52"
+];
+        var x_axis = weeksOfYear.slice()
+        var revenue = []
+document.getElementById('graph').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var formData = new FormData(this);
+    var timeRange = formData.get('timeRange');
+
+    // Make sure timeRange is what you expect
+    console.log(timeRange);
+    if(timeRange === 'month')  x_axis = months.slice()
+    else x_axis = weeksOfYear.slice()
+console.log(x_axis,"x_axis");
+    fetch('/admin/show_graph', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify({timeRange: timeRange})
+    }).then(response => {
+      console.log(response)
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Network response was not ok');
+        }
+    }).then(data => {
+      console.log(timeRange);
+
+        console.log(data.success.length, "data.success.length***");
+        var total = 0;
+      
+        for(let i = 0;i<data.success.length;i++){
+        
+        
+        if(data.success[i].length){
+          console.log(data.success[i],"success[i]")
+       
+          data.success[i].forEach((element,index) => {
+            total += element.amount;
+        });
+        console.log(1111);
+        total = parseFloat(total).toFixed(2);
+
+       revenue.push(total)
+
+     
+       
+      }
+      else revenue.push(0)
+    }
+    console.log(revenue,"revenue");
+   
+    myChart.data.labels = x_axis;
+myChart.data.datasets[0].data = revenue;
+myChart.update(); 
+
+
+    }).catch(error => console.log("error :", error));
+});
+
+
+
+
+// JavaScript code for setting up and configuring the chart
+    document.addEventListener('DOMContentLoaded', function() {
+      console.log(x_axis,"525252525");
+        var ctx = document.getElementById('revenueChart').getContext('2d');
+        var myChart = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: x_axis,
+                datasets: [{
+                    label: 'Revenue',
+                    data: revenue,
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+
+</script>
+
+
+<script>
+ // Define a function to initialize the chart
+function initializeChart(labels, data) {
+    var ctx = document.getElementById('revenueChart').getContext('2d');
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Revenue',
+                data: data,
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+document.getElementById('graph').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    var formData = new FormData(this);
+    var timeRange = formData.get('timeRange');
+
+    // Make sure timeRange is what you expect
+    console.log(timeRange);
+    if(timeRange === 'month')  x_axis = months.slice()
+    else x_axis = weeksOfYear.slice()
+    console.log(x_axis,"x_axis");
+    fetch('/admin/show_graph', {
+        method: 'POST',
+        headers: {
+            'content-type': 'application/json'
+        },
+        body: JSON.stringify({timeRange: timeRange})
+    }).then(response => {
+        console.log(response)
+        if (response.ok) {
+            return response.json();
+        } else {
+            throw new Error('Network response was not ok');
+        }
+    }).then(data => {
+        console.log(timeRange);
+        console.log(data.success.length, "data.success.length***");
+        var total = 0;
+        var revenue = [];
+
+        for(let i = 0; i < data.success.length; i++){
+            if(data.success[i].length){
+                console.log(data.success[i],"success[i]")
+                data.success[i].forEach((element,index) => {
+                    total += element.amount;
+                });
+                console.log(1111);
+                total = parseFloat(total).toFixed(2);
+                revenue.push(total);
+            } else {
+                revenue.push(0);
+            }
+        }
+        console.log(revenue,"revenue");
+
+        // Call the function to initialize/update the chart
+        initializeChart(x_axis, revenue);
+    }).catch(error => console.log("error :", error));
+});
+
+</script>
 
 
   <%-include('adminFooter')-%>

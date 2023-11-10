@@ -3,8 +3,8 @@ const invoice = require('../../utils/invoice')
 
 
 const userHome = (req, res) => {
-    // res.render('user/index')
-    res.render('user/bookingFinalPage')
+     res.render('user/index')
+    //res.render('user/bookingFinalPage')
     // const checkin_date = req.session.checkin_date
     // const checkout_date = req.session.checkout_date
     //res.render('user/userHome',{checkin_date,checkout_date})
@@ -21,20 +21,62 @@ console.log(req.body,"req.body");
     req.session.checkin_date = req.body.checkin_date
     req.session.checkout_date = req.body.checkout_date
 
-    const hotels = await userService.findHotels(req.session.city)
-    if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
-    else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+    const hotels = await userService.findHotels(req.session.city,1)
+    //console.log(hotels,"hotels")
+    // if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+    // else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+    if (hotels.status === 400) res.redirect(`/hotelsPage`)
+    else res.redirect(`/hotelsPage`)
 
 }
 const userhotelsListPage = async (req, res) => {
-    let hotels = await userService.findHotels(req.session.city)
+    var page = req.query.page || 1
+    console.log(page,"page")
+    
+    let hotels = await userService.findHotels(req.session.city,page)
+    console.log(hotels,"hotels")
+    req.session.hotelsss = hotels
+
     if(req.session.filtered) hotels = req.session.filtered
 
     const userName = ''
     const user = req.session.user
     const msg = req.query.msg
+    console.log(888888)
+
     res.render('user/hotels', { hotels, msg, userName, user })
+    console.log(99999)
+
+   // res.json()
 }
+
+
+     const hotelists = async (req, res) => {
+//     const page = parseInt(req.query.page) || 1;
+//     const limit = parseInt(req.query.limit) || 10;
+  
+//     const skip = (page - 1) * limit;
+//     console.log(page,limit,"limit")
+
+//     try {
+//         let items = await userService.findHotels(req.session.city,skip,limit)
+// console.log(items,"items")
+//      // const items = await Item.find().skip(skip).limit(limit);
+//      // const totalItems = await items.countDocuments();
+//       const totalItems = items.length
+
+
+//   console.log(items,totalItems,"totalItems")
+//       res.json({
+//         items,
+//         currentPage: page,
+//         totalPages: Math.ceil(totalItems / limit),
+//         totalItems
+//       });
+//     } catch (error) {
+//       res.status(500).json({ error: 'Internal Server Error' });
+//     }
+  };
 
 const userLogin = (req, res) => {
     let msg = req.query.msg
@@ -665,6 +707,8 @@ const generateInvoice = async (req, res) => {
 
 
 module.exports = {
+
+   hotelists,
     userHome,
     userhotelsList,
     userhotelsListPage,

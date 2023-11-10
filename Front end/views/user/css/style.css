@@ -1,0 +1,212 @@
+/* Global Styles */
+
+body {
+  font-family: 'Roboto', sans-serif;
+}
+
+a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+a:hover {
+  color: #0056b3;
+  text-decoration: underline;
+}
+
+/* Header Styles */
+
+.site-header {
+  background-color: #fff;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
+  z-index: 1000;
+}
+
+.site-header .site-logo a {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+  text-decoration: none;
+}
+
+.site-header .site-menu-toggle span {
+  background-color: #333;
+  display: block;
+  height: 2px;
+  margin: 4px auto;
+  width: 25px;
+}
+
+.site-header .site-navbar ul.menu {
+  list-style: none;
+  padding: 0;
+}
+
+.site-header .site-navbar ul.menu li {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.site-header .site-navbar ul.menu li a {
+  color: #333;
+  font-weight: bold;
+  text-decoration: none;
+  text-transform: uppercase;
+  transition: color 0.3s;
+}
+
+.site-header .site-navbar ul.menu li a:hover {
+  color: #007bff;
+}
+
+/* Hero Section Styles */
+
+.site-hero {
+  position: relative;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  color: #fff;
+  text-align: center;
+  padding: 100px 0;
+}
+
+.site-hero .custom-breadcrumbs li {
+  display: inline-block;
+  margin: 0 5px;
+  color: #fff;
+}
+
+/* Availability Section Styles */
+
+.check-availabilty .block-32 .form-control {
+  border: 1px solid #ddd;
+  border-radius: 0;
+  height: 45px;
+}
+
+.check-availabilty .block-32 .icon {
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.check-availabilty .block-32 .btn {
+  background-color: #007bff;
+  border: none;
+  border-radius: 0;
+  height: 45px;
+  text-transform: uppercase;
+  font-weight: bold;
+}
+
+/* Filter Options Styles */
+
+.filter-options {
+  background-color: #f8f9fa;
+  border-radius: 5px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.filter-options h3 {
+  margin-bottom: 10px;
+}
+
+.filter-option label,
+.filter-option select {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Hotel List Styles */
+
+.hotel-lists h2 {
+  font-size: 36px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.hotel-items {
+  display: flex;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.hotel-items img {
+  max-width: 500%;
+  height: auto;
+  margin-right: 0px;
+}
+
+.hotel-items-details {
+  flex-grow: 1;
+}
+
+.hotel-items-details .hotel-items-name {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.hotel-items-details .hotel-items-rating {
+  font-size: 18px;
+  font-weight: bold;
+  color: #007bff;
+  margin-bottom: 10px;
+}
+
+.hotel-items-details .hotel-items-description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+.hotel-items-details .btn {
+  background-color: #007bff;
+  border: none;
+  border-radius: 0;
+  font-size: 16px;
+  font-weight: bold;
+  text-transform: uppercase;
+  padding: 10px 20px;
+  transition: background-color 0.3s;
+}
+
+.hotel-items-details .btn:hover {
+  background-color: #0056b3;
+}
+
+/* Footer Styles */
+
+.footer-section {
+  background-color: #f8f9fa;
+  padding: 50px 0;
+  color: #555;
+}
+
+.footer-section .link li {
+  margin-bottom: 10px;
+}
+
+.footer-section .contact-info p {
+  margin-bottom: 10px;
+}
+
+.footer-section .social a {
+  font-size: 24px;
+  color: #007bff;
+  margin-right: 20px;
+}
+
+.footer-section .social a:hover {
+  color: #0056b3;
+}
+.hotel-lists{
+  display: flex;
+}

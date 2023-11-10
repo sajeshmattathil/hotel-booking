@@ -17,11 +17,11 @@ const findUserByEmail = async (email) => {
     }
 }
 
-const findAllHotels = async (cityName) => {
+const findAllHotels = async (cityName,page) => {
     try {
         if (cityName) {
             console.log(cityName,"parameter received as city");
-            const data = await hotels.find({ isApproved: true, city:cityName }).limit(10)
+            const data = await hotels.find({ isApproved: true, city:cityName }).skip((page-1) * 3).limit(3)
             if (data.length === 0) {
                 console.log("Showing all the hotels");
                 return await hotels.find({ isApproved: true })

@@ -1,0 +1,531 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Travel Nest</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="" />
+    <meta name="keywords" content="" />
+    <meta name="author" content="" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+    <link rel="stylesheet" href="/static/user/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/user/css/style.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+
+</head>
+ <header class="site-header js-site-header py-3" style="background-color: #003b95; height: 15%;">
+      <nav class="navbar navbar-light " style="background-color: #003b95; height: 10%;">
+        <div class="container-fluid">
+            <a class="navbar-brand text-light">TravelNest</a>
+            <form class="d-flex">
+                <a href="" class=" me-2 text-light"></a>
+            </form>
+            <div class="left-links">
+                <a href="/userManagement" class="text-light  px-2">Profile Management</a>
+                <a href="/manageBookings" class="text-light  px-2">Manage Bookings</a>
+                <% if(user) { %>
+                    <a href="/wallet" class="text-light  px-2">Wallet</a>
+                    <a href="/sign_out" class="text-light  px-2">Sign Out</a>
+                <% } else { %>
+                    <a href="/login" class="text-light px-2">Log in/Sign up</a>
+                <% } %>
+            </div>
+        </div>   
+      </nav>
+    </header>
+
+<body>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .btn-primary {
+            background-color: #003b95;
+            border-color: #003b95;
+        }
+
+        .btn-primary:hover {
+            background-color: #003b95;
+            border-color: #003b95;
+        }
+
+        .coupon {
+            border: 2px solid #888d89;
+            background-color: rgba(231, 240, 239, 0.705);
+            padding: 10px;
+            margin: 2px;
+            border-radius: 5px;
+            max-width: 50%;
+            height: 10%;
+        }
+
+        .apply_coupon {
+            border: 2px solid #28a745;
+            /* Green border */
+            background-color: rgba(40, 167, 69, 0.5);
+            /* Transparent green background */
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .booking {
+            border: 2px solid #888d89;
+            margin: 10%;
+            padding: 10px;
+            border-radius: 10px;
+            max-width: 50%;
+        }
+
+        .proceed-button {
+
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #003b95;
+            border: 1px solid #003b95;
+        }
+
+        .navbar {
+            background-color: #003b95;
+            height: 80px;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+        }
+
+        .navbar-toggler-icon {
+            color: #fff;
+        }
+
+        .dropdown-menu {
+            background-color: #003b95;
+        }
+
+        .dropdown-item {
+            color: #fff;
+        }
+
+        .container {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        input[type="radio"] {
+            margin-right: 5px;
+        }
+
+        .proceed-button {
+            background: #003b95;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            color: #fff;
+        }
+
+        .proceed {
+    background-color: #003b95; /* Background color */
+    color: #fff; /* Text color */
+    padding: 10px 20px; /* Padding */
+    font-size: 16px; /* Font size */
+    border: none; /* Remove border */
+    border-radius: 5px; /* Add border radius for rounded corners */
+    cursor: pointer; /* Add pointer cursor on hover */
+}
+
+.proceed:hover {
+    background-color: #002e72; /* Darker background color on hover */
+}
+
+    </style>
+
+    <div class="container mt-5 " style="border: 2px solid #6c7709; border-radius: 10px; margin-top: 20px;">
+        
+        <div class="row mt-5">
+            <h3 class="text-success">
+                <%=msg%>
+            </h3>
+            <!-- Left Section -->
+            <div class="col-md-6 ">
+                <h5 class="card-title"> Personal Details</h5>
+                <p class="card-text">Name: <%=booking.name%>
+                </p>
+                <p class="card-text">Email: <%=booking.email %>
+                </p>
+                <p class="card-text">Mobile: <%=booking.phone %>
+                </p>
+            </div>
+
+            <!-- Right Section -->
+
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body" style="border: 2px solid #6c7709; border-radius: 10px;">
+                        <h5 class="card-title">Room Details</h5>
+                        <form class="pay-form">
+                            <p class="card-text">
+                                <%=roomData.roomType%>
+                            </p>
+                            <% if(offer) { %>
+                                <!-- <h4 class="card-text text-dark font-weight-bold">
+                                    Price per Night: ₹ <%= roomData.price - (roomData.price * (offer.discount / 100)) %>
+                                        <span class="text-muted"><s>₹ <%= roomData.price %></s> </span>
+                                        
+                                </h4><h4 class="text-danger"><%= offer.discount %>%</h4> -->
+                                <div class="card-text text-dark font-weight-bold" style="display: flex;  align-items: center;">
+                                    <h4>Price per Night: ₹ <%= roomData.price - (roomData.price * (offer.discount / 100)) %></h4>
+                                    <h4><span class="text-muted px-2"><s>₹ <%= roomData.price %></s></span></h4>
+                                <h4>    <span class="text-danger"><%= offer.discount %>%</span></h4>
+                                </div>
+                                
+                                <div class="d-flex " style="flex-direction: row;">
+                                    <p class="px-3">
+                                        <%=checkin_date %>
+                                    </p>
+                                    <p class="px-3">
+                                        <%=checkout_date %>
+                                    </p>
+                                </div>
+                                <p>
+                                <p>
+                                    
+                                    <button class="apply_coupon" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#collapseExample" aria-expanded="false"
+                                        aria-controls="collapseExample">
+                                        Apply coupon
+                                    </button>
+                                </p>
+                                <% if(coupons) { %>
+                                <% coupons.forEach((coupon,index)=> { %>
+                                    <div class="coupon d-flex" style="flex-direction: row;">
+                                        <i class="fas fa-tags"></i>
+                                        <a href="/selected_coupon/<%=coupon.discount%>">
+                                            <p class="card-text text-dark">
+                                                <%=coupon.name%> ₹ <%=coupon.discount%> off
+                                            </p>
+                                        </a>
+                                    </div>
+                                    <% }) %>
+                                    <% } %>
+                                         <p class=" text-success card-text ">Wallet: ₹ <%=  wallet %>
+                                        </p>
+                                        <p class=" text-success card-text ">Discount: - ₹ <%=(roomData.price * (offer.discount / 100)) * noOfRooms || 0  %>
+                                        </p>
+                                        <p class="card-text text-gray">Amount: ₹ <%=amount %>
+
+                                        <p class="card-text text-gray">GST: ₹ <%=amount * .12 %>
+                                        </p>
+
+                                        <% if(couponSelected) { %>
+                                            <p class="card-text text-success">Coupon Discount: - ₹ <%= couponSelected %>
+                                            </p>
+                                            <p class="card-text d-flex justify-content-between align-items-center">
+                                                Total Price: ₹ <%= totalAmount %>
+                                                    <div class="d-flex">
+                                                        <span class="text-success font-weight-bold">Coupon
+                                                            applied</span>
+                                                        <a href="/remove_coupon"><i class="fas fa-times"></i></a>
+                                                    </div>
+                                            </p>
+
+                                            <% } else { %>
+                                                <p class="card-text" value>Total Price: ₹ <%= totalAmount %>
+                                                </p>
+                                                <% } %>
+
+                                                    <div id="message" style="display:none;color:red;">Please select a
+                                                        payment option.</div>
+
+
+
+                                                    
+                                                        <!-- <form class="pay-form"> -->
+
+                                                        <input type="hidden" name="name" value="<%= roomData.roomType %>">
+                                                        <input type="hidden" name="amount" value="<%= totalAmount %>">
+                                                        <input type="hidden" name="description" value="Booking your room">
+                                                        <!-- </form> -->
+                                          
+                                                    <label>
+                                                        <input type="radio" name="payment" value="pay"> Pay Now
+                                                    </label>
+                                                    <span>
+                                                        <label>
+                                                            <input type="radio" name="payment" value="bookNow"> Pay When
+                                                            Arrival
+                                                        </label>
+                                                    </span>
+                                                    
+                                                    <input class="proceed" type="submit" value="Proceed & Book Now">
+
+
+                                                    <% } else { %>
+                                                        <h4 class="card-text text-dark font-weight-bold">
+                                                            Price per Night: ₹ <%= roomData.price %>
+                                                        </h4>
+                                                        <div class="d-flex " style="flex-direction: row;">
+                                                            <p class="px-3">
+                                                                <%=checkin_date %>
+                                                            </p>
+                                                            <p class="px-3">
+                                                                <%=checkout_date %>
+                                                            </p>
+                                                        </div>
+
+                                                        <p>
+                                                        <p>
+                                                            <button class="apply_coupon" type="button"
+                                                                data-bs-toggle="collapse"
+                                                                data-bs-target="#collapseExample" aria-expanded="false"
+                                                                aria-controls="collapseExample">
+                                                                Apply coupon
+                                                            </button>
+                                                        </p>
+                                                        <% coupons.forEach((coupon,index)=> { %>
+                                                            <div class="coupon d-flex" style="flex-direction: row;">
+                                                                <i class="fas fa-tags"></i>
+                                                                <a href="/selected_coupon/<%=coupon.discount%>">
+                                                                    <p class="card-text text-dark">
+                                                                        <%=coupon.name%> ₹ <%=coupon.discount%> off
+                                                                    </p>
+                                                                </a>
+                                                            </div>
+                                                            <% }) %>
+
+
+                                                                <p class="card-text text-gray">GST: ₹
+                                                                    <%=(roomData.price*.12)%>
+                                                                </p>
+
+                                                                <% if(couponSelected) { %>
+                                                                    <p class="card-text text-gray">Coupon Discount: - ₹
+                                                                        <%= couponSelected %>
+                                                                    </p>
+                                                                    <div class="d-flex">
+                                                                        <p
+                                                                            class="card-text d-flex justify-content-between align-items-center">
+                                                                            Total Price: ₹ <%= totalAmount %>
+
+                                                                        </p>
+                                                                        <span
+                                                                            class="text-success font-weight-bold">Coupon
+                                                                            applied</span>
+                                                                        <a href="/remove_coupon"><i
+                                                                                class="fas fa-times"></i></a>
+
+
+                                                                    </div>
+
+                                                                    <% } else { %>
+                                                                        <p class="card-text">Total Price: ₹ <%= totalAmount %>
+                                                                        </p>
+                                                                        <% } %>
+
+
+
+                                                                            
+                                                                                <!-- <form class="pay-form"> -->
+
+                                                                                <input type="hidden" name="name"
+                                                                                    value="<%= roomData.roomType %>">
+                                                                                <input type="hidden" name="amount"
+                                                                                    value="<%= totalAmount %>">
+                                                                                <input type="hidden" name="description"
+                                                                                    value="Booking your room">
+                                                                                
+                                                                                <!-- </form> -->
+                                                                           
+
+
+                                                                            <label>
+                                                                                <input type="radio" name="payment"
+                                                                                    value="pay"> Pay Now
+                                                                            </label>
+                                                                            <label>
+                                                                                <input type="radio" name="payment"
+                                                                                    value="bookNow"> Pay When Arrival
+                                                                            </label>
+                                                                            
+                                                                            <input class="proceed" type="submit"
+                                                                                value="Proceed & Book Now">
+
+
+                                                                            <% } %>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .card-body a {
+            display: block;
+            text-decoration: none;
+            margin-bottom: 10px;
+        }
+
+        .card-body button {
+
+            text-align: left;
+        }
+
+        .collapse button {
+
+            width: 100%;
+            border-radius: 10px;
+            background-color: #f5f5f5;
+
+        }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.10.2/dist/umd/popper.min.js"
+        integrity="sha384-7+zCNj/IqJ95wo16oMtfsKbZ9ccEh31eOz1HGyDuCQ6wgnyJNSYdrPa03rtR1zdB"
+        crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.min.js"
+        integrity="sha384-QJHtvGhmr9XOIpI6YVutG+2QOK9T+ZnN4kzFN1RtK3zEFEIsxhlmWl5/YESvpZ13"
+        crossorigin="anonymous"></script>
+
+</body>
+<script>
+     document.querySelector('form').addEventListener('submit', function(event) {
+            if (!document.querySelector('input[name="payment"]:checked')) {
+                event.preventDefault(); 
+
+            }
+        });
+
+
+       const paymentRadios = document.querySelectorAll('input[name="payment"]');
+
+    paymentRadios.forEach(radio => {
+        radio.addEventListener('change', () => {
+            if (document.querySelector('input[name="payment"]:checked')) {
+                proceedButton.disabled = false;
+
+            } else {
+                proceedButton.disabled = true;
+            }
+        });
+    });
+
+</script>
+
+<!-- razorpay -->
+
+    
+
+
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    
+
+
+    $(document).ready(function () {
+        $('.pay-form').submit(function (e) {
+            e.preventDefault();
+
+            var paymentOption = $("input[name='payment']:checked").val();
+
+            if(paymentOption === "bookNow") {
+                window.location.href = "/booknow";
+
+            } else if(paymentOption === "pay") {
+              
+
+            var formData = $(this).serialize();
+            console.log(formData);
+
+            $.ajax({
+                url: "/createOrder",
+                type: "POST",
+                data: formData,
+                success: function (res) {
+                    if (res.success) {
+                        var options = {
+                            "key": "" + res.key_id + "",
+                            "amount": "" + res.amount + "",
+                            "currency": "INR",
+                            "name": "" + res.product_name + "",
+                            "description": "" + res.description + "",
+                            "image": "https://dummyimage.com/600x400/000/fff",
+                            "order_id": "" + res.order_id + "",
+                            "handler": function (response) {
+                                //alert("Payment Succeeded");
+                                 window.open("/bookNow/?param=" +res.amount,"_self")
+                            },
+                            "prefill": {
+                                "contact": "" + res.contact + "",
+                                "name": "" + res.name + "",
+                                "email": "" + res.email + ""
+                            },
+                            "notes": {
+                                "description": "" + res.description + ""
+                            },
+                            "theme": {
+                                "color": "#2300a3"
+                            }
+                        };
+                        var razorpayObject = new Razorpay(options);
+                        razorpayObject.on('payment.failed', function (response) {
+                           // alert("Payment Failed");
+                            window.open("/confirmPayment","_self")
+                        });
+                        razorpayObject.open();
+                    }
+                    else {
+                        alert(res.msg);
+                    }
+                }
+            })
+            }
+        });
+    
+    });
+
+</script>
+
+
+</html>

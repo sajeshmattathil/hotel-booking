@@ -1,14 +1,19 @@
 <%- include('header') -%>
 
-<div class="wrapper">
+  <div class="wrapper">
     <div class="title-text">
       <div class="title login">Owner Login Form</div>
-      <div class="title signup">Signup Form</div>
+
+
     </div>
     <div class="form-container">
-      
+
       <div class="form-inner">
+
         <form action="/owner/ownerlogin" class="login" method="post">
+          <h5 class="text-danger">
+            <%= msg %>
+          </h5>
           <div class="field">
             <input type="text" placeholder="Email Address" name="email" required>
           </div>
@@ -16,14 +21,14 @@
             <input type="password" placeholder="Password" name="password" required minlength="6">
           </div>
           <div class="pass-link"><a href="#">Forgot password?</a></div>
-         
+
           <div class="field btn">
             <div class="btn-layer">
             </div>
-             <input type="submit" value="Login">
+            <input type="submit" value="Login">
           </div>
-     </form>
-      
+        </form>
+
       </div>
     </div>
   </div>
