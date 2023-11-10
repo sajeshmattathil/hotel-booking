@@ -25,12 +25,14 @@ const findHotels = async (city,page) => {
     try {
         if (city) {
             let hotelsData = await userRepository.findAllHotels(city,page)
+            let totalHotel = await userRepository.findHotelsNumber(city)
+            console.log(hotelsData,totalHotel)
             if (!hotelsData.length) {
                 const msg = "No hotels in found in the city"
                 req.session.city
                 return { status: 400, msg }
             }
-            return hotelsData
+            return {hotelsData,totalHotel}
         }
 
 

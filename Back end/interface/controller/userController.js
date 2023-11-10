@@ -33,49 +33,26 @@ const userhotelsListPage = async (req, res) => {
     var page = req.query.page || 1
     console.log(page,"page")
     
-    let hotels = await userService.findHotels(req.session.city,page)
-    console.log(hotels,"hotels")
-    req.session.hotelsss = hotels
-
+    let response = await userService.findHotels(req.session.city,page)
+    let hotels =response.hotelsData
+    let totalHotels = response.totalHotel
+console.log(totalHotels,"totalHotels")
     if(req.session.filtered) hotels = req.session.filtered
 
     const userName = ''
     const user = req.session.user
     const msg = req.query.msg
-    console.log(888888)
+    
 
-    res.render('user/hotels', { hotels, msg, userName, user })
-    console.log(99999)
+    res.render('user/hotels', { hotels, msg, userName, user ,totalHotels})
+    
 
-   // res.json()
+  
 }
 
 
      const hotelists = async (req, res) => {
-//     const page = parseInt(req.query.page) || 1;
-//     const limit = parseInt(req.query.limit) || 10;
-  
-//     const skip = (page - 1) * limit;
-//     console.log(page,limit,"limit")
 
-//     try {
-//         let items = await userService.findHotels(req.session.city,skip,limit)
-// console.log(items,"items")
-//      // const items = await Item.find().skip(skip).limit(limit);
-//      // const totalItems = await items.countDocuments();
-//       const totalItems = items.length
-
-
-//   console.log(items,totalItems,"totalItems")
-//       res.json({
-//         items,
-//         currentPage: page,
-//         totalPages: Math.ceil(totalItems / limit),
-//         totalItems
-//       });
-//     } catch (error) {
-//       res.status(500).json({ error: 'Internal Server Error' });
-//     }
   };
 
 const userLogin = (req, res) => {

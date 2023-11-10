@@ -34,6 +34,14 @@ const findAllHotels = async (cityName,page) => {
         console.log(error);
     }
 }
+
+const findHotelsNumber = async (city)=>{
+    try{
+      const data = await hotels.find({isApproved:true,city:city})
+      if(data.length) return data.length
+      else console.log('cityName not found')
+    }catch(err){console.log(err.message);}
+}
 const findAndEditName = async (req) => {
     try {
         const email = req.session.user
@@ -580,7 +588,9 @@ module.exports = {
     filerHotelsifOneMissing,
     filerHotels,
     findTransactions,
-    getRoom
+    getRoom,
+ findHotelsNumber 
+
    
 }
 
