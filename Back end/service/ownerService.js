@@ -12,7 +12,7 @@ const auth = async (req) => {
      }
      try {
           const owner = await ownerRepository.findOwnerByEmail(email)
-        
+
           if (!owner) {
                const msg = "Email or Password is incorrect"
                return { status: 400, msg: msg }
@@ -47,16 +47,16 @@ const authHotel = async (req) => {
 
      try {
           const image = req.files.map(file => file.filename);
-          console.log(image,"imageimage");
-          const owner=req.session.owner
+          console.log(image, "imageimage");
+          const owner = req.session.owner
           const ownerData = await ownerRepository.findOwnerByEmail(owner)
           const owner_id = ownerData._id
-          let {amenities,cancellationPolicy} = req.body
-          const { hotel_name,star_rating,description, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
-          
-          if(!cancellationPolicy) cancellationPolicy =" "
-          
-          if (!hotel_name||!star_rating ||!description|| !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
+          let { amenities, cancellationPolicy } = req.body
+          const { hotel_name, star_rating, description, email, address, city, pincode, totalRoomsAvailable, nearTouristDestination } = req.body
+
+          if (!cancellationPolicy) cancellationPolicy = " "
+
+          if (!hotel_name || !star_rating || !description || !email || !address || !city || !pincode || !totalRoomsAvailable || !nearTouristDestination) {
                console.log("fill empty fields");
                let msg = 'fill empty fields'
                return { status: 400, msg: msg }
@@ -70,9 +70,9 @@ const authHotel = async (req) => {
 
           }
           else {
-             if(amenities.includes(','))  amenities = amenities.split(',')
+               if (amenities.includes(',')) amenities = amenities.split(',')
                const newHotel = new hotel({
-                    owner_id:owner,
+                    owner_id: owner,
                     hotel_name,
                     star_rating,
                     description,
@@ -90,13 +90,10 @@ const authHotel = async (req) => {
                newHotel.save()
                let msg = 'Hotel saved successfully'
                return { status: 200, msg: msg }
-
           }
-
      }
      catch (error) { console.log(error); }
 }
-
 
 const hotelsWithIncompleteDetails = async (req, res) => {
      try {
@@ -105,8 +102,7 @@ const hotelsWithIncompleteDetails = async (req, res) => {
           if (data.length === 0) {
                let msg = 'No details available'
                return { status: 400, message: msg }
-          }
-          // status 200          
+          }        
           return data
      } catch (err) { console.log(err); }
 }
@@ -116,12 +112,12 @@ const authenticateRoomDetails = async (req) => {
           const hotel_id = req.session.hotel_id
           console.log(hotel_id);
           const image = req.files.map(file => file.filename);
-          let {roomType,roomSpace,description, price,RoomNumberStartwith ,roomCount, amnities, availableRooms} = req.body
-console.log(req.body);
-          if (!roomType || !roomSpace  || !description||!price || !RoomNumberStartwith || !roomCount || !amnities || !availableRooms) {
+          let { roomType, roomSpace, description, price, RoomNumberStartwith, roomCount, amnities, availableRooms } = req.body
+          console.log(req.body);
+          if (!roomType || !roomSpace || !description || !price || !RoomNumberStartwith || !roomCount || !amnities || !availableRooms) {
                console.log("fill empty fields");
                let message = 'fill empty fields'
-               return { status: 400,message }
+               return { status: 400, message }
           }
           amnities = amnities.split(',')
 
@@ -136,70 +132,70 @@ console.log(req.body);
                imagesOfRoom: image,
                hotel: hotel_id
           })
-          newRoom.save().catch((err)=>{console.log(err);})
-         await ownerRepository.addRoomNumbers(hotel_id,roomType,roomCount,RoomNumberStartwith)
-     
+          newRoom.save().catch((err) => { console.log(err); })
+          await ownerRepository.addRoomNumbers(hotel_id, roomType, roomCount, RoomNumberStartwith)
+
           const message = "New room saved sucessfully"
           return { status: 200, message }
      } catch (error) { console.log(error); }
 }
 
-const findCategories= async ()=>{
-     try{
- const category= await ownerRepository.findCategories()
- return category
-     }catch(err){console.log(err);}
+const findCategories = async () => {
+     try {
+          const category = await ownerRepository.findCategories()
+          return category
+     } catch (err) { console.log(err); }
 }
-const findSubCategories= async ()=>{
-     try{
- const category= await ownerRepository.findSubCategories()
- return category
-     }catch(err){console.log(err);}
+const findSubCategories = async () => {
+     try {
+          const category = await ownerRepository.findSubCategories()
+          return category
+     } catch (err) { console.log(err); }
 }
 
-const addCategoryOffer = async (req)=>{
-     try{ 
-          const hotel_id=req.session.hotel_id
+const addCategoryOffer = async (req) => {
+     try {
+          const hotel_id = req.session.hotel_id
           console.log(hotel_id);
-          const {name,roomType,discount,startingDate,expiry} = req.body
+          const { name, roomType, discount, startingDate, expiry } = req.body
           req.session.roomType = roomType
-      const isExist = await offer.findOne({roomType:roomType})
-      if(isExist){
-          const msg="Offer for this Category alredy exists,edit existing data"
-          return {status:201,msg}
-      }else{
-          const newOffer = new offer({
-               name,
-               roomType,
-               discount,
-               startingDate,
-               expiry,
-               hotel_id
-          })
+          const isExist = await offer.findOne({ roomType: roomType })
+          if (isExist) {
+               const msg = "Offer for this Category alredy exists,edit existing data"
+               return { status: 201, msg }
+          } else {
+               const newOffer = new offer({
+                    name,
+                    roomType,
+                    discount,
+                    startingDate,
+                    expiry,
+                    hotel_id
+               })
                console.log(newOffer);
                newOffer.save()
 
-               
-               const msg="Offer for this Category saved sucessfully"
-               return {status:200,msg}
+
+               const msg = "Offer for this Category saved sucessfully"
+               return { status: 200, msg }
           }
-      
-     }catch(err){console.log(err);}
-     
+
+     } catch (err) { console.log(err); }
+
 }
 
-const findOffers = async (req)=>{
-     try{
-          console.log(req.session.hotel_id,"8888");
-       const hotel_id = req.session.hotel_id
-       
-       const offers = await ownerRepository.findOffers(hotel_id)
+const findOffers = async (req) => {
+     try {
+          console.log(req.session.hotel_id, "8888");
+          const hotel_id = req.session.hotel_id
 
-       if(!offers.length) {
-          const msg = "No offers available"
-          return {msg}
-       }else return offers
-     }catch(err){console.log(err);}
+          const offers = await ownerRepository.findOffers(hotel_id)
+
+          if (!offers.length) {
+               const msg = "No offers available"
+               return { msg }
+          } else return offers
+     } catch (err) { console.log(err); }
 }
 module.exports = {
      auth,

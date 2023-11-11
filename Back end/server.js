@@ -18,10 +18,8 @@ app.use(express.json())
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }))
 app.set('view engine', 'ejs')
-
 app.use('/static', express.static(path.join(__dirname, '../Front end/public')));
 app.set('views', path.join(__dirname, '../Front end/views'));
-
 app.use(session({
     secret: uuidv4(),
     resave: false,

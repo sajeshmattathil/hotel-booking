@@ -1,8 +1,8 @@
 const Owner = require('../domain/model/owner')
 const hotel = require('../domain/model/hotel')
-const category=require('../domain/model/category')
-const subcategory=require('../domain/model/subCategory')
-const rooms=require('../domain/model/room')
+const category = require('../domain/model/category')
+const subcategory = require('../domain/model/subCategory')
+const rooms = require('../domain/model/room')
 const offer = require('../domain/model/category_offer')
 const bookinghistory = require('../domain/model/bookingHistory')
 
@@ -25,86 +25,86 @@ const findOwnerNameByEmail = async (email) => {
 const FindHotelByName = async (hotel_name) => {
     try {
         return await hotel.findOne({ hotel_name: hotel_name })
-         
+
     } catch (error) {
         console.log(error);
     }
 }
-const findHotelsWithIncompleteDetails= async ()=>{
+const findHotelsWithIncompleteDetails = async () => {
     try {
         return await hotel.find({ status: "inactive" }).lean()
-         
+
     } catch (error) {
         console.log(error);
     }
 }
-const findCategories= async ()=>{
+const findCategories = async () => {
     try {
         return await category.find({})
-         
+
     } catch (error) {
         console.log(error);
     }
 }
-const findSubCategories= async ()=>{
+const findSubCategories = async () => {
     try {
         return await subcategory.find({})
-         
+
     } catch (error) {
         console.log(error);
     }
 }
 
-const addRoomNumbers= async (hotel_id,roomType,roomCount,RoomNumberStartwith)=>{
-  try{
-    console.log(hotel_id,'><><',roomType,"nn",roomCount,'<><',RoomNumberStartwith);
-    for(let i=0;i<roomCount;i++){
-        await rooms.updateOne({hotel:hotel_id,roomType:roomType},{$push:{roomNumbers:String(RoomNumberStartwith) }})
-        RoomNumberStartwith++
-    }
-        
-  }catch(err){console.log();}
-}
-
-const findOffers = async (hotel_id)=>{
+const addRoomNumbers = async (hotel_id, roomType, roomCount, RoomNumberStartwith) => {
     try {
-        return await offer.find({hotel_id:hotel_id})
-         
+        console.log(hotel_id, '><><', roomType, "nn", roomCount, '<><', RoomNumberStartwith);
+        for (let i = 0; i < roomCount; i++) {
+            await rooms.updateOne({ hotel: hotel_id, roomType: roomType }, { $push: { roomNumbers: String(RoomNumberStartwith) } })
+            RoomNumberStartwith++
+        }
+
+    } catch (err) { console.log(); }
+}
+
+const findOffers = async (hotel_id) => {
+    try {
+        return await offer.find({ hotel_id: hotel_id })
+
     } catch (error) {
         console.log(error);
     }
 }
 
-const updateOwnerWallet = async (hotelId,getBookingId,ownerAmount) =>{
-    try{
-        console.log(hotelId,getBookingId,ownerAmount,"hotelId,getBookingId,ownerAmount")
+const updateOwnerWallet = async (hotelId, getBookingId, ownerAmount) => {
+    try {
+        console.log(hotelId, getBookingId, ownerAmount, "hotelId,getBookingId,ownerAmount")
         const ownerData = await bookinghistory.aggregate([
-                {
-                    $match:{_id:getBookingId}
-                },
-                {
-                    $lookup: {
-                        from: "hotels",
-                        localField: "hotel_id",
-                        foreignField: "_id",
-                        as: "ownerInfo"
-                    }
-
-                },
-                {
-                    $unwind:"$ownerInfo"
-                },
-                {
-                    $project:{
-                        owner_id:"$ownerInfo.owner_id"
-                    }
+            {
+                $match: { _id: getBookingId }
+            },
+            {
+                $lookup: {
+                    from: "hotels",
+                    localField: "hotel_id",
+                    foreignField: "_id",
+                    as: "ownerInfo"
                 }
-        ])
-        console.log(ownerData,'ownerData');
 
-        console.log(ownerData,'ownerData');
-        return await Owner.updateOne({_id:ownerData[0].owner_id},{$inc:{wallet:ownerAmount}})
-    }catch(err){console.log(err);}
+            },
+            {
+                $unwind: "$ownerInfo"
+            },
+            {
+                $project: {
+                    owner_id: "$ownerInfo.owner_id"
+                }
+            }
+        ])
+        console.log(ownerData, 'ownerData');
+
+        console.log(ownerData, 'ownerData');
+        return await Owner.updateOne({ _id: ownerData[0].owner_id }, { $inc: { wallet: ownerAmount } })
+    } catch (err) { console.log(err); }
 }
 module.exports = {
     findOwnerByEmail,

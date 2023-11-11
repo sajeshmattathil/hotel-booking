@@ -8,14 +8,11 @@ const razorpayInstance = new Razorpay({
 
 const renderProductPage = async(req,res)=>{
 
-    try {
-        
+    try {     
         res.render('product');
-
     } catch (error) {
         console.log(error.message);
     }
-
 }
 
 const createOrder = async(req,res)=>{
@@ -54,8 +51,6 @@ const createOrder = async(req,res)=>{
         console.log(error.message);
     }
 }
-
-
 module.exports = {
     renderProductPage,
     createOrder

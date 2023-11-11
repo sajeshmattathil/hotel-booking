@@ -17,7 +17,7 @@ router.get('/forms', auth.ownerAuthCheck, ownerController.ownerForms)
 router.get('/offer_management/:id',auth.ownerAuthCheck,ownerController.offerManagement)
 router.get('/offerManagementPage',auth.ownerAuthCheck,ownerController.offerManagementPage)
 router.post('/add_category_offer',ownerController.addCategoryOffer)
-
+router.get('/signout',ownerController.signOut)
 module.exports = router
 
 

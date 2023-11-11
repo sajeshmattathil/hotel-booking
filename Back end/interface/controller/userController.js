@@ -3,7 +3,7 @@ const invoice = require('../../utils/invoice')
 
 
 const userHome = (req, res) => {
-     res.render('user/index')
+    res.render('user/index')
     //res.render('user/bookingFinalPage')
     // const checkin_date = req.session.checkin_date
     // const checkout_date = req.session.checkout_date
@@ -11,7 +11,7 @@ const userHome = (req, res) => {
     //res.render('user/invoice')
 }
 const userhotelsList = async (req, res) => {
-console.log(req.body,"req.body");
+    console.log(req.body, "req.body");
 
     const user = req.session.user
 
@@ -21,44 +21,54 @@ console.log(req.body,"req.body");
     req.session.checkin_date = req.body.checkin_date
     req.session.checkout_date = req.body.checkout_date
 
-    const hotels = await userService.findHotels(req.session.city,1)
-    //console.log(hotels,"hotels")
-    // if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
-    // else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
-    if (hotels.status === 400) res.redirect(`/hotelsPage`)
-    else res.redirect(`/hotelsPage`)
+
+    const hotels = await userService.findHotels(req.session.city, 1)
+    if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+    else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+    // if (hotels.status === 400) res.redirect(`/hotelsPage`)
+    // else res.redirect(`/hotelsPage`)
 
 }
 const userhotelsListPage = async (req, res) => {
     var page = req.query.page || 1
-    console.log(page,"page")
-    
-    let response = await userService.findHotels(req.session.city,page)
-    let hotels =response.hotelsData
+    console.log(page, "page")
+
+    let response = await userService.findHotels(req.session.city, page)
+    let hotels = response.hotelsData
     let totalHotels = response.totalHotel
-console.log(totalHotels,"totalHotels")
-    if(req.session.filtered) hotels = req.session.filtered
+    console.log(totalHotels, "totalHotels")
+    if (req.session.filtered) hotels = req.session.filtered
 
     const userName = ''
     const user = req.session.user
     const msg = req.query.msg
-    
-
-    res.render('user/hotels', { hotels, msg, userName, user ,totalHotels})
-    
-
-  
+    res.render('user/hotels', { hotels, msg, userName, user, totalHotels })
+}
+const cityFromImage = (req,res)=>{
+    try{
+        console.log(req.params.city,"req.params.city")
+        req.session.city = req.params.city
+        res.redirect(`/hotelsPage`)
+    }catch(err){console.log(err.message);}
 }
 
+const hotelists = async (req, res) => {
 
-     const hotelists = async (req, res) => {
-
-  };
+};
 
 const userLogin = (req, res) => {
-    let msg = req.query.msg
+    let msg =''
+     if(req.query.msg) msg = req.query.msg
+    
+    res.redirect(`/loginPage?msg=${msg}`)
+}
+
+const userLoginPage = (req,res)=>{
+    try{
+        let msg = req.query.msg
     res.render('user-login', { msg })
-    msg = " "
+
+    }catch(err){console.log(err.message);}
 }
 
 const otpVerification = async (req, res) => {
@@ -114,7 +124,7 @@ const userRegisterView = (req, res) => {
 const userRegisterPage = (req, res) => {
     const msg = req.query.msg
     const user = req.session.user
-    res.render('user-signup', { msg: msg ,user})
+    res.render('user-signup', { msg: msg, user })
 }
 
 const signOut = (req, res) => {
@@ -127,14 +137,14 @@ const signOut = (req, res) => {
 }
 
 const userManagement = (req, res) => {
-    if(req.session.user) res.redirect('/manageYourProfilePage')
+    if (req.session.user) res.redirect('/manageYourProfilePage')
     else res.redirect('/login')
 }
 
 const userManagementPage = (req, res) => {
     const user = req.session.user
 
-    res.render('user/userManagement',{user})
+    res.render('user/userManagement', { user })
 }
 
 const manageYourProfile = (req, res) => {
@@ -157,22 +167,22 @@ const editUserName = async (req, res) => {
     } catch (err) { console.log(err); }
 }
 
-const generateOTP = async (req,res)=>{
-    try{
-       const response = await userService.generateOtpAndSendForEmailChange(req)
-       const msg = "Something went wrong"
-       if(response.status === 200) res.json({success:true})
-       else res.json({msg:msg})
-    }catch(err){console.log(err.message);}
+const generateOTP = async (req, res) => {
+    try {
+        const response = await userService.generateOtpAndSendForEmailChange(req)
+        const msg = "Something went wrong"
+        if (response.status === 200) res.json({ success: true })
+        else res.json({ msg: msg })
+    } catch (err) { console.log(err.message); }
 }
-const verifyOTP = async (req,res)=>{
-    try{
+const verifyOTP = async (req, res) => {
+    try {
         console.log("dsfsgfgfdg");
-    const response = await userService.veriftOtpForChangeEmail(req)
-    if(response.status === 200) res.json({success:true})
-    if(response.status === 203) res.json({msg:response.msg})
-    if(response.status === 204) res.json({msg:response.msg})
-    }catch(err){console.log(err.message);}
+        const response = await userService.veriftOtpForChangeEmail(req)
+        if (response.status === 200) res.json({ success: true })
+        if (response.status === 203) res.json({ msg: response.msg })
+        if (response.status === 204) res.json({ msg: response.msg })
+    } catch (err) { console.log(err.message); }
 }
 // const saveEmail = async (req,res)=>{
 //     try{
@@ -184,8 +194,8 @@ const saveEmail = async (req, res) => {
     try {
         console.log(1);
         const response = await userService.saveEditedUserEmail(req)
-        if (response.status === 200) res.json({success:response.msg})
-        if (response.status === 500) res.json({emailError:response.msg})
+        if (response.status === 200) res.json({ success: response.msg })
+        if (response.status === 500) res.json({ emailError: response.msg })
 
     } catch (err) { console.log(err); }
 }
@@ -221,7 +231,7 @@ const editUserAddress = async (req, res) => {
 const editUserPassword = async (req, res) => {
     try {
         console.log(11111);
-        const response = await userService.saveEditedUserPassword(req,res)
+        const response = await userService.saveEditedUserPassword(req, res)
         if (response.status === 400) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 200) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
         if (response.status === 500) res.redirect(`/manageYourProfilePage?msg=${response.msg}`)
@@ -290,7 +300,7 @@ const hotelDetailsPage = async (req, res) => {
         const images = await userService.roomImages(req)
         const user = req.session.user
         const msg = req.query.msg
-       
+
 
         let checkin_date = req.session.checkin_date
         let checkout_date = req.session.checkout_date
@@ -300,7 +310,7 @@ const hotelDetailsPage = async (req, res) => {
             checkin_date = today
             req.session.checkin_date = checkin_date
 
-            console.log(checkin_date,"checkin_date");
+            console.log(checkin_date, "checkin_date");
 
         }
         if (!checkout_date) {
@@ -310,16 +320,16 @@ const hotelDetailsPage = async (req, res) => {
             const tomorrowString = tomorrow.toISOString().split('T')[0];
             checkout_date = tomorrowString
             req.session.checkout_date = checkout_date
-            console.log(checkout_date,"checkout_date")
+            console.log(checkout_date, "checkout_date")
         }
 
 
         const roomArray = await userService.roomDetails(req)
-        console.log(roomArray,"roomArray");
-        let no_ofRooms =  req.session.noOfRooms
-       let no_ofAdults = req.session.num_adults
+        console.log(roomArray, "roomArray");
+        let no_ofRooms = req.session.noOfRooms
+        let no_ofAdults = req.session.num_adults
 
-        res.render('user/rooms', {no_ofAdults,no_ofRooms, roomArray, images, checkin_date, checkout_date, user, msg })
+        res.render('user/rooms', { no_ofAdults, no_ofRooms, roomArray, images, checkin_date, checkout_date, user, msg })
 
     } catch (err) { console.log(err); }
 }
@@ -335,13 +345,13 @@ const sortHotels = async (req, res) => {
 
 const filterHotels = async (req, res) => {
     try {
-        const { amenitie, star_rating } = req.body    
+        const { amenitie, star_rating } = req.body
         const city = req.session.city
-        const filteredHotels = await userService.filteredData(req.body,city)
-        console.log(filteredHotels,"filteredHotels");
-       if(filteredHotels.data) req.session.filtered = filteredHotels.data
-       console.log(req.session.filtered,"req.session.filtered");
-       res.redirect('/hotelsPage')
+        const filteredHotels = await userService.filteredData(req.body, city)
+        console.log(filteredHotels, "filteredHotels");
+        if (filteredHotels.data) req.session.filtered = filteredHotels.data
+        console.log(req.session.filtered, "req.session.filtered");
+        res.redirect('/hotelsPage')
     } catch (err) { console.log(err); }
 }
 
@@ -376,7 +386,7 @@ const proceedBooking = async (req, res) => {
             checkin_date = today
             req.session.checkin_date = checkin_date
 
-            console.log(checkin_date,"checkin_date");
+            console.log(checkin_date, "checkin_date");
 
         }
         if (!checkout_date) {
@@ -386,7 +396,7 @@ const proceedBooking = async (req, res) => {
             const tomorrowString = tomorrow.toISOString().split('T')[0];
             checkout_date = tomorrowString
             req.session.checkout_date = checkout_date
-            console.log(checkout_date,"checkout_date")
+            console.log(checkout_date, "checkout_date")
         }
 
         res.redirect('/proceedBookingPage')
@@ -406,7 +416,7 @@ const proceedBookingPage = async (req, res) => {
         const checkout_date = req.session.checkout_date
         const noOfRooms = req.session.noOfRooms
         const noOfAdults = req.session.num_adults
-     
+
         const dateObject1 = new Date(checkin_date);
         const dateObject2 = new Date(checkout_date);
         if (!isNaN(dateObject1) && !isNaN(dateObject2)) {
@@ -415,44 +425,44 @@ const proceedBookingPage = async (req, res) => {
         } else {
             console.error('Invalid date format');
         }
-        console.log(numberOfDays,"numberOfDays");
-        const totalAmount =numberOfDays * noOfRooms * roomData.price
+        console.log(numberOfDays, "numberOfDays");
+        const totalAmount = numberOfDays * noOfRooms * roomData.price
         req.session.totalAmount_first = totalAmount
-       // const checkRoomAvailability = await userService.checkRoomAvailability(req,noOfRooms)
+        // const checkRoomAvailability = await userService.checkRoomAvailability(req,noOfRooms)
         const msg = req.query.msg
-       // const availablityMsg = checkRoomAvailability.msg
-       // console.log(availablityMsg, "availablityMsg");
-        res.render('user/proceedBooking', {user,userData,numberOfDays, roomData, hotelData, checkin_date, checkout_date,totalAmount,noOfRooms, msg,noOfAdults })
+        // const availablityMsg = checkRoomAvailability.msg
+        // console.log(availablityMsg, "availablityMsg");
+        res.render('user/proceedBooking', { user, userData, numberOfDays, roomData, hotelData, checkin_date, checkout_date, totalAmount, noOfRooms, msg, noOfAdults })
     } catch (err) { console.log(err.message); }
 }
 
-const getRooms=(req,res)=>{
-    try{
-        console.log(req.body.num_rooms,"num_rooms");
+const getRooms = (req, res) => {
+    try {
+        console.log(req.body.num_rooms, "num_rooms");
         req.session.noOfRooms = req.body.num_rooms
-        res.json({sucess:req.session.noOfRooms})
-    }catch(err){console.log(err.message);}
+        res.json({ sucess: req.session.noOfRooms })
+    } catch (err) { console.log(err.message); }
 }
-const getAdults=(req,res)=>{
-    try{
-        console.log(req.body,"req.body")
-        const {num_adults,numRooms,expectesRoomNumber} = req.body
-        console.log(req.body.num_adults,"num_adults");
+const getAdults = (req, res) => {
+    try {
+        console.log(req.body, "req.body")
+        const { num_adults, numRooms, expectesRoomNumber } = req.body
+        console.log(req.body.num_adults, "num_adults");
         req.session.num_adults = num_adults
-        console.log(req.session.num_adults,"req.session.num_adults,")
+        console.log(req.session.num_adults, "req.session.num_adults,")
 
-        if(expectesRoomNumber >= numRooms) req.session.noOfRooms = expectesRoomNumber
-        res.json({sucess:req.session.num_adults})
-    }catch(err){console.log(err.message);}
+        if (expectesRoomNumber >= numRooms) req.session.noOfRooms = expectesRoomNumber
+        res.json({ sucess: req.session.num_adults })
+    } catch (err) { console.log(err.message); }
 }
 
 
-const verifyRoomAvailability = async (req,res)=>{
-    try{
+const verifyRoomAvailability = async (req, res) => {
+    try {
         const response = await userService.checkRoomAvailability(req)
-        if(response.msg === " ") res.json({success:"ok"})
-        else res.json({success:"no"})
-    }catch(err){console.log(err.message);}
+        if (response.msg === " ") res.json({ success: "ok" })
+        else res.json({ success: "no" })
+    } catch (err) { console.log(err.message); }
 }
 
 const checkInDatecheckOutDate = (req, res) => {
@@ -471,7 +481,7 @@ const confirmBooking = async (req, res) => {
 
 const confirmPayment = async (req, res) => {
     try {
-        const user  = req.session.user
+        const user = req.session.user
         const booking = req.session.booking
         const roomData = req.session.roomData
         const coupons = await userService.findCoupons(req)
@@ -500,64 +510,61 @@ const confirmPayment = async (req, res) => {
         const offer = await userService.findCategoryOffer(req)
         req.session.offer = offer
         const walletMoney = await userService.findWalletMoney(req)
-       let wallet = walletMoney.wallet
+        let wallet = walletMoney.wallet
         console.log(walletMoney, "wallet");
-        var totalAmount =  req.session.totalAmount_first
+        var totalAmount = req.session.totalAmount_first
         let diff
-        console.log(totalAmount,"totalAmount-first");
+        console.log(totalAmount, "totalAmount-first");
         if (couponSelected && offer) {
             console.log(111);
-            var amount = (totalAmount- ((roomData.price * (offer.discount / 100)) * noOfRooms )) - parseInt(couponSelected) 
-           totalAmount = amount + (amount * 0.12)
-           if(totalAmount < walletMoney.wallet){
-            diff = totalAmount - walletMoney.wallet
-            wallet = diff
-            walletMoney.wallet = walletMoney.wallet - diff
-            totalAmount = totalAmount -  walletMoney.wallet
-           }
-        } else if (offer && !couponSelected) {
-            console.log(222);
-            console.log(totalAmount,roomData.price ,offer.discount,noOfRooms,walletMoney.wallet,"datas");
-            amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms )) 
+            var amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms)) - parseInt(couponSelected)
             totalAmount = amount + (amount * 0.12)
-
-            if(totalAmount < walletMoney.wallet){
-                diff = walletMoney.wallet - totalAmount 
+            if (totalAmount < walletMoney.wallet) {
+                diff = totalAmount - walletMoney.wallet
                 wallet = diff
                 walletMoney.wallet = walletMoney.wallet - diff
-               }
-               totalAmount = totalAmount -  walletMoney.wallet
+                totalAmount = totalAmount - walletMoney.wallet
+            }
+        } else if (offer && !couponSelected) {
+            console.log(222);
+            console.log(totalAmount, roomData.price, offer.discount, noOfRooms, walletMoney.wallet, "datas");
+            amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms))
+            totalAmount = amount + (amount * 0.12)
+
+            if (totalAmount < walletMoney.wallet) {
+                diff = walletMoney.wallet - totalAmount
+                wallet = diff
+                walletMoney.wallet = walletMoney.wallet - diff
+            }
+            totalAmount = totalAmount - walletMoney.wallet
         } else if (couponSelected && !offer) {
             console.log(333);
 
             amount = (totalAmount - parseInt(couponSelected))
             totalAmount = amount + (amount * 0.12)
-            if(totalAmount < walletMoney.wallet){
-                diff =walletMoney.wallet - totalAmount 
+            if (totalAmount < walletMoney.wallet) {
+                diff = walletMoney.wallet - totalAmount
                 wallet = diff
                 walletMoney.wallet = walletMoney.wallet - diff
-               }
-               totalAmount = totalAmount -  walletMoney.wallet
+            }
+            totalAmount = totalAmount - walletMoney.wallet
 
         } else {
             console.log(444);
 
-            amount = totalAmount 
+            amount = totalAmount
             totalAmount = amount + (amount * 0.12)
-            if(totalAmount < walletMoney.wallet){
-                diff = walletMoney.wallet - totalAmount 
+            if (totalAmount < walletMoney.wallet) {
+                diff = walletMoney.wallet - totalAmount
                 wallet = diff
                 walletMoney.wallet = walletMoney.wallet - diff
-               }
-               totalAmount = totalAmount -  walletMoney.wallet
-
-
+            }
+            totalAmount = totalAmount - walletMoney.wallet
         }
-
-        console.log(totalAmount,"totalAmount-last");
+        console.log(totalAmount, "totalAmount-last");
         req.session.walletMoneyUsed = walletMoney.wallet
         req.session.totalAmount = totalAmount
-        res.render('user/payment', { user,userName, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, wallet, amount, numberOfDays ,noOfRooms})
+        res.render('user/payment', { user, userName, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, wallet, amount, numberOfDays, noOfRooms })
     } catch (err) { console.log(err); }
 }
 
@@ -585,25 +592,25 @@ const bookNow = async (req, res) => {
     } catch (err) { console.log(err); }
 }
 
-const bookingConfirmed = (req,res)=>{
-    try{
-      res.redirect('/bookingConfirmedPage')
-    }catch(err){console.log(err.message);}
+const bookingConfirmed = (req, res) => {
+    try {
+        res.redirect('/bookingConfirmedPage')
+    } catch (err) { console.log(err.message); }
 }
-const bookingConfirmedPage = async (req,res)=>{
-    try{
+const bookingConfirmedPage = async (req, res) => {
+    try {
         const user = req.session.user
         const booking = req.session.bookingData
-        console.log(booking,"booking");
-        booking.checkin_date =  booking.checkin_date.split('T')[0]
-        booking.checkout_date =  booking.checkout_date.split('T')[0]
+        console.log(booking, "booking");
+        booking.checkin_date = booking.checkin_date.split('T')[0]
+        booking.checkout_date = booking.checkout_date.split('T')[0]
 
-        console.log(booking,"booking");
+        console.log(booking, "booking");
         const hotel = await userService.findHotel(booking.hotel_id)
         const room = await userService.findRoom(booking.room_id)
-console.log(hotel,room,"hotel,room")
-        res.render('user/bookingFinalPage',{user,booking,hotel,room})
-    }catch(err){console.log(err.message);}
+        console.log(hotel, room, "hotel,room")
+        res.render('user/bookingFinalPage', { user, booking, hotel, room })
+    } catch (err) { console.log(err.message); }
 }
 
 const manageBookings = (req, res) => {
@@ -625,7 +632,7 @@ const manageBookingsPage = async (req, res) => {
         console.log(hotels);
         const msg = req.query.msg
         const user = req.session.user
-        res.render('user/manageBookings', { hotels, msg,user })
+        res.render('user/manageBookings', { hotels, msg, user })
     } catch (err) { console.log(err); }
 }
 
@@ -645,9 +652,9 @@ const walletPage = async (req, res) => {
         const user = req.session.user
         const wallet = await userService.findWalletMoney(req)
         const transactions = await userService.findWalletTransactions(req)
-        console.log(transactions,"transactions");
+        console.log(transactions, "transactions");
         const msg = transactions.msg
-        res.render('user/wallet', { user,wallet,transactions,msg })
+        res.render('user/wallet', { user, wallet, transactions, msg })
     } catch (err) { console.log(err.message); }
 }
 
@@ -668,28 +675,26 @@ const generateInvoice = async (req, res) => {
         if (response.status === 201) res.redirect(`/manageBookingsPage?msg=${response.msg}`)
         else {
             console.log(7777);
-            console.log(response.data[0].checkout,"response.data.checkout_date");
+            console.log(response.data[0].checkout, "response.data.checkout_date");
 
             const currentDate = new Date().toISOString().split('T')[0];
             response.data[0].date = currentDate
             response.data[0].checkout = response.data[0].checkout.toISOString().split('T')[0];
 
-            
-            console.log(response.data[0].checkout,"response.data.checkout_date");
+
+            console.log(response.data[0].checkout, "response.data.checkout_date");
             await invoice(response.data, response.invoiceNumber, res)
         }
     } catch (err) { console.log(err); }
 }
-
-
-
 module.exports = {
-
-   hotelists,
+    hotelists,
     userHome,
     userhotelsList,
     userhotelsListPage,
+    cityFromImage,
     userLogin,
+    userLoginPage,
     userRegister,
     userRegisterView,
     userRegisterPage,
@@ -744,6 +749,5 @@ module.exports = {
     verifyRoomAvailability,
     bookingConfirmed,
     bookingConfirmedPage
-    // salesReport,
-    // salesReportSelected,
+   
 }

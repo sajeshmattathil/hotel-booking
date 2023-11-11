@@ -120,6 +120,13 @@ const addCategoryOffer = async (req,res)=>{
 
     }catch(err){console.log(err);}
 }
+
+  const signOut = (req,res)=>{
+    try{
+        res.redirect('/owner')
+        delete req.session.owner
+    }catch(err){console.log(err.message);}
+  }  
 module.exports = {
     ownerlogin,
     ownerAuthCheck,
@@ -133,6 +140,6 @@ module.exports = {
     ownerForms,
     offerManagement,
     offerManagementPage,
-    addCategoryOffer
-
+    addCategoryOffer,
+    signOut
 }

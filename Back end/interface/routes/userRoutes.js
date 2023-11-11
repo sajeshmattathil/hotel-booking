@@ -3,12 +3,13 @@ const router=express.Router()
 const controller=require('../controller/userController')
 const paymentController = require('../../utils/payment')
 
-
 router.get('/',controller.userHome)
 router.post('/searchHotels',controller.userhotelsList)
 router.get('/items/:page/:limit',controller.hotelists)
 router.get('/hotelsPage',controller.userhotelsListPage)
+router.get('/hotel_city/:city',controller.cityFromImage)
 router.get('/login',controller.userLogin)
+router.get('/loginPage',controller.userLoginPage)
 router.post('/login-submit',controller.userLoginHome)
 router.get('/login/home',controller.userLoginHomeView)
 router.get('/signupPage',controller.userRegisterView)
@@ -34,7 +35,6 @@ router.post('/email-submit',controller.emailSubmit)
 router.post('/generateOTP',controller.generateOTP)
 router.post('/verifyOTP',controller.verifyOTP)
 router.post('/saveEmail',controller.saveEmail)
-
 router.get('/resendOtp',controller.resendOtp)
 router.get('/otpVerificationPage',controller.otpVerificationPage)
 router.post('/otpForgot-submit',controller.otpForgotSubmit)
@@ -51,13 +51,11 @@ router.post('/checkInDate-checkOutDate',controller.checkInDatecheckOutDate)
 router.post('/getNoOfRooms',controller.getRooms)
 router.post('/getNoOfAdults',controller.getAdults)
 router.post('/verifyRoomAvailability',controller.verifyRoomAvailability)
-
 router.post('/confirmBooking',controller.confirmBooking)
 router.get('/confirmPayment',controller.confirmPayment)
 router.get('/bookNow',controller.bookNow)
 router.get('/bookingConfirmed',controller.bookingConfirmed)
 router.get('/bookingConfirmedPage',controller.bookingConfirmedPage)
-
 router.post('/createOrder', paymentController.createOrder);
 router.get('/manageBookings',controller.manageBookings)
 router.get('/manageBookingsPage',controller.manageBookingsPage)
@@ -67,7 +65,6 @@ router.get('/cancel_booking/:id',controller.cancelBooking)
 router.get('/wallet',controller.wallet)
 router.get('/walletPage',controller.walletPage)
 router.get('/generate_invoice/:id',controller.generateInvoice)
-
 
 module.exports=router
 

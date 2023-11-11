@@ -117,24 +117,7 @@ const sortBy = async (req) => {
 const roomDetails = async (hotelId) => {
     try {
         console.log(hotelId,"hotelId");
-        // const roomArray = await rooms.aggregate([
-
-        //     {
-        //         $match:{hotel:hotelId}
-        //     },
-        //     // {
-        //     //     $group: {
-        //     //         _id: "$roomType",
-        //     //         price: { $addToSet: "$price" }
-        //     //     }
-        //     // },
-        //     // {
-        //     //     $project: {
-        //     //         type: "$roomType",
-        //     //         price: 1
-        //     //     }
-        //     // }
-        // ]);
+       
         const roomArray  = await rooms.find({hotel:hotelId})
         console.log(roomArray);
 
@@ -201,9 +184,6 @@ const findAvailableRooms = async (startDate, endDate, hotel_id, room_id) => {
     } catch (err) { console.log(err); }
 }
 
-
-
-
 const bothStartEndOverlaps = async (startDate, endDate, hotel_id, room_id) => {
     try {
         return await bookings.find({
@@ -227,11 +207,8 @@ const onlyEndOverlaps = async (startDate, endDate, hotel_id, room_id) => {
                 {
                     checkin_date: { $lte: endDate },
                     checkout_date: { $gte: endDate }
-                }
-               
-              
+                }         
             ]
-
         })
     } catch (err) { console.log(err); }
 }
@@ -244,23 +221,17 @@ const onlyStartOverlapsRooms = async (startDate, endDate, hotel_id, room_id) => 
                 {
                     checkin_date: { $lte: startDate },
                     checkout_date: { $gte: startDate }
-                }
-               
-              
+                }           
             ]
-
         })
     } catch (err) { console.log(err); }
 }
-
 
 const findWalletMoney = async (email)=>{
     try{
         return await User.findOne({email:email},{wallet:1,_id:0})
      }catch(err){console.log(err);}
 }
-
-
 
 const updateUserWallet = async (user,amount) =>{
     try{
@@ -379,7 +350,6 @@ const findAndUpdateHistory = async (bookingId)=>{
             return await bookinghistory.updateOne({booking_id:bookingId},{$set:{status:"cancelled"}})
     }catch(err){console.log(err);}
 }
-
 
 const findAndDelete = async (bookingId)=>{
     try{
@@ -558,7 +528,6 @@ module.exports = {
     selectedRoom,
     removeRoomNumber,
     findAvailableRooms,
-  
    findUserHistory,
     findCouponByUser,
     findAllRoomNumber,
@@ -566,7 +535,6 @@ module.exports = {
     findUserByReferal,
     updateReferalForExistinUser,
     updateNewUserWallet,
-
     bothStartEndOverlaps,
     onlyEndOverlaps,
     onlyStartOverlapsRooms ,
@@ -590,8 +558,7 @@ module.exports = {
     findTransactions,
     getRoom,
  findHotelsNumber 
-
-   
+ 
 }
 
 

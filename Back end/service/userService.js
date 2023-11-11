@@ -12,8 +12,6 @@ const referalCodeGenerator = require('../utils/referalCodeGenerator')
 const invoiceNum = require('../utils/invoiceNumber')
 const { ObjectId } = require('mongodb');
 
-
-
 const findUser = async (email)=>{
     try {
         const data = await userRepository.findUserByEmail(email)
@@ -26,7 +24,6 @@ const findHotels = async (city,page) => {
         if (city) {
             let hotelsData = await userRepository.findAllHotels(city,page)
             let totalHotel = await userRepository.findHotelsNumber(city)
-            console.log(hotelsData,totalHotel)
             if (!hotelsData.length) {
                 const msg = "No hotels in found in the city"
                 req.session.city
@@ -76,7 +73,6 @@ const auth = async (req) => {
     }
 }
 
-
 const generateOtpAndSend = (req) => {
     const otp = generatedOtp()
     req.session.otp = otp
@@ -88,7 +84,6 @@ const generateOtpAndSend = (req) => {
     sendMail(currentEmail, otp)
     return {status:200}
 }
-
 
 const otpAuth = async (req) => {
     const genOtp = req.session.otp
@@ -111,7 +106,6 @@ const otpAuth = async (req) => {
         return { status: 400, msg }
     }
 }
-
 
 const userAuthentication = async (req) => {
     const userData = req.session.userFormData
@@ -259,7 +253,6 @@ const saveEditedUserEmail = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-
 const generateOtpAndSendForEmailChange = (req) => {
     const otp = generatedOtp()
     req.session.otpForChangeEmail = otp
@@ -340,9 +333,6 @@ const saveEditedUserAddress = async (req) => {
         }
     } catch (err) { console.log(err); }
 }
-
-
-
 
 const saveEditedUserPassword = async (req,res) => {
     try {
@@ -498,65 +488,6 @@ const roomImages = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-// const checkRoomAvailability = async (req,noOfRooms) => {
-//     try {
-//         const roomData = req.session.roomData
-//         const hotelData = req.session.hotelData
-//         console.log(roomData,hotelData,"***")
-//         const hotel_id = hotelData._id
-//         const room_id = roomData._id
-//         const startDate = req.session.checkin_date
-//         const endDate = req.session.checkout_date
-
-
-//         let selectedRoom = await userRepository.selectedRoom(roomData)
-//         var roomNumber = selectedRoom.roomNumbers[0]
-//         var roomNumberArray = await userRepository.findAllRoomNumber()
-//         if (roomNumber) await userRepository.removeRoomNumber(roomData)     
-//         else {
-//             console.log(roomNumberArray, "All room numbers");
-
-//             let bothStartEndOverlaps = await userRepository.bothStartEndOverlaps(startDate, endDate, hotel_id, room_id)
-//             const bothStartEndOverlapsRooms = bothStartEndOverlaps.map((room) => { return room.roomNumber })
-//             console.log(bothStartEndOverlapsRooms, "Room numbers having both startDate, endDate inside ");
-
-//             if (bothStartEndOverlapsRooms.length) {
-//                 roomNumberArray = roomNumberArray.filter(item => !bothStartEndOverlapsRooms.includes(item));
-//                 console.log(roomNumberArray, "After first filtering");
-//             }
-
-//             let onlyEndOverlaps = await userRepository.onlyEndOverlaps(startDate, endDate, hotel_id, room_id)
-//             const onlyEndOverlapsRooms = onlyEndOverlaps.map((room) => { return room.roomNumber })
-//             console.log(onlyEndOverlapsRooms, "Room numbers having only endDate inside");
-
-//             if (onlyEndOverlapsRooms.length) {
-//                 roomNumberArray = roomNumberArray.filter(item => !onlyEndOverlapsRooms.includes(item));
-//                 console.log(roomNumberArray, "After second filtering ");
-//             }
-
-//             let onlyStartOverlaps = await userRepository.onlyStartOverlapsRooms(startDate, endDate, hotel_id, room_id)
-//             const onlyStartOverlapsRooms = onlyStartOverlaps.map((room) => { return room.roomNumber })
-//             console.log(onlyStartOverlapsRooms, "Room numbers having only endDate inside");
-
-//             if (onlyStartOverlapsRooms.length) {
-//                 roomNumberArray = roomNumberArray.filter(item => !onlyStartOverlapsRooms.includes(item));
-//                 console.log(roomNumberArray, "After final filtering");
-//             }
-//         }
-//         console.log(roomNumberArray, "roomNumberArray");
-//         console.log(roomNumberArray.length >=noOfRooms);
-
-//         if (roomNumberArray.length <=noOfRooms) {
-//             console.log('/////');
-//             const msg = "No rooms available,select another room"
-//             return { msg }
-//         } else {
-//             const msg = " "
-//             return { msg }
-//         }
-//     } catch (err) { console.log(err); }
-// }
-
 const checkRoomAvailability = async (req) => {
     try {
        const {numRooms,roomId} = req.body
@@ -631,9 +562,6 @@ const checkRoomAvailability = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-
-
-
 const selectedRoom = async (req, res) => {
     try {
         const roomType = req.session.roomType
@@ -673,7 +601,6 @@ const findWalletMoney = async (req) => {
 
     } catch (err) { console.log(err); }
 }
-
 
 const saveBooking = async (req) => {
     try {
@@ -722,7 +649,6 @@ const saveBooking = async (req) => {
         var roomNumber = selectedRoom.roomNumbers[0]
         if (roomNumber) await userRepository.removeRoomNumber(roomData)
         else {
-
 
             var roomNumberArray = await userRepository.findAllRoomNumber()
             console.log(roomNumberArray, "All room numbers");
@@ -787,7 +713,6 @@ const saveBooking = async (req) => {
         })
         newBooking.save()
         console.log(newBooking._id, "newBooking...");
-
 
         const newBookingHistory = new bookingHistory({
             userName: user,
@@ -881,7 +806,6 @@ const findBookings = async (email) => {
     } catch (err) { console.log(err.message); }
 }
 
-
 const findCategoryOffer = async (req) => {
     try {
         const roomData = req.session.roomData
@@ -889,8 +813,6 @@ const findCategoryOffer = async (req) => {
         return offer
     } catch (err) { console.log(err); }
 }
-
-
 
 const cancelBooking = async (req) => {
     try {
@@ -985,7 +907,6 @@ const genInvoice = async (req) => {
     } catch (err) { console.log(err.message); }
 }
 
-
 const findWalletTransactions = async (req)=>{
 try{
     const email = req.session.user
@@ -1045,12 +966,9 @@ module.exports = {
     findBookings,
     findCoupons,
     findCategoryOffer,
-
     findWalletMoney,
     cancelBooking,
     updateFinishedBooking,
     genInvoice,
-    // findSalesReport,
-    // findSalesReportSelected,
     findWalletTransactions
 }

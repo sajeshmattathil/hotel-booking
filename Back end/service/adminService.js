@@ -2,19 +2,20 @@ const bcrypt = require('bcryptjs')
 const adminRepository = require('../repository/adminRepository')
 const Category = require('../domain/model/category')
 const subCategory = require('../domain/model/subCategory')
-const owner=require('../domain/model/owner')
-const coupon=require('../domain/model/coupon')
+const owner = require('../domain/model/owner')
+const coupon = require('../domain/model/coupon')
 
 const auth = async (req) => {
      const { email, password } = req.body
      if (!email && !password) {
-          const msg="Fill empty fields "
-          return { status: 401,msg }
+          const msg = "Fill empty fields "
+          return { status: 401, msg }
      }
      try {
           const admin = await adminRepository.findAdminByEmail(email)
-          if (!admin) {const msg="Username or password is incorrect "; return { status: 401,msg }
-}
+          if (!admin) {
+               const msg = "Username or password is incorrect "; return { status: 401, msg }
+          }
           const checkedPassword = await bcrypt.compare(password, admin.password)
           if (admin && checkedPassword) {
                if (admin.isAdmin) {
@@ -23,8 +24,8 @@ const auth = async (req) => {
                }
           }
           else {
-               const msg="Username or password is incorrect "
-               return { status: 401,msg }
+               const msg = "Username or password is incorrect "
+               return { status: 401, msg }
           }
      }
      catch (error) {
@@ -35,11 +36,11 @@ const auth = async (req) => {
 const adminUsername = async (email) => {
      try {
           const adminData = await adminRepository.findAdminNameByEmail(email)
-          if(adminData){
+          if (adminData) {
                const name = adminData.name
                return name
-          }else return null
-          
+          } else return null
+
      } catch (err) { console.log(err); }
 }
 
@@ -96,8 +97,6 @@ const saveNewSubCategory = async (req) => {
      }
 }
 
-
-
 const findRequests = async () => {
      try {
           const requestDatas = await adminRepository.findHotelApprovalRequests()
@@ -121,113 +120,110 @@ const approve = async (req) => {
                return { status: 400, msg: msg }
           }
      } catch (error) { console.log(error); }
-
 }
 
-const authenticateOwner= async (req)=>{
-  
+const authenticateOwner = async (req) => {
+
      try {
           const { first_name, last_name, email, mobile, password, confirm } = req.body;
           console.log(req.body);
           if (!first_name || !last_name || !email || !mobile || !password || !confirm) {
-              console.log('Fill in empty fields');
-              const msg = 'Fill in empty fields'
-              return { status: 400, message: msg };
+               console.log('Fill in empty fields');
+               const msg = 'Fill in empty fields'
+               return { status: 400, message: msg };
           }
-  
+
           // Confirm password
           if (password !== confirm) {
-              console.log('Passwords must match');
-              const msg = 'Passwords must match'
-              return { status: 400, message: msg };
+               console.log('Passwords must match');
+               const msg = 'Passwords must match'
+               return { status: 400, message: msg };
           }
           const existingOwner = await adminRepository.findOwnerByEmail(email)
           console.log(existingOwner);
           if (existingOwner) {
-              const msg = 'Owner already exists'
-              return { status: 200, message: msg }
-          } 
+               const msg = 'Owner already exists'
+               return { status: 200, message: msg }
+          }
           const hashPassword = await bcrypt.hash(password, 10)
 
-          const newOwner=new owner({
-               owner_name:first_name,
+          const newOwner = new owner({
+               owner_name: first_name,
                last_name,
                email,
                mobile,
-               
+
                password: hashPassword
           })
-               newOwner.save()
-               const msg = 'Owner saved sucessfully'
-              return { status: 200, message: msg }
-      } catch (error) { console.log(error); }
+          newOwner.save()
+          const msg = 'Owner saved sucessfully'
+          return { status: 200, message: msg }
+     } catch (error) { console.log(error); }
 }
 
-const existingCoupons= async ()=>{
-     try{
-         const data=await adminRepository.findExistingCoupons()
-           return data
-         
-
-     }catch(err){console.log(err);}
+const existingCoupons = async () => {
+     try {
+          const data = await adminRepository.findExistingCoupons()
+          return data
+     } catch (err) { console.log(err); }
 }
 
-const addCoupon= async (req)=>{
-    try{
-     const {name,discount,startingDate,expiry}=req.body
-     const newCoupon=new coupon({
-          name,
-          discount,
-          startingDate,
-          expiry
-     })
-     newCoupon.save()
-     const msg="Coupon saved sucessfully"
-     return {status:200,msg}
-    }catch(err){console.log(err);}
+const addCoupon = async (req) => {
+     try {
+          const { name, discount, startingDate, expiry } = req.body
+          const newCoupon = new coupon({
+               name,
+               discount,
+               startingDate,
+               expiry
+          })
+          newCoupon.save()
+          const msg = "Coupon saved sucessfully"
+          return { status: 200, msg }
+     } catch (err) { console.log(err); }
 }
 
-const findAlldetails = async (req,res)=>{
-     try{
-        const data = await adminRepository.findsales()
-        if(data.length) return data
+const findAlldetails = async (req, res) => {
+     try {
+          const data = await adminRepository.findsales()
+          if (data.length) return data
 
-     }catch(err){console.log(err.message);}
+     } catch (err) { console.log(err.message); }
 }
 
-const findAllUsers = async ()=>{
-     try{
+const findAllUsers = async () => {
+     try {
           const data = await adminRepository.findAllUsers()
-          if(data) return data
-     }catch(err){console.log(err.message);}
+          if (data) return data
+     } catch (err) { console.log(err.message); }
 }
 const findSalesReport = async (data) => {
      try {
-         const startDate = new Date(data.checkin_date);
-         const endDate = new Date(data.checkout_date);
- 
-         const salesData = await adminRepository.findSalesData(startDate, endDate)
-         if (salesData) return salesData
-         else {
-             const msg = "No data found"
-             return { msg }
-         }
+          const startDate = new Date(data.checkin_date);
+          const endDate = new Date(data.checkout_date);
+
+          const salesData = await adminRepository.findSalesData(startDate, endDate)
+          if (salesData) return salesData
+          else {
+               const msg = "No data found"
+               return { msg }
+          }
      } catch (err) { console.log(err); }
- }
- 
- const findSalesReportSelected = async (startDate, endDate) => {
+}
+
+const findSalesReportSelected = async (startDate, endDate) => {
      try {
-         // const startDate = new Date(data.checkin_date); 
-         // const endDate = new Date(data.checkout_date);
- 
-         const salesData = await adminRepository.findSalesData(startDate, endDate)
-         if (salesData) return salesData
-         else {
-             const msg = "No data found"
-             return { msg }
-         }
+          // const startDate = new Date(data.checkin_date); 
+          // const endDate = new Date(data.checkout_date);
+
+          const salesData = await adminRepository.findSalesData(startDate, endDate)
+          if (salesData) return salesData
+          else {
+               const msg = "No data found"
+               return { msg }
+          }
      } catch (err) { console.log(err.message); }
- }
+}
 
 module.exports = {
      auth,

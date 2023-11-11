@@ -27,7 +27,4 @@ const sendOTPByEmail = (email,otp) => {
         }
     });
 }
-
-
-
 module.exports = sendOTPByEmail;

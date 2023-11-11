@@ -3,7 +3,6 @@ const fs = require('fs')
 
 const createSalesReport = (data, res) => {
 
-
     const workbook = new Excel.Workbook();
 
     const worksheet = workbook.addWorksheet('Sheet1');
@@ -17,7 +16,6 @@ const createSalesReport = (data, res) => {
         { header: 'Check In', key: 'checkin', width: 10 },
         { header: 'Check Out', key: 'checkout', width: 10 },
         { header: 'Amount', key: 'amount', width: 9 },
-
 
     ];
     data.forEach((element, index) => {
@@ -34,15 +32,10 @@ const createSalesReport = (data, res) => {
 
     })
 
-
     workbook.xlsx.writeFile('sales.xlsx')
         .then(function () {
             console.log('File saved!');
-
-
-
             const salesPath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Back end/sales.xlsx'
-
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.download(salesPath, 'sales.xlsx', (err) => {
                 if (err) {
@@ -62,12 +55,8 @@ const createSalesReport = (data, res) => {
 }
 
 const salesReportWeekly = (report, res) => {
-
-
     const workbook = new Excel.Workbook();
-
     const worksheet = workbook.addWorksheet('Sheet1');
-
     worksheet.columns = [
         { header: 'Week No.', key: 'id', width: 10 },
         { header: 'Name', key: 'username', width: 20 },
@@ -77,40 +66,28 @@ const salesReportWeekly = (report, res) => {
         { header: 'Check In', key: 'checkin', width: 10 },
         { header: 'Check Out', key: 'checkout', width: 10 },
         { header: 'Amount', key: 'amount', width: 9 },
-
-
     ];
-    let weekCount = report.length +1
-    for(let i = 0 ; i<report.length;i++){
+    let weekCount = report.length + 1
+    for (let i = 0; i < report.length; i++) {
         weekCount--
-            report[i].forEach((element, index) => {
-               
-                worksheet.addRow({
-                    id: `week ${weekCount}`,
-                    username: element.userName,
-                    checkin: element.checkin,
-                    checkout: element.checkout,
-                    hotelname: element.hotelName,
-                    city: element.city,
-                    status: element.status,
-                    amount: element.amount
-                });
-            
-        
-            })
-        
+        report[i].forEach((element, index) => {
+
+            worksheet.addRow({
+                id: `week ${weekCount}`,
+                username: element.userName,
+                checkin: element.checkin,
+                checkout: element.checkout,
+                hotelname: element.hotelName,
+                city: element.city,
+                status: element.status,
+                amount: element.amount
+            });
+        })
     }
-    //console.log();
-
-
     workbook.xlsx.writeFile('salesweekly.xlsx')
         .then(function () {
             console.log('File saved!');
-
-
-
             const salesPath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Back end/salesweekly.xlsx'
-
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.download(salesPath, 'salesweekly.xlsx', (err) => {
                 if (err) {
@@ -145,25 +122,25 @@ const salesReportMonthly = (report, res) => {
         { header: 'Check Out', key: 'checkout', width: 10 },
         { header: 'Amount', key: 'amount', width: 9 },
     ];
-    let weekCount = report.length +1
-    for(let i = 0 ; i<report.length;i++){
+    let weekCount = report.length + 1
+    for (let i = 0; i < report.length; i++) {
         weekCount--
-            report[i].forEach((element, index) => {
-               
-                worksheet.addRow({
-                    id: `month ${weekCount}`,
-                    username: element.userName,
-                    checkin: element.checkin,
-                    checkout: element.checkout,
-                    hotelname: element.hotelName,
-                    city: element.city,
-                    status: element.status,
-                    amount: element.amount
-                });
-            
-        
-            })
-        
+        report[i].forEach((element, index) => {
+
+            worksheet.addRow({
+                id: `month ${weekCount}`,
+                username: element.userName,
+                checkin: element.checkin,
+                checkout: element.checkout,
+                hotelname: element.hotelName,
+                city: element.city,
+                status: element.status,
+                amount: element.amount
+            });
+
+
+        })
+
     }
 
     workbook.xlsx.writeFile('salesmonthly.xlsx')
@@ -192,7 +169,7 @@ const salesReportMonthly = (report, res) => {
         });
 }
 
-module.exports ={ 
+module.exports = {
     createSalesReport,
     salesReportWeekly,
     salesReportMonthly
