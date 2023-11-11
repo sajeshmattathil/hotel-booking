@@ -204,7 +204,7 @@ input[type="text"] {
 
         <div class="container my-5 ">
             <!-- <div class="text-sucess">
-                <h5><%= msg %></h5>
+                <h5 id="msg"><%= msg %></h5>
             </div> -->
            
             <!-- <div class="sidebar px-5 mx-5 ">
@@ -681,6 +681,14 @@ console.log(9);
     }
   
   </script>
- 
+  <script>
+    document.addEventListener('DOMContentLoaded',function(){
+       setTimeout(()=>{
+           let msg = document.getElementById('msg')
+           msg.textContent = ''
+       },3000)
+       console.log(msg,"msg")
+     })
+ </script>
 
 </html>

@@ -9,7 +9,7 @@
       
       <div class="form-inner">
         <form action="/admin/adminlogin" class="login" method="post">
-        <h5><%=msg%></h5>
+        <h5 id="msg"><%=msg%></h5>
 
           <div class="field">
             <input type="text" placeholder="Email Address" name="email" required>
@@ -28,5 +28,13 @@
       </div>
     </div>
   </div>
-
+  <script>
+    document.addEventListener('DOMContentLoaded',function(){
+       setTimeout(()=>{
+           let msg = document.getElementById('msg')
+           msg.textContent = ''
+       },3000)
+       console.log(msg,"msg")
+     })
+ </script>
   <%-include('footer')-%>

@@ -7,7 +7,7 @@
     <div class="form-container">
       <div class="form-inner">
         <form action="/email-submit" class="login" method="post">
-          <h4  class="message text-success"><%= msg %></h4>
+          <h4 id="msg"  class="message text-success"><%= msg %></h4>
           <div class="field">
             <input type="text" placeholder="Email Address" name="email" required>
           </div>
@@ -19,5 +19,13 @@
       </div>
     </div>
   </div>
-
+  <script>
+    document.addEventListener('DOMContentLoaded',function(){
+       setTimeout(()=>{
+           let msg = document.getElementById('msg')
+           msg.textContent = ''
+       },3000)
+       console.log(msg,"msg")
+     })
+ </script>
   <%-include('footer')-%>

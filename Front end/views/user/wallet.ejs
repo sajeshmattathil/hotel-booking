@@ -64,28 +64,6 @@
   </header>
   
 
-<!-- <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
-    <div class="container-fluid">
-        <a class="navbar-brand text-light">Travel Nest</a>
-        <form class="d-flex">
-            <a href="" class=" me-2 text-light"></a>
-        </form>
-        <div class="dropdown">
-          
-          <a class="btn  dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-          </a>
-        
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <li><a class="dropdown-item" href="/userManagement">Profile Management</a></li>
-            <li><a class="dropdown-item" href="#">Bookings</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </div>
-        
-    </div>
-    
-</nav> -->
-
 
 
 <style>
@@ -153,7 +131,7 @@
 <div class="card">
     <div class="card-body">
       <h4 class="card-title">Wallet transactions</h4>
-      <h1  class="text-success"><%= msg %></h1>
+      <h1 id="msg" class="text-success"><%= msg %></h1>
       <table class="table table-striped">
         <thead>
           <tr>
@@ -189,7 +167,15 @@
     </div>
   </div>
 
-
+  <script>
+    document.addEventListener('DOMContentLoaded',function(){
+       setTimeout(()=>{
+           let msg = document.getElementById('msg')
+           msg.textContent = ''
+       },3000)
+       console.log(msg,"msg")
+     })
+ </script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

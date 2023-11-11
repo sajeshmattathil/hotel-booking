@@ -316,11 +316,6 @@
           border-radius: 20px;
         }
       </style>
-
-
-
-
-
       <div class="col-md-9">
         <!-- Hotel list and details go here -->
         <div class="hotel-lists px-5 py-3">
@@ -329,9 +324,7 @@
           <div id="hotels" data-hotels="<%= JSON.stringify(hotels) %>">
 
           </div>
-          <div id="hotel-container" class="hotel-container">
-
-          </div>
+         
 
           <% hotels.forEach((item)=> { %>
             <div class="hotel-items mb-4">
@@ -363,52 +356,95 @@
               </div>
             </div>
             <% }) %>
+<style>
+  .pagination {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px;
+  background-color: #f0f0f0;
+}
 
+button {
+  padding: 8px 16px;
+  cursor: pointer;
+  border: none;
+  border-radius: 4px;
+  background-color: #3498db;
+  color: #fff;
+}
+
+#page-num {
+  font-size: 18px;
+  margin: 0 10px;
+}
+
+</style>
               <div class="pagination">
                 <button id="prev">Previous</button>
-                <span id="page-num"></span>
+                <span id="page-num" class="text-dark"></span>
                 <button type="" id="nextPage">Next</button>
               </div>
         </div>
       </div>
+      <div class="totalHotels" data-count="<%=totalHotels%>" ></div>
+
       <script>
         document.addEventListener('DOMContentLoaded', function () {
-          var currentPage = 1;
-          let totalpage // Initialize current page
-          // updatePage()
+          let total = document.querySelectorAll('.totalHotels')
+          console.log(total[0].dataset.count)
+          let pageCount = total[0].dataset.count / 3
+
+
+          const url = new URLSearchParams(window.location.search)
+          var currentPage
+
+          if(url.get('page')) currentPage = url.get('page')
+           else currentPage = 1;
+
+          console.log(url.get('page'))
+          let totalpage 
+         
           const prevBtn = document.getElementById('prev');
           const nextBtn = document.getElementById('nextPage');
+        let page_num = document.getElementById('page-num')
 
           prevBtn.addEventListener('click', function () {
             console.log(currentPage, "prevBtn")
 
             if (currentPage > 1) {
               currentPage--;
-              updatePage(currentpage);
+              console.log(currentPage, "****")
+              updatePage(currentPage);
             }
           });
 
           nextBtn.addEventListener('click', function () {
             console.log(currentPage, "nextBtn")
-            currentPage++;
-            updatePage(currentPage);
+           if(currentPage<pageCount) currentPage++;
+            console.log(currentPage, "/////")
+
+            updatePage(Number(currentPage));
 
           });
           console.log(currentPage,"8888")
-         
+        })
           function updatePage(page) {
             console.log(page, "currentpage")
             window.location.href = `/hotelsPage?page=${page}`;
             console.log( `/hotelsPage?page=${page}`)
+            page_num.textContent =currentPage
 
           }
          
-        })
+       
       </script>
 
 
-      <footer class="section footer-section " style="width: 100%;">
-        <div class="container">
+      <!-- <footer class="section footer-section " style="width: 100%;"> -->
+
+        
+        <!-- <div class="container">
           <div class="row mb-4">
             <div class="col-md-3 mb-5">
               <ul class="list-unstyled link">
@@ -427,7 +463,6 @@
               </ul>
             </div>
             <div class="col-md-3 mb-5 pr-md-5 contact-info">
-              <!-- <li>198 West 21th Street, <br> Suite 721 New York NY 10016</li> -->
               <p><span class="d-block"><span class="ion-ios-location h5 mr-3 text-primary"></span>Address:</span> <span>
                   198 West 21th Street, <br> Suite 721 New York NY 10016</span></p>
               <p><span class="d-block"><span class="ion-ios-telephone h5 mr-3 text-primary"></span>Phone:</span> <span>
@@ -447,12 +482,8 @@
           </div>
           <div class="row pt-5">
             <p class="col-md-6 text-left">
-              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
               Copyright &copy;
-              <script>document.write(new Date().getFullYear());</script> All rights reserved | This template is made
-              with <i class="icon-heart-o" aria-hidden="true"></i> by <a href="https://colorlib.com"
-                target="_blank">Colorlib</a>
-              <!-- Link back to Colorlib can't be removed. Template is licensed under CC BY 3.0. -->
+              <script>document.write(new Date().getFullYear());</script> 
             </p>
 
             <p class="col-md-6 text-right social">
@@ -463,7 +494,7 @@
               <a href="#"><span class="fa fa-vimeo"></span></a>
             </p>
           </div>
-        </div>
+        </div> -->
 
 
         <%-include('footer')-%>

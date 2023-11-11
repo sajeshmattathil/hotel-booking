@@ -11,7 +11,7 @@
       <div class="form-inner">
 
         <form action="/owner/ownerlogin" class="login" method="post">
-          <h5 class="text-danger">
+          <h5 id="msg" class="text-danger">
             <%= msg %>
           </h5>
           <div class="field">
@@ -33,4 +33,13 @@
     </div>
   </div>
 
+  <script>
+    document.addEventListener('DOMContentLoaded',function(){
+       setTimeout(()=>{
+           let msg = document.getElementById('msg')
+           msg.textContent = ''
+       },3000)
+       console.log(msg,"msg")
+     })
+ </script>
   <%-include('footer')-%>

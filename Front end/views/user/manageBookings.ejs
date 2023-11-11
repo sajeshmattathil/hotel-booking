@@ -135,7 +135,7 @@ border-radius: 5px;
 
 </style>
 <h3>Booking History</h3>
-<h5><%= msg %></h5>
+<h5 id="msg" ><%= msg %></h5>
 
 <% hotels.forEach((booking,index) => { %>
     <div class="booking-history">
@@ -230,7 +230,15 @@ border-radius: 5px;
         </div>
     </div>
 <% }) %>
-
+<script>
+  document.addEventListener('DOMContentLoaded',function(){
+     setTimeout(()=>{
+         let msg = document.getElementById('msg')
+         msg.textContent = ''
+     },3000)
+     console.log(msg,"msg")
+   })
+</script>
 
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>

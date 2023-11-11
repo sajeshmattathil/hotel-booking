@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel Room Details</title>
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 
 
@@ -53,20 +55,19 @@
 
 
     <style>
-        .sections-container {
+        /* .sections-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-        }
+        } */
 
-        .section {
+        /* .section {
             flex: 0 0 calc(50% - 20px);
-            /* 50% width for each section with some spacing */
             margin: 10px;
             border: 1px solid #ccc;
             padding: 20px;
             box-sizing: border-box;
-        }
+        } */
 
         .carousel-container {
             max-width: 800px;
@@ -103,20 +104,13 @@
 
 
 
-        .sections-container {
+        /* .sections-container {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
-        }
+        } */
 
-        .section {
-            flex: 0 0 calc(33.33% - 20px);
-            /* 33.33% width for each section with some spacing */
-            margin: 10px;
-            border: 1px solid #ccc;
-            padding: 20px;
-            box-sizing: border-box;
-        }
+       
 
         .check-in-out,
         .amenities {
@@ -150,12 +144,53 @@
         }
     </style>
 </head>
+<style>
+    /* Default styles for larger screens */
+    .sections-container {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+    }
+
+    .section {
+        flex: 1;
+        max-width: 33%; /* Adjust as needed */
+        box-sizing: border-box;
+        margin-right: 20px;
+        flex: 0 0 calc(33.33% - 20px);
+            margin: 10px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            box-sizing: border-box; /* Add margin for spacing between sections */
+    }
+
+    /* Responsive styles for medium-sized screens */
+    @media screen and (max-width: 768px) {
+        .sections-container {
+            flex-direction: column;
+        }
+
+        .section {
+            max-width: 100%; /* Take up full width on medium screens */
+            margin-right: 0; /* Remove margin on smaller screens */
+        }
+    }
+
+    /* Responsive styles for small screens */
+    @media screen and (max-width: 576px) {
+        .section {
+            max-width: 100%; /* Take up full width on small screens */
+            margin-right: 0; /* Remove margin on smaller screens */
+        }
+    }
+</style>
+
 
 <body>
     <div class="sections-container">
-        <div class="section">
-            <div class="carousel-container" style="max-height: 500px; overflow: hidden;">
-                <!-- Your carousel code goes here -->
+        <div class="card section">
+            <div class="card-body">
+            <div class="carousel-container">
                 <div class="carousel-slide">
                     <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
                         <ol class="carousel-indicators">
@@ -191,8 +226,10 @@
                 </div>
             </div>
         </div>
-
-        <div class="section">
+    </div>
+        <div class="card section">
+            <div class="card-body">
+            
             <div class="check-in-out">
                 <i class="fas fa-clock icon"></i> Check-In Time: 3:00 PM<br>
                 <i class="fas fa-clock icon"></i> Check-Out Time: 12:00 PM
@@ -206,41 +243,55 @@
                 </ul>
             </div>
         </div>
+    </div>
 
-
-        <div class="section">
-
-            <div class="section">
-                <div class="d-flex " style="flex-direction: row;">
+        <div class="card section">
+            <div class="card-body">
+            
+                <!-- <div class="d-flex " style="flex-direction: row;">
                     <p class="px-3">
                         <%=checkin_date %>
                     </p>
                     <p class="px-3">
                         <%=checkout_date %>
                     </p>
-                </div>
+                </div> -->
                 <form action="/checkInDate-checkOutDate" class=" align-items-center" method="post">
-                    <div class="field-icon-wrap d-flex align-items-center mr-3">
-                        <label for="checkin_date" class="font-weight-bold text-dark mr-2">&nbsp;&nbsp;&nbsp;Check
-                            In</label>
-                        <div class="icon"><span class="icon-calendar"></span></div>
-                        <input type="date" id="checkin" name="checkin_date" class="form-control small-input"
-                            placeholder="<%=checkin_date || 'Check In'%>" required>
+                    <div class="d-flex align-items-center">
+                        <div class="field-icon-wrap d-flex align-items-center mr-3">
+                            <!-- <label for="checkin_date" class="font-weight-bold text-dark mr-2">&nbsp;&nbsp;&nbsp;Check In</label> -->
+                            <div class="icon"><span class="icon-calendar"></span></div>
+                            <input type="date" id="checkin" name="checkin_date" class="control small-input"
+                               value="<%=checkin_date%>" placeholder="<%=checkin_date || 'Check In'%>" required>
+                        </div>
+                    
+                        <div class="field-icon-wrap d-flex align-items-center mr-3">
+                            <!-- <label for="checkout_date" class="font-weight-bold text-dark mr-2">Check Out</label> -->
+                            <div class="icon"><span class="icon-calendar"></span></div>
+                            <input type="date" id="checkout" name="checkout_date" class="control small-input"
+                                value="<%=checkout_date%>" placeholder="<%=checkout_date || 'Check Out'%>" required>
+                        </div>
+                        <button type="submit" class="btn " style="color: #edeff1;background-color: #003b95;">Submit</button>
+
                     </div>
-                    <div class="field-icon-wrap d-flex align-items-center mr-3">
-                        <label for="checkout_date" class="font-weight-bold text-dark mr-2">Check Out</label>
-                        <div class="icon"><span class="icon-calendar"></span></div>
-                        <input type="date" id="checkout" name="checkout_date" class="form-control small-input"
-                            placeholder="<%=checkout_date || 'Check Out'%>" required>
-                    </div>
-                    <button type="submit" class="btn " style="color: #edeff1;background-color: #003b95;">Submit</button>
-                    <div class="room-selection" style="width: 40%;">
+                    <style>
+                        .control{
+                            width: 200px;
+                            border-radius: 5px;
+                            outline: none;
+                            border: none;
+                        }
+                    </style> 
+                    
+                    <div class="room-selection control align-items-center" style="width: 40%;">
                         <label for="num_rooms" class="font-weight-bold text-dark">Number of Adults</label>
                         <div class="input-group" id="">
-                            <button type="button" class="btn btn-outline-secondary" onclick="decrementAdults()">-</button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                onclick="decrementAdults()">-</button>
                             <input type="number" id="num_adults" class="form-control" value="<%= no_ofAdults || 1 %>"
                                 min="1" max="10">
-                            <button type="button" class="btn btn-outline-secondary" onclick="incrementAdults()">+</button>
+                            <button type="button" class="btn btn-outline-secondary"
+                                onclick="incrementAdults()">+</button>
                         </div>
                     </div>
                     <div class="room-selection" style="width: 40%;">
@@ -253,142 +304,136 @@
                         </div>
                     </div>
                 </form>
-
-
-
-                <script>
-                    document.addEventListener('DOMContentLoaded', () => {
-                        getNumberOfRooms();
-                    });
-
-                    function getNumberOfRooms(num_rooms) {
-                        var num_rooms = document.getElementById('num_rooms').value
-                        fetch('/getNoOfRooms', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ num_rooms: num_rooms })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.sucess) {
-                                    console.log(3444);
-
-                                    document.getElementById('no_rooms').innerHTML = data.sucess
-
-                                } else {
-                                    console.log(8888883,"num_Adults");
-                                }
-                            })
-                            .catch(error => console.error('Error:', error));
-                    }
-                    function getNumberOfAdults(numAdults,numRooms,expectesRoomNumber) {
-                        var num_Adults = document.getElementById('num_adults').value
-                        fetch('/getNoOfAdults', {
-                            method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify({ num_adults: num_Adults,numRooms:numRooms,expectesRoomNumber:expectesRoomNumber })
-                        })
-                            .then(response => response.json())
-                            .then(data => {
-                                if (data.sucess) {
-                                    console.log(3444);
-
-                                    document.getElementById('num_adults').innerHTML = data.sucess
-
-                                } else {
-                                    console.log(8888883,"num_Adults");
-                                }
-                            })
-                            .catch(error => console.error('Error:', error));
-                    }
-                </script>
-
-
-                <script>
-            function increment() {
-                var numRooms = document.getElementById('num_rooms').value;
-                if (numRooms < 11) numRooms++;
-                document.getElementById('num_rooms').value = numRooms;
-                console.log(numRooms,"numRooms,num_rooms")
-                //numRooms = num_rooms
-                getNumberOfRooms(numRooms);
-                findTotalPrice(numRooms)
-
-            }
-
-            function decrement() {
-               var  numRooms = document.getElementById('num_rooms').value;
-
-                if (numRooms > 1) numRooms--;
-
-                document.getElementById('num_rooms').value = numRooms;
-
-                numRooms = num_rooms
-                getNumberOfRooms(numRooms);
-                findTotalPrice(numRooms)
-            }
-
-
-            function incrementAdults() {
-                var numAdults = document.getElementById('num_adults').value
-                var  numRooms = document.getElementById('num_rooms').value;
-                var expectesRoomNumber
-                if (numAdults < 11) numAdults++;
-                const rooms = document.querySelectorAll('.roomsss');
-                console.log(rooms,"incrementAdults")
-            var numRooms = document.getElementById('num_rooms').value
-            rooms.forEach((room)=>{
-                const capacity = room.dataset.capacity
-                 expectesRoomNumber = Math.ceil(numAdults/capacity)
-                 console.log(expectesRoomNumber,numAdults,capacity,"expectesRoomNumber")
-
-                if(expectesRoomNumber>numRooms) document.getElementById('num_rooms').value = expectesRoomNumber
-            })
-                document.getElementById('num_adults').value = numAdults;
-              //  numRooms = num_rooms
-                 getNumberOfAdults(numAdults,numRooms,expectesRoomNumber);
-                 findTotalPrice()
-
-            }
-
-            function decrementAdults() {
-               var numAdults = document.getElementById('num_adults').value
-               var  numRooms = document.getElementById('num_rooms').value;
-                var expectesRoomNumber
-                if (numAdults >1) numAdults--;
-               
-                const rooms = document.querySelectorAll('.roomsss');
-                console.log(rooms,"incrementAdults")
-            var numRooms = document.getElementById('num_rooms').value
-            rooms.forEach((room)=>{
-                const capacity = room.dataset.capacity
-                 expectesRoomNumber = Math.ceil(numAdults/capacity)
-                 console.log(expectesRoomNumber,numAdults,capacity,"expectesRoomNumber")
-
-                if(expectesRoomNumber<=numRooms) document.getElementById('num_rooms').value = expectesRoomNumber
-            })
-                document.getElementById('num_adults').value = numAdults;
-
-               // numRooms = num_rooms
-               getNumberOfAdults(numAdults,numRooms,expectesRoomNumber);
-                findTotalPrice()  
-            }
-
-                </script>
-
-                <div id="no_rooms"></div>
-                <div id="num_adults"></div>
-
-
-            </div>
-
         </div>
     </div>
+    </div>
 
+
+
+   
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            getNumberOfRooms();
+        });
+
+        function getNumberOfRooms(num_rooms) {
+            var num_rooms = document.getElementById('num_rooms').value
+            fetch('/getNoOfRooms', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ num_rooms: num_rooms })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucess) {
+                        console.log(3444);
+
+                        document.getElementById('no_rooms').innerHTML = data.sucess
+
+                    } else {
+                        console.log(8888883, "num_Adults");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+        function getNumberOfAdults(numAdults, numRooms, expectesRoomNumber) {
+            var num_Adults = document.getElementById('num_adults').value
+            fetch('/getNoOfAdults', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ num_adults: num_Adults, numRooms: numRooms, expectesRoomNumber: expectesRoomNumber })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.sucess) {
+                        console.log(3444);
+
+                        document.getElementById('num_adults').innerHTML = data.sucess
+
+                    } else {
+                        console.log(8888883, "num_Adults");
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    </script>
+
+
+    <script>
+        function increment() {
+            var numRooms = document.getElementById('num_rooms').value;
+            if (numRooms < 11) numRooms++;
+            document.getElementById('num_rooms').value = numRooms;
+            console.log(numRooms, "numRooms,num_rooms")
+            //numRooms = num_rooms
+            getNumberOfRooms(numRooms);
+            findTotalPrice(numRooms)
+
+        }
+
+        function decrement() {
+            var numRooms = document.getElementById('num_rooms').value;
+
+            if (numRooms > 1) numRooms--;
+
+            document.getElementById('num_rooms').value = numRooms;
+
+            numRooms = num_rooms
+            getNumberOfRooms(numRooms);
+            findTotalPrice(numRooms)
+        }
+
+
+        function incrementAdults() {
+            var numAdults = document.getElementById('num_adults').value
+            var numRooms = document.getElementById('num_rooms').value;
+            var expectesRoomNumber
+            if (numAdults < 11) numAdults++;
+            const rooms = document.querySelectorAll('.roomsss');
+            console.log(rooms, "incrementAdults")
+            var numRooms = document.getElementById('num_rooms').value
+            rooms.forEach((room) => {
+                const capacity = room.dataset.capacity
+                expectesRoomNumber = Math.ceil(numAdults / capacity)
+                console.log(expectesRoomNumber, numAdults, capacity, "expectesRoomNumber")
+
+                if (expectesRoomNumber > numRooms) document.getElementById('num_rooms').value = expectesRoomNumber
+            })
+            document.getElementById('num_adults').value = numAdults;
+            //  numRooms = num_rooms
+            getNumberOfAdults(numAdults, numRooms, expectesRoomNumber);
+            findTotalPrice()
+
+        }
+
+        function decrementAdults() {
+            var numAdults = document.getElementById('num_adults').value
+            var numRooms = document.getElementById('num_rooms').value;
+            var expectesRoomNumber
+            if (numAdults > 1) numAdults--;
+
+            const rooms = document.querySelectorAll('.roomsss');
+            console.log(rooms, "incrementAdults")
+            var numRooms = document.getElementById('num_rooms').value
+            rooms.forEach((room) => {
+                const capacity = room.dataset.capacity
+                expectesRoomNumber = Math.ceil(numAdults / capacity)
+                console.log(expectesRoomNumber, numAdults, capacity, "expectesRoomNumber")
+
+                if (expectesRoomNumber <= numRooms) document.getElementById('num_rooms').value = expectesRoomNumber
+            })
+            document.getElementById('num_adults').value = numAdults;
+
+            // numRooms = num_rooms
+            getNumberOfAdults(numAdults, numRooms, expectesRoomNumber);
+            findTotalPrice()
+        }
+
+    </script>
 
     <style>
         table {
@@ -426,18 +471,18 @@
             max-width: 120px;
         }
 
-        .field-icon-wrap {
+        .formField-icon-wrap {
             position: relative;
         }
 
-        .field-icon-wrap .icon {
+        .formField-icon-wrap .icon {
             position: absolute;
             right: 10px;
             top: 50%;
             transform: translateY(-50%);
         }
 
-        .field-icon-wrap input {
+        .formField-icon-wrap input {
             padding-right: 30px;
             /* Adjust as needed based on icon width */
         }
@@ -467,22 +512,22 @@
             font-size: 16px;
         }
 
-        .field {
+        .formField {
             margin-bottom: 15px;
         }
 
-        .field input {
+        .formField input {
             width: 100%;
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
         }
 
-        .field.btn {
+        .formField.btn {
             text-align: center;
         }
 
-        .field.btn .btn-layer {
+        .formField.btn .btn-layer {
             position: absolute;
             top: 0;
             left: 0;
@@ -494,7 +539,7 @@
             border-radius: 5px;
         }
 
-        .field.btn input[type="submit"] {
+        .formField.btn input[type="submit"] {
             position: relative;
             z-index: 1;
             background: none;
@@ -544,63 +589,59 @@
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-    findTotalPrice();
-});
+            findTotalPrice();
+        });
 
-async function findTotalPrice() {
-    var finalPrice = [];
-    const rooms = document.querySelectorAll('.roomsss');
-    const roomTable = document.getElementById('roomTable');
-    var numRooms = document.getElementById('num_rooms').value;
+        async function findTotalPrice() {
+            var finalPrice = [];
+            const rooms = document.querySelectorAll('.roomsss');
+            const roomTable = document.getElementById('roomTable');
+            var numRooms = document.getElementById('num_rooms').value;
 
-    for (const room of rooms) {
-        const roomId = room.dataset.roomid;
-        const capacity = room.dataset.capacity;
-        const price = room.dataset.price;
-        const index = room.dataset.index;
+            for (const room of rooms) {
+                const roomId = room.dataset.roomid;
+                const capacity = room.dataset.capacity;
+                const price = room.dataset.price;
+                const index = room.dataset.index;
 
-        const totalPrice = price * numRooms;
-        finalPrice.push(totalPrice);
+                const totalPrice = price * numRooms;
+                finalPrice.push(totalPrice);
 
-        var totalRoomPrice = document.getElementById(`totalRoomPrice${index}`);
-        totalRoomPrice.textContent = totalPrice;
+                var totalRoomPrice = document.getElementById(`totalRoomPrice${index}`);
+                totalRoomPrice.textContent = totalPrice;
 
-        try {
-            const response = await fetch('/verifyRoomAvailability', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ numRooms: numRooms, roomId: roomId })
-            });
+                try {
+                    const response = await fetch('/verifyRoomAvailability', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ numRooms: numRooms, roomId: roomId })
+                    });
 
-            const data = await response.json();
+                    const data = await response.json();
 
-            if (data.success === "ok") {
-                var button = document.getElementById(`room${index}`);
-                button.textContent = "Select Room";
-                button.disabled = false;
-                button.style.backgroundColor = '';
-                button.style.color = '';
-                button.style.filter = '';
-            } else {
-                var button = document.getElementById(`room${index}`);
-                button.textContent = "Sold Out";
-                button.disabled = true;
-                button.style.backgroundColor = '#cccccc';
-                button.style.color = '#000';
-                button.style.filter = 'blur(2px)';
+                    if (data.success === "ok") {
+                        var button = document.getElementById(`room${index}`);
+                        button.textContent = "Select Room";
+                        button.disabled = false;
+                        button.style.backgroundColor = '';
+                        button.style.color = '';
+                        button.style.filter = '';
+                    } else {
+                        var button = document.getElementById(`room${index}`);
+                        button.textContent = "Sold Out";
+                        button.disabled = true;
+                        button.style.backgroundColor = '#cccccc';
+                        button.style.color = '#000';
+                        button.style.filter = 'blur(2px)';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                }
             }
-        } catch (error) {
-            console.error('Error:', error);
         }
-    }
-}
-
-   
-    </script>
-
-
+ </script>
     <h1>Room Types and Prices</h1>
     <table id="roomTable">
         <tr>
@@ -622,16 +663,20 @@ async function findTotalPrice() {
                         <span> No. of Guests : <%= room.roomSpace %> </span>
                     </div>
                 </td>
-              
+
                 <td class="priceCell"> ₹<%= room.price %>
 
                 <td>
-                     <div id="totalRoomPrice<%= index %>"  ><%= index %></div>
+                    <div id="totalRoomPrice<%= index %>">
+                        <%= index %>
+                    </div>
                 </td>
-                <div class="roomsss" data-price="<%= room.price %>" data-index="<%= index %>" data-capacity="<%= room.roomSpace %>" data-roomId ="<%= room._id %>">
+                <div class="roomsss" data-price="<%= room.price %>" data-index="<%= index %>"
+                    data-capacity="<%= room.roomSpace %>" data-roomId="<%= room._id %>">
 
                     <% if (user) { %>
-                        <td><a href="/proceedBooking/<%= room.roomType %>"><button class="continue-button" id="room<%= index %>">Select
+                        <td><a href="/proceedBooking/<%= room.roomType %>"><button class="continue-button"
+                                    id="room<%= index %>">Select
                                     Room</button></a></td>
                         <% } else { %>
                             <td>
@@ -657,29 +702,33 @@ async function findTotalPrice() {
                                         <%= msg %>
                                     </h4>
 
-                                    <div class="field">
+                                    <div class="formField">
                                         <input type="text" placeholder="First Name" name="first_name" required>
                                     </div>
-                                    <div class="field">
+                                    <div class="formField">
                                         <input type="text" placeholder="Last Name" name="last_name" required>
                                     </div>
-                                    <div class="field">
+                                    <div class="formField">
                                         <input type="text" placeholder="Email Address" name="email" required>
                                     </div>
-                                    <div class="field">
+                                    <div class="formField">
                                         <input type="" placeholder="Mobile Number" name="mobile" required>
                                     </div>
-                                    <div class="field">
+                                    <div class="formField">
                                         <input type="password" placeholder="Password" name="password" required>
                                     </div>
-                                    <div class="field">
+                                    <div class="formField">
                                         <input type="password" placeholder="Confirm password" name="confirm" required>
                                     </div>
-                                    <div class="field btn">
+                                    <div class="formField">
+                                        <input type="text" placeholder="Enter your referal code" name="referal" minlength="6" >
+                                      </div>
+                                    <div class="formField btn">
                                         <div class="btn-layer"></div>
                                         <input type="submit" value="Signup">
 
                                     </div>
+
                                 </form>
                             </div>
                         </div>
@@ -789,11 +838,6 @@ async function findTotalPrice() {
 
 
     <style>
-        /* body {
-    font-family: Arial, sans-serif;
-    text-align: center;
-} */
-
         .date-picker {
             margin: 20px;
         }
@@ -832,6 +876,10 @@ async function findTotalPrice() {
     });
 
 </script>
+<!-- Add these links to include Bootstrap CSS and JS -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
 
 
 </html>

@@ -35,7 +35,7 @@
     <div class="form-container">
       <div class="form-inner">
         <div class="otp-container ">
-          <h5><%= msg %></h5>
+          <h5 id="msg"> <%= msg %></h5>
           <form action="/otp-submit" method="post">
             <input class="otp-input" name="otp"  type="text" minlength="6" maxlength="6" />
             <button class=" btn-layer" type="submit" >Submit</button>
@@ -44,5 +44,13 @@
       </div>
     </div>
   </div>
-
+  <script>
+    document.addEventListener('DOMContentLoaded',function(){
+       setTimeout(()=>{
+           let msg = document.getElementById('msg')
+           msg.textContent = ''
+       },3000)
+       console.log(msg,"msg")
+     })
+ </script>
   <%-include('footer')-%>

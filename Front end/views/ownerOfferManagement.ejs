@@ -242,7 +242,7 @@
                   </h5>
                   <h4 class="card-title">Add new coupon</h4>
                   <form class="forms-sample text-sm-start" action="/owner/add_category_offer" onsubmit="return validateOffer()" method="post">
-                <h5 class="text-success"><%= msg %></h5>
+                <h5 id="msg" class="text-success"><%= msg %></h5>
                     
                     <div class="form-group">
                         <label for="exampleInputEmail2" class="font-weight-bold text-dark">Offer name</label>
@@ -402,7 +402,7 @@
             <div class="card">
               <div class="card-body">
                 <h4 class="card-title">Offers</h4>
-                <h1  class="text-success"><%= msg %></h1>
+                <h1 id="msg"  class="text-success"><%= msg %></h1>
                 <table class="table table-striped">
                   <thead>
                     <tr>
@@ -477,5 +477,14 @@
         expiry.min = formattedDate;
     </script>
     
+    <script>
+      document.addEventListener('DOMContentLoaded',function(){
+         setTimeout(()=>{
+             let msg = document.getElementById('msg')
+             msg.textContent = ''
+         },3000)
+         console.log(msg,"msg")
+       })
+   </script>
     <%-include('ownerFormFooter')-%>
     

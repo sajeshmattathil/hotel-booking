@@ -176,10 +176,10 @@
 
     </style>
 
-    <div class="container mt-5 " style="border: 2px solid #6c7709; border-radius: 10px; margin-top: 20px;">
+    <div class="container mt-5 " style=" border-radius: 10px; margin-top: 20px;">
         
         <div class="row mt-5">
-            <h3 class="text-success">
+            <h3 id="msg" class="text-success">
                 <%=msg%>
             </h3>
             <!-- Left Section -->
@@ -197,7 +197,7 @@
 
             <div class="col-md-6">
                 <div class="card">
-                    <div class="card-body" style="border: 2px solid #6c7709; border-radius: 10px;">
+                    <div class="card-body" style=" border-radius: 10px;">
                         <h5 class="card-title">Room Details</h5>
                         <form class="pay-form">
                             <p class="card-text">
@@ -272,16 +272,12 @@
 
                                                     <div id="message" style="display:none;color:red;">Please select a
                                                         payment option.</div>
-
-
-
-                                                    
-                                                        <!-- <form class="pay-form"> -->
+                                                  
 
                                                         <input type="hidden" name="name" value="<%= roomData.roomType %>">
                                                         <input type="hidden" name="amount" value="<%= totalAmount %>">
                                                         <input type="hidden" name="description" value="Booking your room">
-                                                        <!-- </form> -->
+                                                       
                                           
                                                     <label>
                                                         <input type="radio" name="payment" value="pay"> Pay Now
@@ -361,7 +357,7 @@
 
 
                                                                             
-                                                                                <!-- <form class="pay-form"> -->
+                                                                              
 
                                                                                 <input type="hidden" name="name"
                                                                                     value="<%= roomData.roomType %>">
@@ -370,7 +366,7 @@
                                                                                 <input type="hidden" name="description"
                                                                                     value="Booking your room">
                                                                                 
-                                                                                <!-- </form> -->
+                                                                             
                                                                            
 
 
@@ -526,6 +522,14 @@
     });
 
 </script>
-
+<script>
+    document.addEventListener('DOMContentLoaded',function(){
+       setTimeout(()=>{
+           let msg = document.getElementById('msg')
+           msg.textContent = ''
+       },3000)
+       console.log(msg,"msg")
+     })
+ </script>
 
 </html>
