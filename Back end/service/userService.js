@@ -349,7 +349,8 @@ const saveEditedUserPassword = async (req,res) => {
             if (updateData) {
                 const errorMsg = "New password added sucessfully"
                 delete req.session.otp
-            return res.json({ error: errorMsg });
+            return res.json({ true: errorMsg ,status:200});
+           
 
             } else {
                 const msg = "Something went wrong"

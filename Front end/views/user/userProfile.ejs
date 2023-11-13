@@ -214,6 +214,8 @@ input[type="text"] {
             </div> -->
             <table>
                 <tbody>
+                  <h6 id="msg"><%= sucess %></h6>
+
                     <tr>
                         <td>Name</td>
                         <td>
@@ -255,7 +257,7 @@ input[type="text"] {
                         <tr>
                           <td>Password</td>
                           <td>
-                              <%=  '*******' %>
+                              <%=  '●●●●●●●●' %>
                           </td>
                           <td><button type="button" class="edit-button " data-toggle="modal" data-target="#exampleModalCenter-password" >Edit</button></td> 
   
@@ -453,6 +455,7 @@ input[type="text"] {
              <div class="form-container">
               <form action="/edit-userPassword" method="post" id="changePassword" >
                 <div class="" id="error"></div>
+                <div class="" id="sucessMsg"></div>
                 <div class="form-group">
                   <label for="firstName">Old Password:</label>
                   <input type="password" id="old_password" name="old_password" minlength="6" maxlength="" required>
@@ -477,6 +480,8 @@ input[type="text"] {
         </div>
       </div>
     </div>
+
+    
   
                     </tr>
 
@@ -608,13 +613,18 @@ console.log(9);
         })
         .then(response => response.json())
         .then(data => {
-          if (data.msg) {
+          if (data && data.true) {
               console.log(data,"data");
-                document.getElementById('error').innerHTML = data.msg;
+                document.getElementById('sucessMsg').innerHTML = data.true;
+              
+                window.location.href = '/manageYourProfilePage?sucess=New password added sucessfully'
+
             }
             if (data.error) {
               console.log(data,"data");
                 document.getElementById('error').innerHTML = data.error;
+                console.log("*******");
+                // closeModal()
             } else {
                 document.getElementById('error').innerHTML = ""; // Clear any previous errors
             }
@@ -622,6 +632,14 @@ console.log(9);
         .catch(error => console.error('Error:', error));
     }
 });
+
+</script>
+<script>
+  function closeModal() {
+var modal = document.getElementById("exampleModalCenter-password");
+modal.remove();
+// document.body.style.overflow = "auto"; // Allow scrolling on the body
+}
 
 </script>
    

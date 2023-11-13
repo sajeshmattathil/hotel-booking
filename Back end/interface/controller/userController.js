@@ -152,11 +152,13 @@ const manageYourProfile = (req, res) => {
     res.redirect('/manageYourProfilePage')
 }
 const manageYourProfilePage = async (req, res) => {
+    const sucess = req.query.sucess
+
     const user = await userService.userDetails(req)
     console.log(user);
     if (user.status === 400) res.redirect(`/manageYourProfilePage?msg=${user.msg}`)
     const msg = req.query.msg
-    res.render('user/userProfile', { user, msg })
+    res.render('user/userProfile', { user, msg ,sucess})
 }
 const editUserName = async (req, res) => {
     try {
