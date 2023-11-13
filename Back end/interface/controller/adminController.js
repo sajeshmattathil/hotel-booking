@@ -8,6 +8,7 @@ const adminLogin = (req, res) => {
 
 const adminAuthentication = async (req, res) => {
   try {
+    console.log(req.body,"99999")
     const response = await adminService.auth(req)
     if (response.status === 401) res.redirect(`/admin?msg=${response.msg}`)
     if (response.status === 200) res.redirect('/admin/home')

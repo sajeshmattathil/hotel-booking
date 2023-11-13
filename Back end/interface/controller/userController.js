@@ -23,7 +23,7 @@ const userhotelsList = async (req, res) => {
 
 
     const hotels = await userService.findHotels(req.session.city, 1)
-    if (hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
+    if (hotels.status && hotels.status === 400) res.redirect(`/hotelsPage?msg=${hotels.msg}`)
     else res.redirect(`/hotelsPage?msg=${hotels.msg}`)
     // if (hotels.status === 400) res.redirect(`/hotelsPage`)
     // else res.redirect(`/hotelsPage`)
