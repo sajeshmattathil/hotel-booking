@@ -240,15 +240,18 @@ const editUserPassword = async (req, res) => {
 }
 
 const forgotPassword = (req, res) => {
+    console.log(1)
     res.redirect('/forgotEmailPage')
 }
 
 const forgotEmailPage = (req, res) => {
+    console.log(2)
     const msg = req.query.msg
     res.render('forgotEmailPage', { msg })
 }
 
 const emailSubmit = async (req, res) => {
+    console.log(3)
     if (!(req.session.otp)) {
         const response = await userService.generateOtpAndSendForForgot(req)
         if (response.status === 202) res.redirect(`/forgotEmailPage?msg=${response.msg}`)

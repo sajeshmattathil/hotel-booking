@@ -78,10 +78,11 @@ const generateOtpAndSend = (req) => {
     req.session.otp = otp
     req.session.otpExpireForRegister = Date.now() + 10 * 60 * 1000
 
-    const { currentEmail } = req.body
+    const { email } = req.session.userFormData
 
-    console.log(otp, 'otp');
-    sendMail(currentEmail, otp)
+    console.log(otp, email,req.body,'otp,currentEmail');
+    
+    sendMail(email, otp)
     return {status:200}
 }
 
@@ -368,6 +369,7 @@ const saveEditedUserPassword = async (req,res) => {
 
 const generateOtpAndSendForForgot = async (req) => {
     try {
+        console.log(7)
         let { email } = req.body
 
         //resend otp
@@ -376,7 +378,7 @@ const generateOtpAndSendForForgot = async (req) => {
             email = req.session.email
             req.session.otp = otp
             req.session.otpExpire = Date.now() + 10 * 60 * 1000
-            console.log(otp, 'otp');
+            console.log(otp, 'otp5555');
 
             sendMail(email, otp)
             return { status: 202 }
@@ -393,7 +395,7 @@ const generateOtpAndSendForForgot = async (req) => {
         req.session.otpExpire = Date.now() + 10 * 60 * 1000
         console.log(req.session.otpExpire);
         req.session.email = email
-        console.log(otp, 'otp');
+        console.log(otp,email,"111111,otp666");
 
         sendMail(email, otp)
         return { status: 200 }

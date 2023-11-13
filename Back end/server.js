@@ -35,4 +35,4 @@ setTimeout(() => {
     controller.updateBooking(); 
 }, 5000);
 
-app.listen(8080, () => { console.log('Listening to the server on http://localhost:8080'); })
+app.listen(3000, () => { console.log('Listening to the server on http://localhost:3000'); })
