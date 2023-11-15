@@ -14,6 +14,11 @@ const adminAuthentication = async (req, res) => {
     if (response.status === 200) res.redirect('/admin/home')
   } catch (error) { console.log(error); }
 }
+const homePage = (req,res)=>{
+  try{
+     res.redirect('/admin/home')
+  }catch(err){console.log(err.message);}
+}
 const adminHome = async (req, res) => {
   try {
     var NoOfBookings
@@ -25,10 +30,16 @@ const adminHome = async (req, res) => {
     const data = await adminService.findAlldetails()
     data.forEach((element, index) => {
       total += (element.otherDetails.moneyPaid + element.otherDetails.pendingAmount)
-      // var date = element.checkin_date
-      // date = date.split('T')
-      // console.log(date,"date");
-      // dates.push(date)
+      var date = element.checkin_date
+     date = new Date(date)
+     const day = date.getDay().toString().padStart(2,0)
+     const month = (date.getMonth() + 1).toString().padStart(2,0)
+     const year = date.getFullYear()
+      
+     date = `${day}/${month}/${year}`
+
+      console.log(date,typeof(date),"date");
+      dates.push(date)
       revenue.push((element.otherDetails.moneyPaid + element.otherDetails.pendingAmount))
       NoOfBookings = index + 1
 
@@ -297,6 +308,7 @@ const salesRevenueInGraph = async (req, res) => {
 module.exports = {
   adminLogin,
   adminAuthentication,
+  homePage,
   adminHome,
   categoryManagement,
   categoryManagementPage,

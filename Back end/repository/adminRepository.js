@@ -107,7 +107,7 @@ const findSalesData = async (startDate, endDate) => {
         console.log(startDate, endDate, "startDate,endDate");
         return await bookingHistory.aggregate([
             {
-                $match: { checkin_date: { $gte: startDate }, checkout_date: { $lte: endDate } }
+                $match: { checkin_date: { $gte: startDate }, checkout_date: { $lte: endDate },status:'completed' }
 
             },
             {

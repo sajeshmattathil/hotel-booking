@@ -1,43 +1,89 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Revenue Chart</title>
-    <!-- Include Chart.js library -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Hotel Room Booking - Final Payment</title>
+<style>
+body {
+  font-family: sans-serif;
+  background-color: #fff;
+}
+
+.container {
+  width: 1000px;
+  margin: 0 auto;
+}
+
+.header {
+  background-color: #000;
+  color: #fff;
+  padding: 20px;
+}
+
+.header h1 {
+  font-size: 30px;
+  text-align: center;
+}
+
+.content {
+  padding: 20px;
+}
+
+.room-details {
+  background-color: #eee;
+  padding: 20px;
+}
+
+.payment-details {
+  background-color: #fff;
+  padding: 20px;
+}
+
+.submit-button {
+  background-color: #000;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  cursor: pointer;
+}
+</style>
 </head>
 <body>
-   
+<div class="container">
+  <header class="header">
+    <h1>Hotel Room Booking - Final Payment</h1>
+  </header>
 
-    <div>
-        <canvas id="revenueChart" width="300" height="100"></canvas>
+  <div class="content">
+    <div class="room-details">
+      <h3>Room Details</h3>
+      <ul>
+        <li>Room Type: {{room_type}}</li>
+        <li>Price: {{price}}</li>
+        <li>Offer Percentage: {{offer_percentage}}</li>
+        <li>Original Price: {{original_price}}</li>
+        <li>Coupon Code: {{coupon_code}}</li>
+        <li>Total Price: {{total_price}}</li>
+        <li>GST: {{gst}}</li>
+        <li>Discount Coupon Applied: {{discount_coupon_applied}}</li>
+      </ul>
     </div>
-    <script>
-        // JavaScript code for setting up and configuring the chart
-        document.addEventListener('DOMContentLoaded', function() {
-            var ctx = document.getElementById('revenueChart').getContext('2d');
-            var myChart = new Chart(ctx, {
-                type: 'bar',
-                data: {
-                    labels: ['Day 1', 'Day 2', 'Day 3', 'Day 4', 'Day 5'],
-                    datasets: [{
-                        label: 'Revenue',
-                        data: [100, 200, 150, 300, 250],
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    scales: {
-                        y: {
-                            beginAtZero: true
-                        }
-                    }
-                }
-            });
-        });
-    </script>
+
+    <div class="payment-details">
+      <h3>Payment Details</h3>
+      <form action="/payment/complete" method="post">
+        <input type="hidden" name="room_type" value="{{room_type}}">
+        <input type="hidden" name="price" value="{{price}}">
+        <input type="hidden" name="offer_percentage" value="{{offer_percentage}}">
+        <input type="hidden" name="original_price" value="{{original_price}}">
+        <input type="hidden" name="coupon_code" value="{{coupon_code}}">
+        <input type="hidden" name="total_price" value="{{total_price}}">
+        <input type="hidden" name="gst" value="{{gst}}">
+        <input type="hidden" name="discount_coupon_applied" value="{{discount_coupon_applied}}">
+
+        <input type="submit" class="submit-button" value="Pay Now">
+      </form>
+    </div>
+  </div>
+</div>
 </body>
 </html>

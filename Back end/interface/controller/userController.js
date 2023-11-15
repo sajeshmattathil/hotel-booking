@@ -3,8 +3,8 @@ const invoice = require('../../utils/invoice')
 
 
 const userHome = (req, res) => {
-    res.render('user/index')
-    //res.render('user/bookingFinalPage')
+   // res.render('user/index')
+    res.render('user/sample')
     // const checkin_date = req.session.checkin_date
     // const checkout_date = req.session.checkout_date
     //res.render('user/userHome',{checkin_date,checkout_date})
@@ -38,6 +38,7 @@ const userhotelsListPage = async (req, res) => {
     let totalHotels = response.totalHotel
     console.log(totalHotels, "totalHotels")
     if (req.session.filtered) hotels = req.session.filtered
+    console.log(req.session.filtered,"req.session.filtered")
 
     const userName = ''
     const user = req.session.user
@@ -353,25 +354,20 @@ const filterHotels = async (req, res) => {
         const { amenitie, star_rating } = req.body
         const city = req.session.city
         const filteredHotels = await userService.filteredData(req.body, city)
-        console.log(filteredHotels, "filteredHotels");
         if (filteredHotels.data) req.session.filtered = filteredHotels.data
-        console.log(req.session.filtered, "req.session.filtered");
         res.redirect('/hotelsPage')
     } catch (err) { console.log(err); }
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
+const clearFilter = (req,res)=>{
+    try{
+        console.log("???????????????????????????")
+       delete req.session.filtered
+       res.redirect('/hotelsPage')
+       console.log(req.session.filtered,"clearFilter")
+    }catch(err){console.log(err.message);}
+}
 
 const proceedBooking = async (req, res) => {
     try {
@@ -667,7 +663,7 @@ const walletPage = async (req, res) => {
 const updateBooking = async () => {
     try {
         const response = await userService.updateFinishedBooking()
-        console.log(111222333);
+        console.log(response,111222333);
     } catch (err) { console.log(err); }
 }
 
@@ -734,6 +730,7 @@ module.exports = {
     hotelDetailsPage,
     sortHotels,
     filterHotels,
+    clearFilter,
     getRooms,
     proceedBooking,
     proceedBookingPage,

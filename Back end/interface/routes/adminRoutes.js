@@ -5,6 +5,7 @@ const jwt = require('../../middleware/jwt')
 
 router.get('/', admincontroller.adminLogin)
 router.post('/adminlogin', jwt.generateToken, admincontroller.adminAuthentication)
+router.get('/home_page',jwt.generateToken, admincontroller.homePage)
 router.get('/home', admincontroller.adminHome)
 router.get('/category-management',jwt.verifyToken,admincontroller.categoryManagement)
 router.get('/categoryManagementPage',jwt.verifyToken,admincontroller.categoryManagementPage)

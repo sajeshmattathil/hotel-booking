@@ -499,10 +499,8 @@ const checkRoomAvailability = async (req) => {
         const startDate = req.session.checkin_date
         const endDate = req.session.checkout_date
         const room_id = roomId
-        console.log(startDate,endDate,"startDate,endDate");
 
         let selectedRoom = await userRepository.getRoom(roomId)
-        console.log(selectedRoom,"selectedRoom");
         var roomNumber = selectedRoom.roomNumbers
         const hotel_id = selectedRoom.hotel
         if (roomNumber.length) {
@@ -853,7 +851,8 @@ const updateFinishedBooking = async () => {
     try {
         let timer
         const timerFor = async () => {
-            const millisecondsOf24Hr = 24 * 60 * 60 * 1000              //
+            //const millisecondsOf24Hr = 24 * 60 * 60 * 1000  
+            const millisecondsOf24Hr =  60 * 1000             
             timer = setInterval(async () => {
                 const findBookingsForUpdation = await userRepository.findBookingsForUpdation()
                 console.log(findBookingsForUpdation, "findBookingsForUpdation")
@@ -877,7 +876,7 @@ const updateFinishedBooking = async () => {
             clearInterval(timer);
             console.log('Timer stopped.');
         }
-        setTimeout(stopTimer, 5000);
+        setTimeout(stopTimer, 10000);
     } catch (err) { console.log(err); }
 }
 

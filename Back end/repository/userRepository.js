@@ -381,6 +381,7 @@ const findAndUpdateAllHistory = async ()=>{
         const today = Date.now()
         console.log(today,"today");
         return await bookinghistory.updateMany({checkout_date:{$lt:today}},{$set:{status:"completed"}})
+        console.log("status updated")
 
     }catch(err){console.log(err);}
 }
