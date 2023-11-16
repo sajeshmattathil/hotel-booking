@@ -920,11 +920,11 @@ const genInvoice = async (req) => {
     } catch (err) { console.log(err.message); }
 }
 
-const findWalletTransactions = async (req)=>{
+const findWalletTransactions = async (req,page)=>{
 try{
     const email = req.session.user
     const user = await userRepository.findUserByEmail(email)
-    const data = await userRepository.findTransactions(user._id)
+    const data = await userRepository.findTransactions(user._id,page)
     console.log(data,"data");
     if(data.length) return data
     else  {
@@ -934,6 +934,16 @@ try{
 
 }catch(err){console.log(err.message);}
 }
+const findAllTranasactions = async (req)=>{
+    try{
+        const email = req.session.user
+        const user = await userRepository.findUserByEmail(email)
+        const data = await userRepository.findAllTranasactions(user._id)
+        if(data.length) return data.length
+    }catch(err){console.log(err.message);}
+}
+
+
 const findHotel = async (id)=>{
     try{
       const data = await userRepository.findHotel(id)
@@ -984,5 +994,6 @@ module.exports = {
     cancelBooking,
     updateFinishedBooking,
     genInvoice,
-    findWalletTransactions
+    findWalletTransactions,
+    findAllTranasactions
 }

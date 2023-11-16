@@ -427,10 +427,12 @@ button {
           console.log(currentPage,"8888")
         })
           function updatePage(page) {
+            let page_num = document.getElementById('page-num')
+
             console.log(page, "currentpage")
             window.location.href = `/hotelsPage?page=${page}`;
             console.log( `/hotelsPage?page=${page}`)
-            page_num.textContent =currentPage
+            page_num.textContent =page
 
           }
          

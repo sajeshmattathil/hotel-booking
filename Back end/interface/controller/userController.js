@@ -664,17 +664,24 @@ const cancelBooking = async (req, res) => {
 }
 const wallet = async (req, res) => {
     try {
+      
+       
         res.redirect('/walletPage')
     } catch (err) { console.log(err); }
 }
 const walletPage = async (req, res) => {
     try {
+          let page 
+          if(req.query.page ) page = req.query.page 
+          else page = 1
+          console.log(page,"page")
         const user = req.session.user
         const wallet = await userService.findWalletMoney(req)
-        const transactions = await userService.findWalletTransactions(req)
+        const transactions = await userService.findWalletTransactions(req,page)
+        const totalTransactions = await userService.findAllTranasactions(req)
         console.log(transactions, "transactions");
         const msg = transactions.msg
-        res.render('user/wallet', { user, wallet, transactions, msg })
+        res.render('user/wallet', { user, wallet, transactions, msg ,totalTransactions})
     } catch (err) { console.log(err.message); }
 }
 

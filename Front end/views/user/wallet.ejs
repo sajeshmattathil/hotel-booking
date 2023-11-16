@@ -166,7 +166,92 @@
       </table>
     </div>
   </div>
+  <style>
+    .pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+  }
   
+  button {
+    padding: 8px 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #3498db;
+    color: #fff;
+  }
+  
+  #page-num {
+    font-size: 18px;
+    margin: 0 10px;
+  }
+  </style>
+  <div class="pagination">
+                <button id="prev">Previous</button>
+                <span id="page-num" class="text-dark"></span>
+                <button type="" id="nextPage">Next</button>
+              </div>
+        </div>
+      </div>
+      <div class="totalTransactions" data-count="<%=totalTransactions%>" ></div>
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          let total = document.querySelectorAll('.totalTransactions')
+          console.log(total[0].dataset.count)
+          let pageCount = total[0].dataset.count / 3
+
+
+          const url = new URLSearchParams(window.location.search)
+          var currentPage
+
+          if(url.get('page')) currentPage = url.get('page')
+           else currentPage = 1;
+
+          console.log(url.get('page'))
+          let totalpage 
+         
+          const prevBtn = document.getElementById('prev');
+          const nextBtn = document.getElementById('nextPage');
+        let page_num = document.getElementById('page-num')
+
+          prevBtn.addEventListener('click', function () {
+            console.log(currentPage, "prevBtn")
+
+            if (currentPage > 1) {
+              currentPage--;
+              console.log(currentPage, "****")
+              updatePage(currentPage);
+            }
+          });
+
+          nextBtn.addEventListener('click', function () {
+            console.log(currentPage, "nextBtn")
+           if(currentPage<pageCount) currentPage++;
+            console.log(currentPage, "/////")
+
+            updatePage(Number(currentPage));
+
+          });
+          console.log(currentPage,"8888")
+        })
+
+          function updatePage(page) {
+            let page_num = document.getElementById('page-num')
+
+            console.log(page, "currentpage")
+            console.log( `/walletPage?page=${page}`)
+            page_num.textContent =page
+            window.location.href = `/walletPage?page=${page}`;
+
+
+          }
+         
+       
+      </script>
 
   <script>
     document.addEventListener('DOMContentLoaded',function(){

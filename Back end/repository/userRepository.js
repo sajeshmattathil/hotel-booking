@@ -497,10 +497,16 @@ const filerHotelsifOneMissing = async (city,amenities,star_rating)=>{
     }catch(err){console.log(err);}
 }
 
-const findTransactions = async (id)=>{
+const findTransactions = async (id,page)=>{
     try{
-        console.log(id,"id");
+        console.log(id,page,"page");
+        return await walletTransaction.find({transaction_id:id}).skip((page-1) * 5).limit(5)
+    }catch(err){console.log(err.message);}
+}
+const findAllTranasactions = async (id)=>{
+    try{
         return await walletTransaction.find({transaction_id:id})
+
     }catch(err){console.log(err.message);}
 }
 
@@ -563,6 +569,7 @@ module.exports = {
     filerHotelsifOneMissing,
     filerHotels,
     findTransactions,
+    findAllTranasactions,
     getRoom,
  findHotelsNumber 
  
