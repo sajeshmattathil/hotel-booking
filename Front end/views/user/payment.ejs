@@ -204,11 +204,7 @@
                                 <%=roomData.roomType%>
                             </p>
                             <% if(offer) { %>
-                                <!-- <h4 class="card-text text-dark font-weight-bold">
-                                    Price per Night: ₹ <%= roomData.price - (roomData.price * (offer.discount / 100)) %>
-                                        <span class="text-muted"><s>₹ <%= roomData.price %></s> </span>
-                                        
-                                </h4><h4 class="text-danger"><%= offer.discount %>%</h4> -->
+                               
                                 <div class="card-text text-dark font-weight-bold" style="display: flex;  align-items: center;">
                                     <h4>Price per Night: ₹ <%= roomData.price - (roomData.price * (offer.discount / 100)) %></h4>
                                     <h4><span class="text-muted px-2"><s>₹ <%= roomData.price %></s></span></h4>
@@ -464,6 +460,7 @@
             e.preventDefault();
 
             var paymentOption = $("input[name='payment']:checked").val();
+            console.log(paymentOption,"paymentOption****")
 
             if(paymentOption === "bookNow") {
                 window.location.href = "/booknow";

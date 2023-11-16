@@ -60,7 +60,7 @@ router.get('/bookingConfirmedPage',controller.bookingConfirmedPage)
 router.post('/createOrder', paymentController.createOrder);
 router.get('/manageBookings',controller.manageBookings)
 router.get('/manageBookingsPage',controller.manageBookingsPage)
-router.get('/selected_coupon/:coupon',controller.selectedCoupon)
+router.post('/selected_coupon',controller.selectedCoupon)
 router.get('/remove_coupon',controller.removeCoupon)
 router.get('/cancel_booking/:id',controller.cancelBooking)
 router.get('/wallet',controller.wallet)

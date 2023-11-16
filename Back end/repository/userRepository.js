@@ -163,6 +163,11 @@ const findCouponByUser=async (email)=>{
         return await coupons.find({used_users:{$ne:email}})
     }catch(err){console.log(err);}
 }
+const findCouponData = async (id)=>{
+    try{
+        return await coupons.findOne({_id:id})
+    }catch(err){console.log(err.message);}
+}
 
 const removeRoomNumber = async (roomData) => {
     try {
@@ -531,6 +536,7 @@ module.exports = {
     findAvailableRooms,
    findUserHistory,
     findCouponByUser,
+    findCouponData,
     findAllRoomNumber,
     findOffers,
     findUserByReferal,

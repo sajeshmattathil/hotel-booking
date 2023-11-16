@@ -447,61 +447,61 @@ var months = [
         var x_axis = weeksOfYear.slice()
         var revenue = []
         var myChart
-document.getElementById('graph').addEventListener('submit', function(event) {
-    event.preventDefault();
+// document.getElementById('graph').addEventListener('submit', function(event) {
+//     event.preventDefault();
 
-    var formData = new FormData(this);
-    var timeRange = formData.get('timeRange');
+//     var formData = new FormData(this);
+//     var timeRange = formData.get('timeRange');
 
-   // console.log(timeRange);
-    if(timeRange === 'month')  x_axis = months.slice()
-    else x_axis = weeksOfYear.slice()
-console.log(x_axis,"x_axis");
-    fetch('/admin/show_graph', {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/json'
-        },
-        body: JSON.stringify({timeRange: timeRange})
-    }).then(response => {
-      //console.log(response)
-        if (response.ok) {
-            return response.json();
-        } else {
-            throw new Error('Network response was not ok');
-        }
-    }).then(data => {
-      console.log(timeRange);
+//    // console.log(timeRange);
+//     if(timeRange === 'month')  x_axis = months.slice()
+//     else x_axis = weeksOfYear.slice()
+// console.log(x_axis,"x_axis");
+//     fetch('/admin/show_graph', {
+//         method: 'POST',
+//         headers: {
+//             'content-type': 'application/json'
+//         },
+//         body: JSON.stringify({timeRange: timeRange})
+//     }).then(response => {
+//       //console.log(response)
+//         if (response.ok) {
+//             return response.json();
+//         } else {
+//             throw new Error('Network response was not ok');
+//         }
+//     }).then(data => {
+//       console.log(timeRange);
 
-        //console.log(data.success.length, "data.success.length***");
+//         //console.log(data.success.length, "data.success.length***");
       
-      let count = 0
-        for(let i = 0;i<data.success.length;i++){
-          var total = 0;
-            if(data.success[i].length){
-              count++
-             // console.log(data.success[i],"success[i]")
+//       let count = 0
+//         for(let i = 0;i<data.success.length;i++){
+//           var total = 0;
+//             if(data.success[i].length){
+//               count++
+//              // console.log(data.success[i],"success[i]")
           
-              data.success[i].forEach((element,index) => {
-                total += element.amount;
-                //console.log(element.amount,"element.amount")
-        });
-       // console.log(total,count,"total");
-        total = total.toFixed(2);
+//               data.success[i].forEach((element,index) => {
+//                 total += element.amount;
+//                 //console.log(element.amount,"element.amount")
+//         });
+//        // console.log(total,count,"total");
+//         total = total.toFixed(2);
 
-       revenue.push(total)
-      }
-      else revenue.push(0)
-    }
-    console.log(revenue,"rev***enue");
+//        revenue.push(total)
+//       }
+//       else revenue.push(0)
+//     }
+//     console.log(revenue,"rev***enue");
    
-    myChart.data.labels = x_axis;
-myChart.data.datasets[0].data = revenue;
-myChart.update(); 
+//     myChart.data.labels = x_axis;
+// myChart.data.datasets[0].data = revenue;
+// myChart.update(); 
 
 
-    }).catch(error => console.log("error :", error));
-});
+//     }).catch(error => console.log("error :", error));
+// });
     document.addEventListener('DOMContentLoaded', function() {
       console.log(revenue,"525252525");
         var ctx = document.getElementById('revenueChart').getContext('2d');
@@ -531,7 +531,7 @@ myChart.update();
 
 
 <script>
- // Define a function to initialize the chart
+
 function initializeChart(labels, data) {
     var ctx = document.getElementById('revenueChart').getContext('2d');
     var myChart = new Chart(ctx, {
@@ -562,7 +562,7 @@ document.getElementById('graph').addEventListener('submit', function(event) {
     var formData = new FormData(this);
     var timeRange = formData.get('timeRange');
 
-    // Make sure timeRange is what you expect
+   
     console.log(timeRange);
     if(timeRange === 'month')  x_axis = months.slice()
     else x_axis = weeksOfYear.slice()
@@ -574,7 +574,7 @@ document.getElementById('graph').addEventListener('submit', function(event) {
         },
         body: JSON.stringify({timeRange: timeRange})
     }).then(response => {
-        console.log(response)
+       // console.log(response)
         if (response.ok) {
             return response.json();
         } else {
@@ -584,26 +584,29 @@ document.getElementById('graph').addEventListener('submit', function(event) {
         console.log(timeRange);
         console.log(data.success.length, "data.success.length***");
         var revenue = [];
-
+let count = 0
         for(let i = 0; i < data.success.length; i++){
         var total = 0;
 
             if(data.success[i].length){
+              count++
                 console.log(data.success[i],"success[i]")
                 data.success[i].forEach((element,index) => {
                     total += element.amount;
+                    console.log(element,"element")
                 });
-                console.log(1111);
+                console.log(count,"count");
+               
                 total = parseFloat(total).toFixed(2);
                 revenue.push(total);
             } else {
                 revenue.push(0);
             }
         }
-        console.log(revenue,"revenue");
+       // console.log(revenue,"revenue");
 
-        // Call the function to initialize/update the chart
-        initializeChart(x_axis, revenue);
+       
+       initializeChart(x_axis, revenue);
     }).catch(error => console.log("error :", error));
 });
 

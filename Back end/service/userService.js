@@ -593,6 +593,12 @@ const findCoupons = async (req) => {
 
     } catch (err) { console.log(err); }
 }
+const findCouponData= async (id) =>{
+    try{
+        const data = await userRepository.findCouponData(id)
+        if(data) return data
+    }catch(err){log(err.message)}
+}
 
 const findWalletMoney = async (req) => {
     try {
@@ -791,6 +797,11 @@ const saveBooking = async (req) => {
         }
 
         const msg = "Room booked sucessfully"
+
+        delete req.session.booking
+
+
+
         return { status: 200, msg }
 
     } catch (err) { console.log(err); }
@@ -967,6 +978,7 @@ module.exports = {
     saveBooking,
     findBookings,
     findCoupons,
+    findCouponData,
     findCategoryOffer,
     findWalletMoney,
     cancelBooking,

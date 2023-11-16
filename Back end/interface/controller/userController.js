@@ -3,8 +3,9 @@ const invoice = require('../../utils/invoice')
 
 
 const userHome = (req, res) => {
-   // res.render('user/index')
-    res.render('user/sample')
+   
+    res.render('user/index')
+    //res.render('user/newPayment')
     // const checkin_date = req.session.checkin_date
     // const checkout_date = req.session.checkout_date
     //res.render('user/userHome',{checkin_date,checkout_date})
@@ -482,6 +483,9 @@ const confirmBooking = async (req, res) => {
 
 const confirmPayment = async (req, res) => {
     try {
+
+
+
         const user = req.session.user
         const booking = req.session.booking
         const roomData = req.session.roomData
@@ -518,7 +522,7 @@ const confirmPayment = async (req, res) => {
         console.log(totalAmount, "totalAmount-first");
         if (couponSelected && offer) {
             console.log(111);
-            var amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms)) - parseInt(couponSelected)
+            var amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms)) - parseInt(couponSelected.discount)
             totalAmount = amount + (amount * 0.12)
             if (totalAmount < walletMoney.wallet) {
                 diff = totalAmount - walletMoney.wallet
@@ -527,8 +531,7 @@ const confirmPayment = async (req, res) => {
                 totalAmount = totalAmount - walletMoney.wallet
             }
         } else if (offer && !couponSelected) {
-            console.log(222);
-            console.log(totalAmount, roomData.price, offer.discount, noOfRooms, walletMoney.wallet, "datas");
+            
             amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms))
             totalAmount = amount + (amount * 0.12)
 
@@ -538,10 +541,10 @@ const confirmPayment = async (req, res) => {
                 walletMoney.wallet = walletMoney.wallet - diff
             }
             totalAmount = totalAmount - walletMoney.wallet
-        } else if (couponSelected && !offer) {
-            console.log(333);
-
-            amount = (totalAmount - parseInt(couponSelected))
+        } else if (err && !offer) {
+            
+            
+            amount = (totalAmount - parseInt(couponSelected.discount))
             totalAmount = amount + (amount * 0.12)
             if (totalAmount < walletMoney.wallet) {
                 diff = walletMoney.wallet - totalAmount
@@ -563,22 +566,38 @@ const confirmPayment = async (req, res) => {
             totalAmount = totalAmount - walletMoney.wallet
         }
         console.log(totalAmount, "totalAmount-last");
+        if(offer.discount){
+            var discountedPrice = Math.round( roomData.price - (roomData.price * (offer.discount / 100)) )
+            var discount = Math.round((roomData.price * (offer.discount / 100)) *( noOfRooms || 0))
+        }
+        const gst =Math.floor( amount * .12 )
+
+        amount = Math.round(amount)
+        totalAmount = Math.round(totalAmount)
+
         req.session.walletMoneyUsed = walletMoney.wallet
         req.session.totalAmount = totalAmount
-        res.render('user/payment', { user, userName, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, wallet, amount, numberOfDays, noOfRooms })
+
+       
+
+        res.render('user/newPayment', { user, userName,discountedPrice,discount,gst, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, wallet, amount, numberOfDays, noOfRooms })
     } catch (err) { console.log(err); }
 }
 
-const selectedCoupon = (req, res) => {
+const selectedCoupon = async (req, res) => {
     try {
-        req.session.couponSelected = req.params.coupon
-        res.redirect('/confirmPayment')
-    } catch (err) { console.log(); }
+        const couponData = await userService.findCouponData(req.body.id)
+        req.session.couponSelected = couponData
+        console.log( req.session.couponSelected," req.session.couponSelected")
+        res.json({success:couponData})
+       // res.redirect('/confirmPayment')
+    } catch (err) { console.log(err.message); }
 }
 
 const removeCoupon = (req, res) => {
     try {
         delete req.session.couponSelected
+       // res.json({success:true})
         res.redirect('/confirmPayment')
 
     } catch (err) { console.log(err); }

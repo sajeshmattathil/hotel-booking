@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hotel Booking Details</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
+    
+
+     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+        integrity="sha512-z3gLpd7yknf1YoNbCzqRKc4qyor8gaKU1qmn+CShxbuBusANI9QpRohGBreCFkKxLhei6S9CQXFEbbKuqLg0DA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer">
+   
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: #333;
+            color: white;
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+        }
+
+        .personal-info,
+        .booking-details {
+            flex: 1;
+        }
+
+        .booking-details {
+            padding-left: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 10px 30px;
+            margin: 0 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        footer {
+            /* background-color: #333; */
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header class="site-header js-site-header " style="background-color: #003b95; height: 15%;">
+        <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
+            <div class="container-fluid">
+                <a class="navbar-brand text-light">TravelNest</a>
+                <form class="d-flex">
+                    <a href="" class=" me-2 text-light"></a>
+                </form>
+                <div class="left-links">
+                    <a href="/userManagement" class="text-light px-4">Profile Management</a>
+                    <a href="/manageBookings" class="text-light px-4">Manage Bookings</a>
+                    <% if(user) { %>
+                        <a href="/wallet" class="text-light px-4">Wallet</a>
+                        <a href="/sign_out" class="text-light px-4">Sign Out</a>
+                        <% } else { %>
+                            <a href="/login" class="text-light px-4">Log in/Sign up</a>
+                            <% } %>
+                </div>
+            </div>
+        </nav>
+    </header>
+   
+        <div class="container">
+            <div style="display: flex; justify-content: space-between;">
+
+                <div class="personal-info">
+                    <h2>Personal Information</h2>
+                    <div class="form-group">
+
+                        <input type="text" id="fullName" value="<%=booking.name%>" name="fullName" required>
+
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" value="<%=booking.email %>" name="email" required>
+
+                    </div>
+                    <div class="form-group">
+                        <input type="text" id="mobile" value="<%=booking.phone %>" name="mobile" required>
+
+                    </div>
+                </div>
+                <form id="form" class="pay-form" action="" method="post">
+                <div class="booking-details p-5 ">
+                    <h2>Booking Details</h2>
+                    <p><strong>Hotel Name:</strong> ABC Hotel</p>
+                    <p><strong>Room Name:</strong>
+                        <%=roomData.roomType%>
+                    </p>
+
+                    <div class="card-text text-dark font-weight-bold" style="display: flex;  align-items: center;">
+                        <h5>Price per Night: ₹ <%= discountedPrice %>
+                        </h5>
+                        <h5><span class="text-muted px-2"><s>₹ <%= roomData.price %></s></span></h5>
+                        <h5> <span class="text-danger">
+                                <%= offer.discount %>%
+                            </span></h5>
+                    </div>
+
+                    <div class="d-flex " style="flex-direction: row;">
+                        <p class="px-3">
+                            <%=checkin_date %>
+                        </p>
+                        <p class="px-3">
+                            <%=checkout_date %>
+                        </p>
+                    </div>
+
+
+
+                    <a type="button" class=" text-success" data-toggle="modal" data-target="#exampleModalLong"
+                        href="">Apply coupon</a>
+                    <!-- <button type="button" class="text-dark " data-toggle="modal"
+                                data-target="#exampleModalLong">more coupons</button> -->
+                    <span>
+
+                    </span>
+
+                    <% if(couponSelected) { %>
+                        <div class="coupon-container d-flex px-5">
+                            <div id="couponSelected">
+                                <%= couponSelected.name %>
+                                    <%= couponSelected.discount %>
+                            </div>
+
+                            <span id="removeIcon" class="px-3" onclick="removeCoupon()">
+                                <i class="fas fa-times remove-icon"></i>
+                            </span>
+
+                        </div>
+
+
+                        <% } %>
+
+                            <p class=" text-success card-text "> <strong>Wallet:</strong>  ₹ <%= wallet %>
+                            </p>
+                            <p class=" text-success card-text "><strong>Discount: - ₹ <%=discount %></strong> 
+                            </p>
+                            <p class="card-text text-gray"><strong>Amount: ₹ <%=amount %></strong> 
+
+                                    <p id="gst" class="card-text text-gray"> <strong>GST: ₹ <%=gst %></strong> 
+                                    </p>
+                                    <p class="card-text" id="totalAmount"><strong>Total Price: ₹  <%= totalAmount %></strong>
+                                    </p>
+
+                                    <input type="hidden" name="name" value="<%= roomData.roomType %>">
+                                    <input type="hidden" name="amount" value="<%= totalAmount %>">
+                                    <input type="hidden" name="description" value="Booking your room">
+                                    <input type="hidden" id="amount" value="<%= amount %>">
+                                    <div class="d-flex p-3">
+                                        <label>
+                                            <input type="radio" class="mx-3" name="payment" value="pay"><strong>Pay Now</strong> 
+                                        </label>
+                                        <label>
+                                            <input class="mx-3"  type="radio" name="payment" value="bookNow"><strong> Pay When Arrival</strong>
+                                        </label>
+                                    </div>
+
+
+                </div>
+
+
+
+
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModalLong" tabindex="-1" role="dialog"
+                    aria-labelledby="exampleModalLongTitle" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Coupons</h5>
+                                <button type="button" class="close" id="closeModal" data-dismiss="modal"
+                                    aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <% if(coupons) { %>
+                                    <% coupons.forEach((coupon,index)=> { %>
+                                        <div class="coupon d-flex" style="flex-direction: row;">
+                                            <i class="fas fa-tags"></i>
+
+                                            <div style="width: 50%;">
+
+                                                <p class="card-text text-dark">
+                                                    <%=coupon.name%> ₹ <%=coupon.discount%> off
+                                                </p>
+
+                                            </div>
+
+                                            <span>
+                                                <button type="button" id="<%=coupon._id%>"
+                                                    class="btn btn-outline-secondary"
+                                                    onclick="applyCoupon('<%=coupon._id%>')">Apply</button>
+                                            </span>
+
+                                        </div>
+                                        <% }) %>
+                                            <% } %>
+                            </div>
+                            <div class="modal-footer">
+                                <!-- <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button> -->
+                                <!-- <button type="button" class="btn btn-primary">Save changes</button> -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+           
+           
+
+
+            <div style="text-align: center; padding-bottom: 20px; ">
+                
+                <input class="proceed text-light" type="submit" value="Proceed & Book Now" style="background-color: #003b95; border-radius: 5px;">
+               
+            </div>
+        </div>
+
+
+    </form>
+
+    <footer>
+        <p>&copy; 2023 Your Hotel. All rights reserved.</p>
+    </footer>
+
+</body>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        const closeModal = document.getElementById('closeModal')
+        closeModal.addEventListener('click', (event) => {
+            console.log("close button clicked")
+            window.location.href = '/confirmPayment'
+        })
+
+    })
+    function applyCoupon(couponId) {
+        console.log(couponId, "5555555")
+        fetch('/selected_coupon', {
+            method: 'POST',
+            headers: {
+                'Content-TYpe': 'application/json'
+            },
+            body: JSON.stringify({ id: couponId })
+        }).then(response => response.json()).then(data => {
+            console.log(data, "success")
+            let amount = document.getElementById('amount').value
+            amount = Number(amount)
+            console.log(amount, "amount")
+            const gst = document.getElementById('gst')
+            const totalAmount = document.getElementById('totalAmount')
+
+            gst.textContent = `GST: ₹ ${amount * .12}`
+            totalAmount.textContent = `Total Price: ₹ ${amount + (amount * .12)}`
+
+            let couponSelected = document.getElementById('couponSelected')
+            console.log(couponSelected, "data.success.name")
+
+            couponSelected.textContent = data.success.name
+
+
+        }).catch(error => { console.log("Error:", error) })
+    }
+
+    function removeCoupon() {
+        window.location.href = '/remove_coupon'
+        //             fetch('/remove_coupon',{
+        //                 method:'POST',
+        //                 headers:{
+        //                     'Content-Type':'application/json'
+        //                 }
+
+        //             }).then(responde=>responde.json()).then(data=>{
+        //                 console.log(data,'data')
+        //                 // var couponDiv = document.getElementById('couponSelected');
+        //                 // var removeIcon = document.getElementById('removeIcon');
+
+        //                 // if (couponDiv && removeIcon) {
+        //                 //     couponDiv.style.display = 'none'; 
+        //                 //     removeIcon.style.display = 'none'; 
+        //    // }
+        //             }).catch(error=>console.log(error))
+    }
+</script>
+<script>
+    document.querySelector('form').addEventListener('submit', function(event) {
+           if (!document.querySelector('input[name="payment"]:checked')) {
+               event.preventDefault(); 
+
+           }
+       });
+
+
+      const paymentRadios = document.querySelectorAll('input[name="payment"]');
+      console.log(paymentRadios.value,"paymentRadios")
+
+
+
+</script>
+
+<!-- razorpay -->
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+   
+document.addEventListener('DOMContentLoaded',()=>{
+
+
+
+   $(document).ready(function () {
+       $('.pay-form').submit(function (e) {
+           e.preventDefault();
+
+           var paymentOption = $("input[name='payment']:checked").val();
+           console.log(paymentOption,"paymentOption****")
+
+           if(paymentOption === "bookNow") {
+               window.location.href = "/booknow";
+
+           } else if(paymentOption === "pay") {
+             
+
+           var formData = $(this).serialize();
+           console.log(formData);
+
+           jQuery.ajax({
+               url: "/createOrder",
+               type: "POST",
+               data: formData,
+               success: function (res) {
+                   if (res.success) {
+                       var options = {
+                           "key": "" + res.key_id + "",
+                           "amount": "" + res.amount + "",
+                           "currency": "INR",
+                           "name": "" + res.product_name + "",
+                           "description": "" + res.description + "",
+                           "image": "https://dummyimage.com/600x400/000/fff",
+                           "order_id": "" + res.order_id + "",
+                           "handler": function (response) {
+                               //alert("Payment Succeeded");
+                                window.open("/bookNow/?param=" +res.amount,"_self")
+                           },
+                           "prefill": {
+                               "contact": "" + res.contact + "",
+                               "name": "" + res.name + "",
+                               "email": "" + res.email + ""
+                           },
+                           "notes": {
+                               "description": "" + res.description + ""
+                           },
+                           "theme": {
+                               "color": "#2300a3"
+                           }
+                       };
+                       var razorpayObject = new Razorpay(options);
+                       razorpayObject.on('payment.failed', function (response) {
+                          // alert("Payment Failed");
+                           window.open("/confirmPayment","_self")
+                       });
+                       razorpayObject.open();
+                   }
+                   else {
+                       alert(res.msg);
+                   }
+               }
+           })
+           }
+       });
+   
+   });
+})
+</script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+</html>

@@ -28,6 +28,7 @@ const adminHome = async (req, res) => {
     const email = req.session.admin
     const name = await adminService.adminUsername(email)
     const data = await adminService.findAlldetails()
+    console.log(data,"data")
     data.forEach((element, index) => {
       total += (element.otherDetails.moneyPaid + element.otherDetails.pendingAmount)
       var date = element.checkin_date
@@ -38,7 +39,6 @@ const adminHome = async (req, res) => {
       
      date = `${day}/${month}/${year}`
 
-      console.log(date,typeof(date),"date");
       dates.push(date)
       revenue.push((element.otherDetails.moneyPaid + element.otherDetails.pendingAmount))
       NoOfBookings = index + 1

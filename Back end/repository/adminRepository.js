@@ -93,7 +93,7 @@ const findAdmin = async () => {
 
 const findsales = async () => {
     try {
-        return await bookingHistory.find({ status: { $ne: "cancelled" } })
+        return await bookingHistory.find({ status: "completed" })
     } catch (err) { console.log(err.message); }
 }
 const findAllUsers = async () => {
@@ -135,6 +135,7 @@ const findSalesData = async (startDate, endDate) => {
             },
             {
                 $project: {
+                    _id:1,
                     userName: 1,
                     status: "$status",
                     checkin: "$checkin_date",
