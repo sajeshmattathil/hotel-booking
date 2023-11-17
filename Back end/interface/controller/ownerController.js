@@ -22,7 +22,14 @@ const ownerHomePage =(req,res)=>{
 const ownerHome = async (req, res) => {
     const email = req.session.owner
     const name = await ownerService.ownerUsername(email)
-    res.render('ownerHome', { username: name })
+    const owner = await ownerService.findOwner(email)
+
+    // const totalSales = await ownerService.findTotalSales(email) 
+    // console.log(totalSales,"revenue")
+    const totalHotels = await ownerService.findTotalHotels(email)
+
+
+    res.render('ownerHome', { username: name,totalHotels,owner })
 }
 
 const hotelsManagement = async (req, res) => {

@@ -134,9 +134,9 @@ const roomImages = async (hotelId) => {
     } catch (err) { console.log(err); }
 }
 
-const selectedRoomDetails = async (roomType) => {
+const selectedRoomDetails = async (roomType,hotelId) => {
     try {
-        return await rooms.findOne({ roomType: roomType })
+        return await rooms.findOne({ roomType: roomType,hotel:hotelId })
     } catch (err) { console.log(err); }
 
 }
@@ -303,10 +303,12 @@ try{
 
 const findOffers = async (roomType)=>{
     try{
-        const today = Date.now()
-      return await offers.findOne({roomType:roomType},{expiry:{$lte:today}})
+      
+      return await offers.findOne({roomType:roomType })
     }catch(err){console.log(err);}
 }
+
+
 
 const findUserByReferal = async (code)=>{
     try{

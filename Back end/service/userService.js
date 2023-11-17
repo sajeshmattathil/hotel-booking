@@ -571,7 +571,8 @@ const selectedRoom = async (req, res) => {
         console.log(hotelId);
 
         const selectedHotel = await userRepository.selectedHotelDetails(hotelId)
-        const selectedRoom = await userRepository.selectedRoomDetails(roomType)
+        const selectedRoom = await userRepository.selectedRoomDetails(roomType,hotelId)
+        
 
         return { selectedHotel, selectedRoom }
     } catch (err) { console.log(err); }
@@ -822,6 +823,7 @@ const findCategoryOffer = async (req) => {
     try {
         const roomData = req.session.roomData
         const offer = await userRepository.findOffers(roomData.roomType)
+        console.log(offer,"offer")
         return offer
     } catch (err) { console.log(err); }
 }

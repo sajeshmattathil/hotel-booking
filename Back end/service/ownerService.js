@@ -4,6 +4,9 @@ const room = require('../domain/model/room')
 const bcrypt = require('bcryptjs')
 const offer = require('../domain/model/category_offer')
 
+
+
+
 const auth = async (req) => {
      const { email, password } = req.body
      if (!email && !password) {
@@ -43,6 +46,44 @@ const ownerUsername = async (email) => {
      return owner_name
 }
 
+const findTotalHotels = async (email)=>{
+     try{
+          console.log("***///****")
+
+          const owner = await ownerRepository.findOwnerByEmail(email)
+          const data = await ownerRepository.findTotalHotels(owner._id)
+          console.log(owner,data,"*******")
+          if(data.length) return data.length
+
+
+     }catch(err){console.log(err.message);}
+}
+const findOwner = async (email)=>{
+     try{
+          const owner = await ownerRepository.findOwnerByEmail(email)
+          return owner
+
+     }catch(err){console.log(err.message);}
+}
+
+const findTotalSales = async (email)=>{
+     try{
+          const owner = await ownerRepository.findOwnerByEmail(email)
+          const hotels = await ownerRepository.findOwnerHotels(owner._id)
+          
+          let revenue = []
+          hotels.forEach( async(element) => {
+               const data = await ownerRepository.findTotalSales(element)
+             if(data.length){
+               revenue.push(data)
+             }  
+
+          });
+          if(revenue.length) return revenue
+          // console.log(hotels,revenue,"5555555")
+
+     }catch(err){console.log(err.message);}
+}
 const authHotel = async (req) => {
 
      try {
@@ -207,7 +248,9 @@ const updateOfferStatus = async (status,id)=>{
 }
 module.exports = {
      auth,
+     findTotalSales,
      ownerUsername,
+     findTotalHotels,
      authHotel,
      hotelsWithIncompleteDetails,
      authenticateRoomDetails,
@@ -215,7 +258,8 @@ module.exports = {
      findSubCategories,
      addCategoryOffer,
      findOffers,
-     updateOfferStatus
+     updateOfferStatus,
+     findOwner
 
 }
 

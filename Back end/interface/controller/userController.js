@@ -373,6 +373,8 @@ const clearFilter = (req, res) => {
 const proceedBooking = async (req, res) => {
     try {
         req.session.roomType = req.params.roomType
+        console.log(req.params.roomType,"req.params.roomType")
+
         const roomDetails = await userService.selectedRoom(req)
         const roomData = roomDetails.selectedRoom
         const hotelData = roomDetails.selectedHotel
@@ -427,7 +429,8 @@ const proceedBookingPage = async (req, res) => {
         } else {
             console.error('Invalid date format');
         }
-        console.log(numberOfDays, "numberOfDays");
+        console.log(numberOfDays , noOfRooms , roomData.price, "aaaaa")
+
         const totalAmount = numberOfDays * noOfRooms * roomData.price
         req.session.totalAmount_first = totalAmount
         // const checkRoomAvailability = await userService.checkRoomAvailability(req,noOfRooms)
@@ -484,9 +487,9 @@ const confirmBooking = async (req, res) => {
 const confirmPayment = async (req, res) => {
     try {
 
-
-
         const user = req.session.user
+        const hotel = req.session.hotelData
+        const hotel_name =hotel.hotel_name
         const booking = req.session.booking
         const roomData = req.session.roomData
         const coupons = await userService.findCoupons(req)
@@ -582,9 +585,28 @@ const confirmPayment = async (req, res) => {
         req.session.walletMoneyUsed = walletMoney.wallet
         req.session.totalAmount = totalAmount
 
+            wallet = wallet.toPad()
 
-
-        res.render('user/newPayment', { user, userName, discountedPrice, discount, gst, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, wallet, amount, numberOfDays, noOfRooms })
+        res.render('user/newPayment', {
+            user,
+            hotel_name,
+            userName,
+            discountedPrice,
+            discount, gst, msg,
+            checkin_date,
+            checkout_date,
+            booking,
+            roomData,
+            coupons,
+            couponMsg,
+            totalAmount,
+            offer,
+            couponSelected,
+            wallet,
+            amount,
+            numberOfDays,
+            noOfRooms
+        })
     } catch (err) { console.log(err); }
 }
 

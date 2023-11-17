@@ -22,6 +22,13 @@ const findOwnerNameByEmail = async (email) => {
     }
 }
 
+const findTotalHotels = async (id)=>{
+    try{
+        console.log(id,"id")
+      return await hotel.find({owner_id:id})
+    }catch(err){console.log(err.message);}
+}
+
 const FindHotelByName = async (hotel_name) => {
     try {
         return await hotel.findOne({ hotel_name: hotel_name })
@@ -113,7 +120,24 @@ const updateOfferStatus = async (status,id)=>{
         await offer.updateOne({name:id},{$set:{isActive:status}})
     }catch(err){console.log(err.message);}
 }
+
+const findOwnerHotels = async (id)=>{
+    try{     
+        
+       return await hotel.find({owner_id : id},{_id :1})
+    }catch(err){console.log(err.message);}
+}
+const findTotalSales = async (id)=>{
+    try{     
+        
+       return await bookinghistory.find({hotel_id : id,status :"completed"})
+        
+    }catch(err){console.log(err.message);}
+}
 module.exports = {
+    findOwnerHotels,
+    findTotalSales,
+    findTotalHotels,
     findOwnerByEmail,
     findOwnerNameByEmail,
     FindHotelByName,

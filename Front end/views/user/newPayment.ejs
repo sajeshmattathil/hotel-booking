@@ -128,21 +128,21 @@
                 <form id="form" class="pay-form" action="" method="post">
                 <div class="booking-details p-5 ">
                     <h2>Booking Details</h2>
-                    <p><strong>Hotel Name:</strong> ABC Hotel</p>
+                    <p><strong>Hotel Name:</strong> <%=hotel_name%></p>
                     <p><strong>Room Name:</strong>
                         <%=roomData.roomType%>
                     </p>
 
                     <div class="card-text text-dark font-weight-bold" style="display: flex;  align-items: center;">
-                        <h5>Price per Night: ₹ <%= discountedPrice %>
-                        </h5>
-                        <% if (discountedPrice) { %>
+                        
+                        <% if (offer && offer.discount) { %>
+                            <h5>Price per Night: ₹ <%= discountedPrice %>
+                            </h5>
                             <h5><span class="text-muted px-2"><s>₹ <%= roomData.price %></s></span></h5>  
                          <% } else { %>
-                            <h5><span class="text-dark px-2">₹ <%= roomData.price %></span></h5>  
+                            <h5><span class="text-dark px-2">Price per Night:   ₹ <%= roomData.price %></span></h5>  
 
                         <% } %>
-                        <h5><span class="text-muted px-2"><s>₹ <%= roomData.price %></s></span></h5>
                         <% if( offer && offer.discount) { %>
                         <h5> <span class="text-danger">
                                 <%= offer.discount %>%
@@ -163,8 +163,7 @@
 
                     <a type="button" class=" text-success" data-toggle="modal" data-target="#exampleModalLong"
                         href="">Apply coupon</a>
-                    <!-- <button type="button" class="text-dark " data-toggle="modal"
-                                data-target="#exampleModalLong">more coupons</button> -->
+                   
                     <span>
 
                     </span>
@@ -185,9 +184,10 @@
 
                         <% } %>
 
-                            <p class=" text-success card-text "> <strong>Wallet:</strong>  ₹ <%= wallet %>
+                            <p class=" text-success card-text "> <strong>Wallet (balance):</strong>  ₹ <%= wallet %>
                             </p>
-                            <p class=" text-success card-text "><strong>Discount: - ₹ <%=discount %></strong> 
+                            
+                            <p class=" text-success card-text "><strong>Discount:  ₹ <%=discount || 0%></strong> 
                             </p>
                             <p class="card-text text-gray"><strong>Amount: ₹ <%=amount %></strong> 
 
