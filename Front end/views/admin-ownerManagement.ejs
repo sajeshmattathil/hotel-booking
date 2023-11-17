@@ -226,6 +226,52 @@
       <!-- New hotel form        -->
        <!-- New hotel form        -->
      <!-- New hotel form        -->
+<style>
+  .card-body {
+  /* max-width: 400px;  */
+  margin: 0 auto; 
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h4 {
+  margin-top: 0;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.form-group {
+  margin-bottom: 20px;
+}
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+button {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+</style>
+
             <div class="row">
               <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
@@ -258,17 +304,154 @@
                     
                     <div class="form-group">
                     </div>
-
-       <!-- upload image -->
-
+                   
+       
+                  </div>
                   </div>
                 </div>
               </div>
-  
+              
+                <div class="card-body">
+                  <h4 class="card-title">Owners Lists</h4>
+                  <h1  class="text-success"><%= msg %></h1>
+                  <table class="table table-striped">
+                    <thead>
+                      <tr>
+                        
+                    
+                        <th>Owner Name</th>
+                        <th>Owner Email</th>
+                        <th>Owner Status</th>
+                        <th></th>
+                        <th> </th>
+                        <th> </th>
+                       
+                      </tr>
+                    </thead>
+                    <tbody>         
+                      <% owners.forEach((owner,index) => { %>   
+                      <tr>
+                          
+                          <td><%= owner.owner_name %></td>
+                          <td ><%= owner.email %></td>
+                          <td id="status<%= index %>"><%= owner.isActive %></td>
+                        
+                          <td><button id="block" onclick="block('<%= owner._id %>','<%= index %>')" class="">Block</button></td>
+                          <td><button  id="unblock" onclick="unblock('<%= owner._id %>','<%= index %>')"   class="">Un Block</button></td>
+                         
+
+                      </tr>
+          
+                      <% }) %>                
+                    </tbody>
+                  </table>
+                </div>
+<script>
+                function  block(name,index){
+                  console.log(index,"name,index")
+                      
+                         fetch('/admin/change_owner_status',{
+                           method:'POST',
+                           headers:{
+                             'content-type': 'application/json',
+           
+                           },
+                           body:JSON.stringify({ status:false,ownerId:name })
+           
+                         }).then((response)=>response.json())
+                         .then((data)=>{
+                           console.log(`status${index}`,"`status${index}`")
+                           const status = document.getElementById(`status${index}`)
+                           status.textContent = 'Blocked'
+                         }).catch((error)=>console.log(error))
+                 }
+             
+           
+                 function unblock(name,index){
+               console.log('clicked')
+                     
+                         fetch('/admin/change_owner_status',{
+                           method:'POST',
+                           headers:{
+                             'content-type': 'application/json',
+           
+                           },
+                           body:JSON.stringify({status:true,ownerId:name  })
+           
+                         }).then((response)=>response.json())
+                         .then((data)=>{
+                           console.log('active')
+                           const status = document.getElementById(`status${index}`)
+                           status.textContent = 'Active'
+                         }).catch((error)=>console.log(error))
+                 }
+            
+           </script>
+
+
+              <!-- <script>
+
+                document.addEventListener('DOMContentLoaded',()=>{
+                 
+                    const block = document.getElementById('block')
+                    const unblock = document.getElementById('unblock')
+
+                    // const owner_id =block.value
+                    // console.log(owner_id,"owner_id")
+
+                    block.addEventListener('click',()=>{
+                          const id = document.getElementById('ownerId').value
+                          console.log(id,"id")
+                            fetch('/admin/change_owner_status',{
+                              method:'POST',
+                              headers:{
+                                'content-type': 'application/json',
+
+                              },
+                              body:JSON.stringify({status:false,ownerId:id
+                                })
+
+                            }).then((response)=>response.json())
+                            .then((data)=>{
+                              const status = document.getElementById('status')
+                              status.textContent = 'Blocked'
+                            }).catch((error)=>console.log(error))
+                    })
+                })
+
+                unblock.addEventListener('click',()=>{
+                          const id = document.getElementById('ownerId').value
+                          console.log(id,"id")
+                            fetch('/admin/change_owner_status',{
+                              method:'POST',
+                              headers:{
+                                'content-type': 'application/json',
+
+                              },
+                              body:JSON.stringify({status:true,ownerId:id
+                                })
+
+                            }).then((response)=>response.json())
+                            .then((data)=>{
+                              const status = document.getElementById('status')
+                              status.textContent = 'Active'
+                            }).catch((error)=>console.log(error))
+                    })
+              
+              </script> -->
+            <script>
+              document.addEventListener('DOMContentLoaded',function(){
+                 setTimeout(()=>{
+                     let msg = document.getElementById('msg')
+                     msg.textContent = ''
+                 },3000)
+                 console.log(msg,"msg")
+               })
+           </script>
+
+           
           <footer class="footer">
             <div class="container-fluid d-flex justify-content-between">
-              <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © bootstrapdash.com 2021</span>
-              <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin template</a> from Bootstrapdash.com</span>
             </div>
           </footer>
           <!-- partial -->

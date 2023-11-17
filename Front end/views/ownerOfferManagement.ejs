@@ -171,20 +171,20 @@
                 <!--change to offline or busy as needed-->
               </div>
               <div class="nav-profile-text d-flex flex-column">
+                <span class="font-weight-bold mb-2"></span>
                 <span class="text-secondary text-small">Project Manager</span>
               </div>
               <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
             </a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="/static/index.html">
+            <a class="nav-link" href="/owner/home">
               <span class="menu-title">Dashboard</span>
               <i class="mdi mdi-home menu-icon"></i>
             </a>
           </li>
         
           <li class="nav-item">
-            <!-- <a class="nav-link" href="/static/pages/forms/ownerForms.html">/owner/forms -->
               <a class="nav-link" href="/owner/forms">
               <span class="menu-title">Add New Hotel</span>
               <i class="mdi mdi-format-list-bulleted menu-icon"></i>
@@ -198,7 +198,7 @@
             </a>
           </li>
           
-          <li class="nav-item">
+          <!-- <li class="nav-item">
             <a class="nav-link" data-bs-toggle="collapse" href="#general-pages" aria-expanded="false" aria-controls="general-pages">
               <span class="menu-title">Sample Pages</span>
               <i class="menu-arrow"></i>
@@ -213,7 +213,7 @@
                 <li class="nav-item"> <a class="nav-link" href="/static/pages/samples/error-500.html"> 500 </a></li>
               </ul>
             </div>
-          </li>
+          </li> -->
          
         </ul>
       </nav>
@@ -221,7 +221,7 @@
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="page-header">
-            <h3 class="page-title"> Coupon Management </h3>
+            <h3 class="page-title"> Offer Management </h3>
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#"></a></li>
@@ -413,7 +413,7 @@
                       <th>Discount Price</th>
                       <th>Starting Date</th>
                       <th>Expiry</th>
-                      <th> </th>
+                      <th>Status </th>
                       <th> </th>
                      
                     </tr>
@@ -429,8 +429,10 @@
                         <td><%= offer.discount %>% off</td>
                         <td><%= offer.startingDate %></td>
                         <td><%= offer.expiry %></td>
-                        <td ><button class="action-buttons-edit">Edit</button></td>
-                        <td><button class="action-buttons-deactivate">Deactivate</button></td>
+                        <td id="status<%= index %>"><%= offer.isActive ||  %></td>
+
+                        <td ><button onclick="block('<%= offer.name %>','<%= index %>')" class="action-buttons-edit">Block</button></td>
+                        <td><button onclick="unblock('<%= offer.name %>','<%= index %>')" class="action-buttons-deactivate">Un-block</button></td>
                     </tr>
         
                     <% }) %>      
@@ -440,6 +442,56 @@
         
       </div>
     </div>
+
+    
+    <script>
+
+
+
+
+                
+                  
+                      
+      function  block(name,index){
+         console.log(index,"name,index")
+             
+                fetch('/owner/change_offer_status',{
+                  method:'POST',
+                  headers:{
+                    'content-type': 'application/json',
+  
+                  },
+                  body:JSON.stringify({ status:false,offerId:name })
+  
+                }).then((response)=>response.json())
+                .then((data)=>{
+                  console.log(`status${index}`,"`status${index}`")
+                  const status = document.getElementById(`status${index}`)
+                  status.textContent = 'Blocked'
+                }).catch((error)=>console.log(error))
+        }
+    
+  
+        function unblock(name,index){
+      console.log('clicked')
+            
+                fetch('/owner/change_offer_status',{
+                  method:'POST',
+                  headers:{
+                    'content-type': 'application/json',
+  
+                  },
+                  body:JSON.stringify({status:true,offerId:name  })
+  
+                }).then((response)=>response.json())
+                .then((data)=>{
+                  console.log('active')
+                  const status = document.getElementById(`status${index}`)
+                  status.textContent = 'Active'
+                }).catch((error)=>console.log(error))
+        }
+   
+  </script>
             
           <footer class="footer">
             <div class="container-fluid d-flex justify-content-between">

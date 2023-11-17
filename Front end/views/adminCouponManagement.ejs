@@ -251,7 +251,7 @@
                       </div>
                     <div class="form-group">
                       <label for="exampleInputEmail2" class="font-weight-bold text-dark">Enter coupon off price</label>
-                      <input type="text" class="form-control" name="discount" placeholder="Discount amount" required>
+                      <input type="text" class="form-control" name="discount" placeholder="Discount amount" maxlength="4" required>
                     </div>
                     <div class="form-group">
                         <label for="checkin_date" class="font-weight-bold text-dark mr-2">Coupon starting date</label>
@@ -328,7 +328,7 @@
   <div class="col-lg-12 grid-margin stretch-card">
     <div class="card">
       <div class="card-body">
-        <h4 class="card-title">Hotel Approval Requests</h4>
+        <h4 class="card-title">Coupon Lists</h4>
         <h1  class="text-success"><%= msg %></h1>
         <table class="table table-striped">
           <thead>
@@ -407,4 +407,6 @@
        })
    </script>
     <%-include('ownerFormFooter')-%>
+    
+
     

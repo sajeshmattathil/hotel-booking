@@ -798,7 +798,7 @@ const saveBooking = async (req) => {
 
         const msg = "Room booked sucessfully"
 
-        delete req.session.booking
+       // delete req.session.booking
 
 
 
@@ -925,7 +925,7 @@ try{
     const email = req.session.user
     const user = await userRepository.findUserByEmail(email)
     const data = await userRepository.findTransactions(user._id,page)
-    console.log(data,"data");
+    //console.log(data,"data");
     if(data.length) return data
     else  {
         const msg = "No transactions made"

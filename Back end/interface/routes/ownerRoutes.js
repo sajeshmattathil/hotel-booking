@@ -6,7 +6,8 @@ const upload = require('../../middleware/uploadImages')
 
 router.get('/', ownerController.ownerlogin)
 router.post('/ownerlogin', ownerController.ownerAuthCheck)
-router.get('/home', ownerController.ownerHome)
+router.get('/home',ownerController.ownerHomePage)
+router.get('/home_page', ownerController.ownerHome)
 router.get('/hotelsManagement', auth.ownerAuthCheck, ownerController.hotelsManagement)
 router.get('/hotelsManagementPage', auth.ownerAuthCheck, ownerController.hotelsManagementPage)
 router.post('/add-hotel', auth.ownerAuthCheck, upload.array('images', 3), ownerController.addNewHotel)
@@ -18,6 +19,7 @@ router.get('/offer_management/:id',auth.ownerAuthCheck,ownerController.offerMana
 router.get('/offerManagementPage',auth.ownerAuthCheck,ownerController.offerManagementPage)
 router.post('/add_category_offer',ownerController.addCategoryOffer)
 router.get('/signout',ownerController.signOut)
+router.post('/change_offer_status',ownerController.changeOfferStatus)
 module.exports = router
 
 

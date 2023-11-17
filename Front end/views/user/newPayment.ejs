@@ -136,10 +136,18 @@
                     <div class="card-text text-dark font-weight-bold" style="display: flex;  align-items: center;">
                         <h5>Price per Night: ₹ <%= discountedPrice %>
                         </h5>
+                        <% if (discountedPrice) { %>
+                            <h5><span class="text-muted px-2"><s>₹ <%= roomData.price %></s></span></h5>  
+                         <% } else { %>
+                            <h5><span class="text-dark px-2">₹ <%= roomData.price %></span></h5>  
+
+                        <% } %>
                         <h5><span class="text-muted px-2"><s>₹ <%= roomData.price %></s></span></h5>
+                        <% if( offer && offer.discount) { %>
                         <h5> <span class="text-danger">
                                 <%= offer.discount %>%
                             </span></h5>
+                            <% } %>
                     </div>
 
                     <div class="d-flex " style="flex-direction: row;">

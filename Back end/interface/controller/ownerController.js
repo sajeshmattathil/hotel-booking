@@ -12,6 +12,12 @@ const ownerAuthCheck = async (req, res) => {
     if (response.status === 400) res.redirect(`/owner?msg=${response.msg}`)
 
 }
+const ownerHomePage =(req,res)=>{
+    try{
+   res.redirect('/owner/home_page')
+    }catch(err){console.log(err.message);}
+}
+
 
 const ownerHome = async (req, res) => {
     const email = req.session.owner
@@ -99,7 +105,8 @@ const offerManagementPage = async (req,res)=>{
               expiry:offer.expiry.toISOString().split('T')[0],
               discount:offer.discount,
               name:offer.name,
-              roomType:offer.roomType
+              roomType:offer.roomType,
+              isActive: isActive
             };
           });
        }
@@ -127,9 +134,20 @@ const addCategoryOffer = async (req,res)=>{
         delete req.session.owner
     }catch(err){console.log(err.message);}
   }  
+
+  const changeOfferStatus = async (req,res)=>{
+    try{
+        console.log(req.body,"req.body")
+        const id = req.body.offerId
+        const status = req.body.status
+       await ownerService.updateOfferStatus(status,id)
+       res.json({})
+    }catch(err){console.log(err.message);}
+  }
 module.exports = {
     ownerlogin,
     ownerAuthCheck,
+    ownerHomePage,
     ownerHome,
     hotelsManagement,
     hotelsManagementPage,
@@ -141,5 +159,6 @@ module.exports = {
     offerManagement,
     offerManagementPage,
     addCategoryOffer,
-    signOut
+    changeOfferStatus,
+    signOut,
 }

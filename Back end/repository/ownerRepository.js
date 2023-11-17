@@ -106,6 +106,13 @@ const updateOwnerWallet = async (hotelId, getBookingId, ownerAmount) => {
         return await Owner.updateOne({ _id: ownerData[0].owner_id }, { $inc: { wallet: ownerAmount } })
     } catch (err) { console.log(err); }
 }
+
+const updateOfferStatus = async (status,id)=>{
+    try{     
+        console.log(status,id,"status,id")
+        await offer.updateOne({name:id},{$set:{isActive:status}})
+    }catch(err){console.log(err.message);}
+}
 module.exports = {
     findOwnerByEmail,
     findOwnerNameByEmail,
@@ -115,6 +122,7 @@ module.exports = {
     findSubCategories,
     addRoomNumbers,
     findOffers,
-    updateOwnerWallet
+    updateOwnerWallet,
+    updateOfferStatus
 
 }

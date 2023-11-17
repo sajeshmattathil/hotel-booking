@@ -155,6 +155,17 @@ const findSalesData = async (startDate, endDate) => {
     } catch (err) { console.log(err.message); }
 }
 
+const findAllOwners = async ()=>{
+    try{
+         return await owner.find()
+    }catch(err){console.log(err.message );}
+}
+
+const updateOwnerStatus = async (status,id)=>{
+    try{
+        await owner.updateOne({ _id: id }, { $set: { isActive: status } });
+    }catch(err){console.log(err.message);}
+}
 module.exports = {
     findAdminByEmail,
     findAdminNameByEmail,
@@ -168,5 +179,7 @@ module.exports = {
     findAdmin,
     findsales,
     findAllUsers,
-    findSalesData
+    findSalesData,
+    findAllOwners,
+    updateOwnerStatus
 }

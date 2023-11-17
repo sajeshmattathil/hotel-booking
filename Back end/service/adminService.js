@@ -4,6 +4,7 @@ const Category = require('../domain/model/category')
 const subCategory = require('../domain/model/subCategory')
 const owner = require('../domain/model/owner')
 const coupon = require('../domain/model/coupon')
+const { userRegister } = require('../interface/controller/userController')
 
 const auth = async (req) => {
      const { email, password } = req.body
@@ -225,6 +226,21 @@ const findSalesReportSelected = async (startDate, endDate) => {
      } catch (err) { console.log(err.message); }
 }
 
+const findAllOwners = async (req,res)=>{
+     try{
+       const data = await adminRepository.findAllOwners()
+       if(data.length) return data
+     }catch(err){console.log(err.message);}
+}
+
+const updateOwnerStatus = async (status,id)=>{
+     try{
+
+          await adminRepository.updateOwnerStatus(status,id)
+
+     }catch(err){console.log(err.message);}
+}
+
 module.exports = {
      auth,
      adminUsername,
@@ -238,6 +254,8 @@ module.exports = {
      findAlldetails,
      findAllUsers,
      findSalesReport,
-     findSalesReportSelected
+     findSalesReportSelected,
+     findAllOwners,
+     updateOwnerStatus
 }
 

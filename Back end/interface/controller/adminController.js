@@ -107,9 +107,11 @@ const requestApprove = async (req, res) => {
 const ownerManagement = (req, res) => {
   res.redirect('/admin/ownerMangementPage')
 }
-const ownerMangementPage = (req, res) => {
+const ownerMangementPage = async (req, res) => {
   const msg = req.query.msg
-  res.render('admin-ownerManagement', { msg })
+  const owners = await adminService.findAllOwners()
+
+  res.render('admin-ownerManagement', { msg ,owners})
 }
 const addNewOwner = async (req, res) => {
   try {
@@ -305,6 +307,14 @@ const salesRevenueInGraph = async (req, res) => {
     console.log(err.message);
   }
 }
+const changeStatus = async (req,res)=>{
+try{
+   const status = req.body.status
+   const id = req.body.ownerId
+   const updatateStatus = await adminService.updateOwnerStatus(status,id)
+   res.json({})
+}catch(err){console.log(err);}
+}
 module.exports = {
   adminLogin,
   adminAuthentication,
@@ -326,5 +336,6 @@ module.exports = {
   signOut,
   salesReportSelected,
   salesReport,
-  salesRevenueInGraph
+  salesRevenueInGraph,
+  changeStatus
 }

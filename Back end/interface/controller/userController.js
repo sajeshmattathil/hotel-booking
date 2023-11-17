@@ -3,7 +3,7 @@ const invoice = require('../../utils/invoice')
 
 
 const userHome = (req, res) => {
-   
+
     res.render('user/index')
     //res.render('user/newPayment')
     // const checkin_date = req.session.checkin_date
@@ -39,19 +39,19 @@ const userhotelsListPage = async (req, res) => {
     let totalHotels = response.totalHotel
     console.log(totalHotels, "totalHotels")
     if (req.session.filtered) hotels = req.session.filtered
-    console.log(req.session.filtered,"req.session.filtered")
+    console.log(req.session.filtered, "req.session.filtered")
 
     const userName = ''
     const user = req.session.user
     const msg = req.query.msg
     res.render('user/hotels', { hotels, msg, userName, user, totalHotels })
 }
-const cityFromImage = (req,res)=>{
-    try{
-        console.log(req.params.city,"req.params.city")
+const cityFromImage = (req, res) => {
+    try {
+        console.log(req.params.city, "req.params.city")
         req.session.city = req.params.city
         res.redirect(`/hotelsPage`)
-    }catch(err){console.log(err.message);}
+    } catch (err) { console.log(err.message); }
 }
 
 const hotelists = async (req, res) => {
@@ -59,18 +59,18 @@ const hotelists = async (req, res) => {
 };
 
 const userLogin = (req, res) => {
-    let msg =''
-     if(req.query.msg) msg = req.query.msg
-    
+    let msg = ''
+    if (req.query.msg) msg = req.query.msg
+
     res.redirect(`/loginPage?msg=${msg}`)
 }
 
-const userLoginPage = (req,res)=>{
-    try{
+const userLoginPage = (req, res) => {
+    try {
         let msg = req.query.msg
-    res.render('user-login', { msg })
+        res.render('user-login', { msg })
 
-    }catch(err){console.log(err.message);}
+    } catch (err) { console.log(err.message); }
 }
 
 const otpVerification = async (req, res) => {
@@ -160,7 +160,7 @@ const manageYourProfilePage = async (req, res) => {
     console.log(user);
     if (user.status === 400) res.redirect(`/manageYourProfilePage?msg=${user.msg}`)
     const msg = req.query.msg
-    res.render('user/userProfile', { user, msg ,sucess})
+    res.render('user/userProfile', { user, msg, sucess })
 }
 const editUserName = async (req, res) => {
     try {
@@ -361,13 +361,13 @@ const filterHotels = async (req, res) => {
 }
 
 
-const clearFilter = (req,res)=>{
-    try{
+const clearFilter = (req, res) => {
+    try {
         console.log("???????????????????????????")
-       delete req.session.filtered
-       res.redirect('/hotelsPage')
-       console.log(req.session.filtered,"clearFilter")
-    }catch(err){console.log(err.message);}
+        delete req.session.filtered
+        res.redirect('/hotelsPage')
+        console.log(req.session.filtered, "clearFilter")
+    } catch (err) { console.log(err.message); }
 }
 
 const proceedBooking = async (req, res) => {
@@ -512,26 +512,30 @@ const confirmPayment = async (req, res) => {
         req.session.numberOfDays = numberOfDays
         var noOfRooms = req.session.noOfRooms
         console.log(numberOfDays, "numberOfDays");
+
         const offer = await userService.findCategoryOffer(req)
         req.session.offer = offer
+
         const walletMoney = await userService.findWalletMoney(req)
         let wallet = walletMoney.wallet
         console.log(walletMoney, "wallet");
+
         var totalAmount = req.session.totalAmount_first
         let diff
         console.log(totalAmount, "totalAmount-first");
         if (couponSelected && offer) {
-            console.log(111);
+
             var amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms)) - parseInt(couponSelected.discount)
             totalAmount = amount + (amount * 0.12)
             if (totalAmount < walletMoney.wallet) {
+
                 diff = totalAmount - walletMoney.wallet
                 wallet = diff
                 walletMoney.wallet = walletMoney.wallet - diff
                 totalAmount = totalAmount - walletMoney.wallet
             }
         } else if (offer && !couponSelected) {
-            
+
             amount = (totalAmount - ((roomData.price * (offer.discount / 100)) * noOfRooms))
             totalAmount = amount + (amount * 0.12)
 
@@ -541,9 +545,9 @@ const confirmPayment = async (req, res) => {
                 walletMoney.wallet = walletMoney.wallet - diff
             }
             totalAmount = totalAmount - walletMoney.wallet
-        } else if (err && !offer) {
-            
-            
+        } else if (couponSelected && !offer) {
+
+
             amount = (totalAmount - parseInt(couponSelected.discount))
             totalAmount = amount + (amount * 0.12)
             if (totalAmount < walletMoney.wallet) {
@@ -566,11 +570,11 @@ const confirmPayment = async (req, res) => {
             totalAmount = totalAmount - walletMoney.wallet
         }
         console.log(totalAmount, "totalAmount-last");
-        if(offer.discount){
-            var discountedPrice = Math.round( roomData.price - (roomData.price * (offer.discount / 100)) )
-            var discount = Math.round((roomData.price * (offer.discount / 100)) *( noOfRooms || 0))
+        if (offer && offer.discount) {
+            var discountedPrice = Math.round(roomData.price - (roomData.price * (offer.discount / 100)))
+            var discount = Math.round((roomData.price * (offer.discount / 100)) * (noOfRooms || 0))
         }
-        const gst =Math.floor( amount * .12 )
+        const gst = Math.floor(amount * .12)
 
         amount = Math.round(amount)
         totalAmount = Math.round(totalAmount)
@@ -578,9 +582,9 @@ const confirmPayment = async (req, res) => {
         req.session.walletMoneyUsed = walletMoney.wallet
         req.session.totalAmount = totalAmount
 
-       
 
-        res.render('user/newPayment', { user, userName,discountedPrice,discount,gst, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, wallet, amount, numberOfDays, noOfRooms })
+
+        res.render('user/newPayment', { user, userName, discountedPrice, discount, gst, msg, checkin_date, checkout_date, booking, roomData, coupons, couponMsg, totalAmount, offer, couponSelected, wallet, amount, numberOfDays, noOfRooms })
     } catch (err) { console.log(err); }
 }
 
@@ -588,16 +592,16 @@ const selectedCoupon = async (req, res) => {
     try {
         const couponData = await userService.findCouponData(req.body.id)
         req.session.couponSelected = couponData
-        console.log( req.session.couponSelected," req.session.couponSelected")
-        res.json({success:couponData})
-       // res.redirect('/confirmPayment')
+        console.log(req.session.couponSelected, " req.session.couponSelected")
+        res.json({ success: couponData })
+        // res.redirect('/confirmPayment')
     } catch (err) { console.log(err.message); }
 }
 
 const removeCoupon = (req, res) => {
     try {
         delete req.session.couponSelected
-       // res.json({success:true})
+        // res.json({success:true})
         res.redirect('/confirmPayment')
 
     } catch (err) { console.log(err); }
@@ -664,24 +668,51 @@ const cancelBooking = async (req, res) => {
 }
 const wallet = async (req, res) => {
     try {
-      
-       
+
+
         res.redirect('/walletPage')
     } catch (err) { console.log(err); }
 }
 const walletPage = async (req, res) => {
     try {
-          let page 
-          if(req.query.page ) page = req.query.page 
-          else page = 1
-          console.log(page,"page")
+        let page
+        if (req.query.page) page = req.query.page
+        else page = 1
+        console.log(page, "page")
         const user = req.session.user
         const wallet = await userService.findWalletMoney(req)
-        const transactions = await userService.findWalletTransactions(req,page)
+        const transactions = await userService.findWalletTransactions(req, page)
+
+        //     transactions.forEach(element => {
+        //             console.log(element.date,"1111")
+
+
+        //    var date = new Date(element.date)
+        //     console.log(date)
+        //     const day = date.getDay().toString().padStart(2,0)
+        //     const month = (date.getMonth() + 1).toString().padStart(2,0)
+        //     const year = date.getFullYear()
+
+        //     date  = `${day}/${month}/${year}`
+        //     console.log(date,"22222")
+        // });
+        const modifiedData = transactions.map(transaction => {
+            return {
+                _id: transaction._id,
+                amount: transaction.amount,
+                transaction_type: transaction.transaction_type,
+                date: transaction.date.toISOString().split('T')[0]
+            };
+        });
+
+        console.log(modifiedData);
+
+
+
         const totalTransactions = await userService.findAllTranasactions(req)
-        console.log(transactions, "transactions");
+        //console.log(transactions, "transactions");
         const msg = transactions.msg
-        res.render('user/wallet', { user, wallet, transactions, msg ,totalTransactions})
+        res.render('user/wallet', { user, wallet, modifiedData, msg, totalTransactions })
     } catch (err) { console.log(err.message); }
 }
 
@@ -689,7 +720,7 @@ const walletPage = async (req, res) => {
 const updateBooking = async () => {
     try {
         const response = await userService.updateFinishedBooking()
-        console.log(response,111222333);
+        console.log(response, 111222333);
     } catch (err) { console.log(err); }
 }
 
@@ -777,5 +808,5 @@ module.exports = {
     verifyRoomAvailability,
     bookingConfirmed,
     bookingConfirmedPage
-   
+
 }

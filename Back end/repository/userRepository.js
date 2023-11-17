@@ -303,7 +303,8 @@ try{
 
 const findOffers = async (roomType)=>{
     try{
-      return await offers.findOne({roomType:roomType})
+        const today = Date.now()
+      return await offers.findOne({roomType:roomType},{expiry:{$lte:today}})
     }catch(err){console.log(err);}
 }
 

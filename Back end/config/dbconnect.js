@@ -8,4 +8,4 @@ const mongoose=require('mongoose')
 const dbConnect=async ()=>{ await mongoose.connect('mongodb+srv://sajeshmattathil:949740halla@cluster0.uhzzvba.mongodb.net/?retryWrites=true&w=majority').then(()=>{
                      console.log("db is connected");}).catch((error)=>{console.log('error in db connection');})   }
 
-    module.exports=dbConnect
+    module.exports=dbConnect  

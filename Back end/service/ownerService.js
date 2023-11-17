@@ -197,6 +197,14 @@ const findOffers = async (req) => {
           } else return offers
      } catch (err) { console.log(err); }
 }
+
+const updateOfferStatus = async (status,id)=>{
+     try{
+          console.log(status,id,"status,id")
+         const data =   await ownerRepository.updateOfferStatus(status,id)
+         console.log(data,"data")
+     }catch(err){console.log(err.message);}
+}
 module.exports = {
      auth,
      ownerUsername,
@@ -206,7 +214,8 @@ module.exports = {
      findCategories,
      findSubCategories,
      addCategoryOffer,
-     findOffers
+     findOffers,
+     updateOfferStatus
 
 }
 

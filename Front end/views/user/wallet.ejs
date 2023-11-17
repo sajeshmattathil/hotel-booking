@@ -136,7 +136,7 @@
         <thead>
           <tr>
             
-            <th>Sl No.</th>
+           
             <th>Amount</th>
             <th>Type</th>
             <th>Date</th>
@@ -146,10 +146,10 @@
           </tr>
         </thead>
         <tbody>   
-            <% if(transactions.length) { %>      
-          <% transactions.forEach((data,index) => { %>   
+            <% if(modifiedData.length) { %>      
+          <% modifiedData.forEach((data,index) => { %>   
           <tr>
-              <td><%= index+1 %></td>
+             
               <td>₹<%= data.amount %></td>
               <% if(data.transaction_type === "credit") { %>  
                 <td class="text-success"><%= data.transaction_type %></td>
@@ -169,7 +169,7 @@
   <style>
     .pagination {
     display: flex;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     align-items: center;
     padding: 10px;
     background-color: #f0f0f0;
@@ -192,7 +192,7 @@
   <div class="pagination">
                 <button id="prev">Previous</button>
                 <span id="page-num" class="text-dark"></span>
-                <button type="" id="nextPage">Next</button>
+                <button type="" class="" style="margin-left: 50%;" id="nextPage">Next</button>
               </div>
         </div>
       </div>
