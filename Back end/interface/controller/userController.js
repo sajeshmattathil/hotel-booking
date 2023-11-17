@@ -585,7 +585,7 @@ const confirmPayment = async (req, res) => {
         req.session.walletMoneyUsed = walletMoney.wallet
         req.session.totalAmount = totalAmount
 
-            wallet = wallet.toPad()
+            wallet = Math.round(wallet)
 
         res.render('user/newPayment', {
             user,
