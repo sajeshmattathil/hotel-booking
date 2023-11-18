@@ -690,7 +690,7 @@ const manageBookingsPage = async (req, res) => {
                 status:hotel.status,
                 checkout: hotel.checkout.toISOString().split('T')[0],
                 checkin: hotel.checkin.toISOString().split('T')[0],
-                hotelName:hotel.athotelName,
+                hotelName:hotel.hotelName,
                 roomType:hotel.roomType,
                 city: hotel.city,
                 hotelImage: hotel.hotelImage,
