@@ -1,5 +1,6 @@
 const Excel = require('exceljs');
 const fs = require('fs')
+const path = require('path')
 
 const createSalesReport = (data, res) => {
 
@@ -35,7 +36,8 @@ const createSalesReport = (data, res) => {
     workbook.xlsx.writeFile('sales.xlsx')
         .then(function () {
             console.log('File saved!');
-            const salesPath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Back end/sales.xlsx'
+            const salesPath = path.join(__dirname, '../sales.xlsx');
+           // const salesPath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Back end/sales.xlsx'
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.download(salesPath, 'sales.xlsx', (err) => {
                 if (err) {
@@ -87,7 +89,9 @@ const salesReportWeekly = (report, res) => {
     workbook.xlsx.writeFile('salesweekly.xlsx')
         .then(function () {
             console.log('File saved!');
-            const salesPath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Back end/salesweekly.xlsx'
+            const salesPath = path.join(__dirname, '../salesweekly.xlsx');
+
+           // const salesPath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Back end/salesweekly.xlsx'
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.download(salesPath, 'salesweekly.xlsx', (err) => {
                 if (err) {
@@ -148,8 +152,9 @@ const salesReportMonthly = (report, res) => {
             console.log('File saved!');
 
 
+            const salesPath = path.join(__dirname, '../salesmonthly.xlsx');
 
-            const salesPath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Back end/salesmonthly.xlsx'
+            //const salesPath = 'C:/Users/Sajesh.M/Desktop/Weekly Tasks/Week 11/Hotel Booking/Back end/salesmonthly.xlsx'
 
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             res.download(salesPath, 'salesmonthly.xlsx', (err) => {

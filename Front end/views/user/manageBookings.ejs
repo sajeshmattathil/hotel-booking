@@ -1,69 +1,69 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Travel Nest</title>
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Travel Nest</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
 </head>
+
 <body>
-   <style>
+  <style>
     body {
-        font-family: Arial, sans-serif;
-        background-color: #f5f5f5;
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
     }
 
     .container {
-        background-color: #ffffff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+      background-color: #ffffff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
     }
 
     .card {
-        margin-bottom: 20px;
+      margin-bottom: 20px;
     }
 
     .form-group {
-        margin-bottom: 20px;
+      margin-bottom: 20px;
     }
 
     .btn-primary {
-        background-color: #003b95;
-        border-color: #003b95;
+      background-color: #003b95;
+      border-color: #003b95;
     }
 
     .btn-primary:hover {
-        background-color: #007bff;
-        border-color: #003b95;
+      background-color: #007bff;
+      border-color: #003b95;
     }
+  </style>
 
-
-</style>
-
-<header class="site-header js-site-header py-3" style="background-color: #003b95; height: 15%;">
-  <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
-    <div class="container-fluid">
+  <header class="site-header js-site-header py-3" style="background-color: #003b95; height: 15%;">
+    <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
+      <div class="container-fluid">
         <a class="navbar-brand text-light">TravelNest</a>
         <form class="d-flex">
-            <a href="" class=" me-2 text-light"></a>
+          <a href="" class=" me-2 text-light"></a>
         </form>
         <div class="left-links">
-            <a href="/userManagement" class="text-light">Profile Management</a>
-            <a href="/manageBookings" class="text-light">Manage Bookings</a>
-            <% if(user) { %>
-                <a href="/wallet" class="text-light">Wallet</a>
-                <a href="/sign_out" class="text-light">Sign Out</a>
+          <a href="/userManagement" class="text-light">Profile Management</a>
+          <a href="/manageBookings" class="text-light">Manage Bookings</a>
+          <% if(user) { %>
+            <a href="/wallet" class="text-light">Wallet</a>
+            <a href="/sign_out" class="text-light">Sign Out</a>
             <% } else { %>
-                <a href="/login" class="text-light">Log in/Sign up</a>
-            <% } %>
+              <a href="/login" class="text-light">Log in/Sign up</a>
+              <% } %>
         </div>
-    </div>   
-  </nav>
-</header>
+      </div>
+    </nav>
+  </header>
 
-<!-- 
+  <!-- 
 <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
     <div class="container-fluid">
         <a class="navbar-brand text-light">Travel Nest</a>
@@ -85,163 +85,288 @@
     </div>
     
 </nav> -->
-   
-<style>
+
+  <style>
     .booking-history {
-    display: flex;
-    flex-direction: column;
-    margin: 20px;
-}
-
-.booking-item {
-    display: flex;
-    border: 1px solid #ccc;
-    border-radius: 10px;
-    margin-bottom: 10px;
-    padding: 10px;
-}
-
-.hotel-image img {
-    max-width: 150px;
-    max-height: 100px;
-    border-radius: 5px;
-    margin-right: 10px;
-}
-
-.booking-details {
-    flex-grow: 1;
-}
-
-.booking-details h3 {
-    margin-top: 0;
-}
-
-.booking-details p {
-    margin: 5px 0;
-}
-.btn-primary {
-        background-color: #003b95;
-        border-color: #003b95;
-border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      margin: 20px;
     }
+
+    .booking-item {
+      display: flex;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      padding: 10px;
+    }
+
+    .hotel-image img {
+      max-width: 150px;
+      max-height: 100px;
+      border-radius: 5px;
+      margin-right: 10px;
+    }
+
+    .booking-details {
+      flex-grow: 1;
+    }
+
+    .booking-details h3 {
+      margin-top: 0;
+    }
+
+    .booking-details p {
+      margin: 5px 0;
+    }
+
+    .btn-primary {
+      background-color: #003b95;
+      border-color: #003b95;
+      border-radius: 5px;
+    }
+
     .btn-primary:hover {
-        background-color: #003b95;
-        border-color: #003b95;
+      background-color: #003b95;
+      border-color: #003b95;
     }
+
     .booking-actions {
-    display: flex;
-    align-items: center;
-}
+      display: flex;
+      align-items: center;
+    }
+  </style>
+  <h3>Booking History</h3>
+  <h5 id="msg">
+    <%= msg %>
+  </h5>
 
-</style>
-<h3>Booking History</h3>
-<h5 id="msg" ><%= msg %></h5>
-
-<% hotels.forEach((booking,index) => { %>
+  <% modifiedData.forEach((booking,index)=> { %>
     <div class="booking-history">
-        <div class="booking-item">
-            <div class="hotel-image">
-                <img src="/static/himages/<%= booking.hotelImage %>" alt="Hotel Image">
-            </div>
-            <div class="booking-details">
-                <h3><%= booking.hotelName %></h3>
-                <p>Check-In Date: <%= booking.checkin %></p>
-                <p>Check-Out Date: <%= booking.checkout %></p>
-                <p>Room Type: <%= booking.roomType %></p>
-                <p>City: <%= booking.city %></p>
-                
-                <div class="booking-actions">
-                      <% if (booking.status === "completed") { %>
-                        <a href="/generate_invoice/<%= booking.bookingId %>"> <button class="btn-primary px-2" >Download Invoice</button>
-                          <% } %>
-                    <% if (booking.status === "pending") { %>
-                        <span class="px-2"><button class="btn-primary" data-toggle="modal" data-target="#exampleModalCenter-cancel<%= index %>">Cancel Booking</button></span>
+      <div class="booking-item">
+        <div class="hotel-image">
+          <img src="/static/himages/<%= booking.hotelImage %>" alt="Hotel Image">
+        </div>
+        <div class="booking-details">
+          <h3>
+            <%= booking.hotelName %>
+          </h3>
+          <p>Check-In Date: <%= booking.checkin %>
+          </p>
+          <p>Check-Out Date: <%= booking.checkout %>
+          </p>
+          <p>Room Type: <%= booking.roomType %>
+          </p>
+          <p>City: <%= booking.city %>
+          </p>
+
+          <div class="booking-actions">
+            <% if (booking.status==="completed" ) { %>
+              <a href="/generate_invoice/<%= booking.bookingId %>"> <button class="btn-primary px-2">Download
+                  Invoice</button>
+                <% } %>
+                  <% if (booking.status==="pending" ) { %>
+                    <span class="px-2"><button class="btn-primary" data-toggle="modal"
+                        data-target="#exampleModalCenter-cancel<%= index %>">Cancel Booking</button></span>
                     <% } %>
-                    <% if (booking.status === "pending") { %>
-                    <span><h6 class="text-success px-2" ><%= booking.status %></h6></span>
-                    <% } else { %>
-                        <span><h6 class="text-danger px-2" ><%= booking.status %></h6></span>
-                        <% } %>
+                      <% if (booking.status==="pending" ) { %>
+                        <span>
+                          <h6 class="text-success px-2">
+                            <%= booking.status %>
+                          </h6>
+                        </span>
+                        <% } else { %>
+                          <span>
+                            <h6 class="text-danger px-2">
+                              <%= booking.status %>
+                            </h6>
+                          </span>
+                          <% } %>
 
-                        
-    <!--Booking Details Modal-->
- <div class="modal fade" id="exampleModalCenter-details<%= index %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
+
+                            <!--Booking Details Modal-->
+                            <div class="modal fade" id="exampleModalCenter-details<%= index %>" tabindex="-1"
+                              role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="form-container">
+                                      <form action="/edit_show_invoice" method="post">
+                                        <div class="form-group">
+                                          <label for="firstName">Address:</label>
+                                          <input type="text" id="address" name="address" placeholder="" required>
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="lastName">City:</label>
+                                          <input type="text" id="city" name="city" placeholder="" required>
+                                        </div>
+                                        <div class="form-group">
+                                          <label for="lastName">PIN:</label>
+                                          <input type="text" id="pin" name="pin" placeholder="" required>
+                                        </div>
+                                        <div class="form-group">
+                                          <button type="submit">Submit</button>
+                                        </div>
+                                      </form>
+                                    </div>
+                                  </div>
+                                  <div class="modal-footer">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!--Booking Cancel Modal-->
+                            <div class="modal fade" id="exampleModalCenter-cancel<%= index %>" tabindex="-1"
+                              role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+                              <div class="modal-dialog modal-dialog-centered" role="document">
+                                <div class="modal-content">
+                                  <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                      <span aria-hidden="true">&times;</span>
+                                    </button>
+                                  </div>
+                                  <div class="modal-body">
+                                    <div class="form-container">
+                                      <h3>
+                                        <%= booking.hotelName %>
+                                      </h3>
+                                      <p>Check-In Date: <%= booking.checkin %>
+                                      </p>
+                                      <p>Check-Out Date: <%= booking.checkout %>
+                                      </p>
+                                      <p>Room Type: <%= booking.roomType %>
+                                      </p>
+                                      <p>City: <%= booking.city %>
+                                      </p>
+                                    </div>
+                                    <span class="px-2"><a href="/cancel_booking/<%= booking.bookingId %>"><button
+                                          class="btn-primary" data-toggle="modal"
+                                          data-target="#exampleModalCenter-cancel<%= index %>">Confirm Cancel
+                                          Booking</button></a></span>
+
+                                  </div>
+                                  <div class="modal-footer">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+          </div>
         </div>
-        <div class="modal-body">
-           <div class="form-container">
-            <form action="/edit_show_invoice" method="post">
-              <div class="form-group">
-                <label for="firstName">Address:</label>
-                <input type="text" id="address" name="address" placeholder="" required>
-              </div>
-              <div class="form-group">
-                <label for="lastName">City:</label>
-                <input type="text" id="city" name="city" placeholder="" required>
-              </div>
-              <div class="form-group">
-                <label for="lastName">PIN:</label>
-                <input type="text" id="pin" name="pin" placeholder="" required>
-              </div>
-              <div class="form-group">
-                <button type="submit">Submit</button>
-              </div>
-            </form>
-             </div>
-        </div>
-        <div class="modal-footer">
-            </div>
       </div>
     </div>
-  </div>
+    <% }) %>
 
-  <!--Booking Cancel Modal-->
-  <div class="modal fade" id="exampleModalCenter-cancel<%= index %>" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered" role="document">
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-        <div class="modal-body">
-           <div class="form-container">
-            <h3><%= booking.hotelName %></h3>
-            <p>Check-In Date: <%= booking.checkin %></p>
-            <p>Check-Out Date: <%= booking.checkout %></p>
-            <p>Room Type: <%= booking.roomType %></p>
-            <p>City: <%= booking.city %></p>
-             </div>
-             <span class="px-2"><a href="/cancel_booking/<%= booking.bookingId %>"><button class="btn-primary" data-toggle="modal" data-target="#exampleModalCenter-cancel<%= index %>">Confirm Cancel Booking</button></a></span>
-
-        </div>
-        <div class="modal-footer">
-            </div>
+<style>
+      .pagination {
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+    padding: 10px;
+    background-color: #f0f0f0;
+  }
+  
+  button {
+    padding: 8px 16px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4px;
+    background-color: #3498db;
+    color: #fff;
+  }
+  
+  #page-num {
+    font-size: 18px;
+    margin: 0 10px;
+  }
+</style>
+    
+      <div class="pagination">
+        <button id="prev">Previous</button>
+        <span id="page-num" class="text-dark"></span>
+        <button type="" class="" style="margin-left: 50%;" id="nextPage">Next</button>
       </div>
-    </div>
-  </div>
-                </div>
-            </div>
-        </div>
-    </div>
-<% }) %>
-<script>
-  document.addEventListener('DOMContentLoaded',function(){
-     setTimeout(()=>{
-         let msg = document.getElementById('msg')
-         msg.textContent = ''
-     },3000)
-     console.log(msg,"msg")
-   })
-</script>
+      </div>
+      </div>
+      <div class="totalBookings" data-count="<%=totalBookings%>"></div>
 
-<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          let total = document.querySelectorAll('.totalBookings')
+          console.log(total[0].dataset.count)
+          let pageCount = total[0].dataset.count / 6
+
+
+          const url = new URLSearchParams(window.location.search)
+          var currentPage
+
+          if (url.get('page')) currentPage = url.get('page')
+          else currentPage = 1;
+
+          console.log(url.get('page'))
+          let totalpage
+
+          const prevBtn = document.getElementById('prev');
+          const nextBtn = document.getElementById('nextPage');
+          let page_num = document.getElementById('page-num')
+
+          prevBtn.addEventListener('click', function () {
+            console.log(currentPage, "prevBtn")
+
+            if (currentPage > 1) {
+              currentPage--;
+              console.log(currentPage, "****")
+              updatePage(currentPage);
+            }
+          });
+
+          nextBtn.addEventListener('click', function () {
+            console.log(currentPage, "nextBtn")
+            if (currentPage < pageCount) currentPage++;
+            console.log(currentPage, "/////")
+
+            updatePage(Number(currentPage));
+
+          });
+          console.log(currentPage, "8888")
+        })
+
+        function updatePage(page) {
+          let page_num = document.getElementById('page-num')
+
+          console.log(page, "currentpage")
+          console.log(`/manageBookingsPage?page=${page}`)
+          page_num.textContent = page
+          window.location.href = `/manageBookingsPage?page=${page}`;
+
+
+        }
+
+
+      </script>
+
+
+
+
+
+      <script>
+        document.addEventListener('DOMContentLoaded', function () {
+          setTimeout(() => {
+            let msg = document.getElementById('msg')
+            msg.textContent = ''
+          }, 3000)
+          console.log(msg, "msg")
+        })
+      </script>
+
+      <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+      <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+      <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
+
 </html>

@@ -19,6 +19,8 @@ const homePage = (req,res)=>{
      res.redirect('/admin/home')
   }catch(err){console.log(err.message);}
 }
+
+
 const adminHome = async (req, res) => {
   try {
     var NoOfBookings
@@ -36,22 +38,54 @@ const adminHome = async (req, res) => {
      const day = date.getDay().toString().padStart(2,0)
      const month = (date.getMonth() + 1).toString().padStart(2,0)
      const year = date.getFullYear()
-      
+
      date = `${day}/${month}/${year}`
 
+      console.log(date,typeof(date),"date");
       dates.push(date)
       revenue.push((element.otherDetails.moneyPaid + element.otherDetails.pendingAmount))
       NoOfBookings = index + 1
-
     })
     total = total.toFixed(2)
     const noOfUsers = await adminService.findAllUsers()
-
     console.log(dates, revenue, "dates");
-
     res.render('adminHome', { username: name, noOfUsers, NoOfBookings, total })
   } catch (err) { console.log(err); }
 }
+
+// const adminHome = async (req, res) => {
+//   try {
+//     var NoOfBookings
+//     var dates = []
+//     var revenue = []
+//     var total = 0
+//     const email = req.session.admin
+//     const name = await adminService.adminUsername(email)
+//     const data = await adminService.findAlldetails()
+//     console.log(data,"data")
+//     data.forEach((element, index) => {
+//       total += (element.otherDetails.moneyPaid + element.otherDetails.pendingAmount)
+//       var date = element.checkin_date
+//      date = new Date(date)
+//      const day = date.getDay().toString().padStart(2,0)
+//      const month = (date.getMonth() + 1).toString().padStart(2,0)
+//      const year = date.getFullYear()
+      
+//      date = `${day}/${month}/${year}`
+
+//       dates.push(date)
+//       revenue.push((element.otherDetails.moneyPaid + element.otherDetails.pendingAmount))
+//       NoOfBookings = index + 1
+
+//     })
+//     total = total.toFixed(2)
+//     const noOfUsers = await adminService.findAllUsers()
+
+//     console.log(dates, revenue, "dates");
+
+//     res.render('adminHome', { username: name, noOfUsers, NoOfBookings, total })
+//   } catch (err) { console.log(err); }
+// }
 
 const categoryManagement = (req, res) => {
   res.redirect('/admin/categoryManagementPage')

@@ -673,12 +673,43 @@ const manageBookings = (req, res) => {
 
 const manageBookingsPage = async (req, res) => {
     try {
+        let page
+        if (req.query.page) page = req.query.page
+        else page = 1
+
         const email = req.session.user
-        const hotels = await userService.findBookings(email)
+        const hotels = await userService.findBookings(email,page)
         console.log(hotels);
         const msg = req.query.msg
         const user = req.session.user
-        res.render('user/manageBookings', { hotels, msg, user })
+
+        const modifiedData = hotels.map(hotel => {
+            return {
+                _id: hotel._id,
+                userName: hotel.userName,
+                status:hotel.status,
+                checkout: hotel.checkout.toISOString().split('T')[0],
+                checkin: hotel.checkin.toISOString().split('T')[0],
+                hotelName:hotel.athotelName,
+                roomType:hotel.roomType,
+                city: hotel.city,
+                hotelImage: hotel.hotelImage,
+                otherDetails: {
+                  couponUsed: hotel.couponUsed,
+                  paymentMode: hotel.paymentMode,
+                  moneyFromWallet: hotel.moneyFromWallet,
+                  moneyPaid:hotel.moneyPaid,
+                  pendingAmount:hotel.pendingAmount,
+                  _id: hotel._id
+                }
+
+            };
+        });
+
+        console.log(modifiedData);
+
+        const totalBookings = await userService.findTotalbookings(email)
+        res.render('user/manageBookings', { modifiedData, msg, user,totalBookings })
     } catch (err) { console.log(err); }
 }
 
@@ -705,19 +736,7 @@ const walletPage = async (req, res) => {
         const wallet = await userService.findWalletMoney(req)
         const transactions = await userService.findWalletTransactions(req, page)
 
-        //     transactions.forEach(element => {
-        //             console.log(element.date,"1111")
-
-
-        //    var date = new Date(element.date)
-        //     console.log(date)
-        //     const day = date.getDay().toString().padStart(2,0)
-        //     const month = (date.getMonth() + 1).toString().padStart(2,0)
-        //     const year = date.getFullYear()
-
-        //     date  = `${day}/${month}/${year}`
-        //     console.log(date,"22222")
-        // });
+       
         const modifiedData = transactions.map(transaction => {
             return {
                 _id: transaction._id,

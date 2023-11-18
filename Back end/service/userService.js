@@ -808,15 +808,25 @@ const saveBooking = async (req) => {
     } catch (err) { console.log(err); }
 }
 
-const findBookings = async (email) => {
+const findBookings = async (email,page) => {
     try {
-        const history = await userRepository.findUserHistory(email)
+        const history = await userRepository.findUserHistory(email,page)
         if (history) return history
         else {
             const msg = "No bookings done ,Book now grab offers"
             return { msg }
         }
     } catch (err) { console.log(err.message); }
+}
+const findTotalbookings = async (email) => {
+    try {
+        const history = await userRepository.findTotalbookings(email)
+        if (history) return history.length
+        else {
+            const msg = "No bookings done ,Book now grab offers"
+            return { msg }
+        }
+    } catch (err) { console.log(err); }
 }
 
 const findCategoryOffer = async (req) => {
@@ -864,8 +874,8 @@ const updateFinishedBooking = async () => {
     try {
         let timer
         const timerFor = async () => {
-            //const millisecondsOf24Hr = 24 * 60 * 60 * 1000  
-            const millisecondsOf24Hr =  60 * 1000             
+            const millisecondsOf24Hr = 24 * 60 * 60 * 1000  
+           // const millisecondsOf24Hr =  60 * 1000             
             timer = setInterval(async () => {
                 const findBookingsForUpdation = await userRepository.findBookingsForUpdation()
                 console.log(findBookingsForUpdation, "findBookingsForUpdation")
@@ -997,5 +1007,6 @@ module.exports = {
     updateFinishedBooking,
     genInvoice,
     findWalletTransactions,
-    findAllTranasactions
+    findAllTranasactions,
+    findTotalbookings
 }

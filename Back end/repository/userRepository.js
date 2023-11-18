@@ -250,8 +250,9 @@ const  findAllRoomNumber= async ()=>{
     }catch(err){console.log(err);}
 }
 
-const findUserHistory= async (email)=>{
+const findUserHistory= async (email,page)=>{
 try{
+    console.log(page,"page")
          return await bookinghistory.aggregate([
     {
         $match: { userName: email } 
@@ -280,6 +281,7 @@ try{
     },
     {
         $project: {
+            _id:1,
             userName: 1,
             status:"$status",
             bookingId:"$booking_id",
@@ -295,7 +297,61 @@ try{
             } ,
             otherDetails:"$otherDetails"         
         }
-    }
+    },
+    { $sort: { _id: -1 } },
+    {$skip:(page - 1) * 6},
+    {$limit:6}
+]);
+
+}catch(err){console.log(err);}
+}
+
+const findTotalbookings = async (email)=>{
+    try{
+        return await bookinghistory.aggregate([
+   {
+       $match: { userName: email } 
+    },
+   {
+       $lookup: {
+           from: "hotels",
+           localField: "hotel_id",
+           foreignField: "_id",
+           as: "hotelInfo"
+       }
+    },
+   {
+       $unwind: "$hotelInfo" 
+   },
+   {
+       $lookup: {
+           from: "rooms",
+           localField: "room_id",
+           foreignField: "_id",
+           as: "roomInfo"
+       }
+   },
+   {
+       $unwind: "$roomInfo"
+   },
+   {
+       $project: {
+           userName: 1,
+           status:"$status",
+           bookingId:"$booking_id",
+           roomNumber:"$roomNumber",
+           checkin: "$checkin_date",
+           checkout: "$checkout_date",
+           hotelName: "$hotelInfo.hotel_name",
+           roomType: "$roomInfo.roomType",
+           city:"$hotelInfo.city",
+
+           hotelImage:    {  
+               $arrayElemAt: ["$hotelInfo.imagesOfHotel", 0]
+           } ,
+           otherDetails:"$otherDetails"         
+       }
+   }
 ]);
 
 }catch(err){console.log(err);}
@@ -574,7 +630,8 @@ module.exports = {
     findTransactions,
     findAllTranasactions,
     getRoom,
- findHotelsNumber 
+ findHotelsNumber ,
+ findTotalbookings
  
 }
 
