@@ -46,8 +46,8 @@ const hotelsManagement = async (req, res) => {
 const hotelsManagementPage = async (req, res) => {
     console.log(56446546);
     try {
-
-        const hotels = await ownerService.hotelsWithIncompleteDetails()
+        const email = req.session.owner
+        const hotels = await ownerService.hotelsWithIncompleteDetails(email)
         console.log(hotels)
         const msg = req.query.msg
         res.render('owner-hotelManagement', { hotels, msg })

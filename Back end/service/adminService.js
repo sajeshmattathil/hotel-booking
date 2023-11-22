@@ -45,6 +45,12 @@ const adminUsername = async (email) => {
      } catch (err) { console.log(err); }
 }
 
+const findAdmin = async (email)=>{
+     try{
+      const adminData = await adminRepository.findAdminByEmail(email)
+          if(adminData) return adminData
+     }catch(err){console.log(err.message);}
+}
 const saveNewCategory = async (req) => {
      try {
 
@@ -243,6 +249,7 @@ const updateOwnerStatus = async (status,id)=>{
 
 module.exports = {
      auth,
+     findAdmin,
      adminUsername,
      saveNewCategory,
      saveNewSubCategory,

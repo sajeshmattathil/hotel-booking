@@ -136,9 +136,10 @@ const authHotel = async (req) => {
      catch (error) { console.log(error); }
 }
 
-const hotelsWithIncompleteDetails = async (req, res) => {
+const hotelsWithIncompleteDetails = async (email) => {
      try {
-          const data = await ownerRepository.findHotelsWithIncompleteDetails()
+          const owner = await ownerRepository.findOwnerByEmail(email)
+          const data = await ownerRepository.findHotelsWithIncompleteDetails(owner._id)
           console.log(data);
           if (data.length === 0) {
                let msg = 'No details available'

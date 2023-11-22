@@ -25,6 +25,10 @@ router.post('/sales_report',jwt.verifyToken,admincontroller.salesReport)
 router.post('/sales_report_selected',jwt.verifyToken,admincontroller.salesReportSelected)
 router.post('/show_graph',jwt.verifyToken,admincontroller.salesRevenueInGraph)
 router.post('/change_owner_status',jwt.verifyToken,admincontroller.changeStatus)
+router.get('/profile',jwt.verifyToken,admincontroller.adminProfile)
+router.get('/adminPage',jwt.verifyToken,admincontroller.adminProfilePage)
+
+
 
 module.exports = router
 

@@ -27,13 +27,12 @@
           <li class="nav-item nav-profile">
             <a href="#" class="nav-link">
               <div class="nav-profile-image">
-                <img src="/static/assets/images/faces/face1.jpg" alt="profile">
                 <span class="login-status online"></span>
                 <!--change to offline or busy as needed-->
               </div>
               <div class="nav-profile-text d-flex flex-column">
                 <span class="font-weight-bold mb-2"></span>
-                <span class="text-secondary text-small">Project Manager</span>
+                <span class="text-secondary text-small"></span>
               </div>
               <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
             </a>
@@ -83,7 +82,7 @@
       <div class="main-panel">
         <div class="content-wrapper">
           <div class="page-header">
-            <h3 class="page-title"> Coupon Management </h3>
+            <h3 class="page-title">  </h3>
             <nav aria-label="breadcrumb">
               <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="#"></a></li>
@@ -91,141 +90,94 @@
               </ol>
             </nav>
           </div>
-          <!--  NEW CATEGORY
-                NEW CATEGORY
-                NEW CATEGORY
-                NEW CATEGORY
-                NEW CATEGORY -->
+
+
+
+         <style>
+          
+.edit-button {
+  padding: 10px 20px;
+    color: #003b95;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    cursor: pointer;
+}
+.edit-button:hover{
+  background-color: #003b95;
+  color: white;
+}
+         </style>
             <div class="row">
-            <div class="col-md-6 grid-margin stretch-card">
               <div class="card">
-                <div class="card-body">
+               
                   <h5 class="text-success">
                   </h5>
-                  <h4 class="card-title">Add new coupon</h4>
-                  <form class="forms-sample text-sm-start" action="/admin/add_coupon" method="post">
-                <h5 id="msg" class="text-success"><%= msg %></h5>
-                    
-                    <div class="form-group">
-                        <label for="exampleInputEmail2" class="font-weight-bold text-dark">Coupon name</label>
-                        <input type="text" class="form-control" name="name" placeholder="Coupon name" required>
-                      </div>
-                    <div class="form-group">
-                      <label for="exampleInputEmail2" class="font-weight-bold text-dark">Enter coupon off price</label>
-                      <input type="text" class="form-control" name="discount" placeholder="Discount amount" maxlength="4" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="checkin_date" class="font-weight-bold text-dark mr-2">Coupon starting date</label>
-                        <div class="icon"><span class="icon-calendar"></span></div>
-                        <input type="date" id="expiry" name="startingDate" class="form-control small-input" placeholder="Coupon Starting" required>
-                        </div>
-                    <div class="form-group">
-                      <label for="checkin_date" class="font-weight-bold text-dark mr-2">Coupon expiry date</label>
-                      <div class="icon"><span class="icon-calendar"></span></div>
-                      <input type="date" id="expiry" name="expiry" class="form-control small-input" placeholder="Coupon expiry" required>
-                      </div>
-                    <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
-                  </form>
+                  <h4 class="card-title">Admin Profile</h4>
 
-                  <div class="form-group">
-                  </div>
-                  </form>
-                </div>
-              </div>
-            </div>          
-  <div class="col-md-6 grid-margin stretch-card">
-    <div class="card">
-      <div class="card-body">
-        <h5 class="text-success">
-        </h5>
-        <h4 class="card-title"></h4>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                text-align: center;
+                  <h5>
+                   Wallet :  <%= admin.wallet %>
+                  </h5>
+                  <table>
+                    <tbody>
+                      <h6 id="msg"><%= msg %></h6>
+    
+                        <tr>
+                            <td>Name</td>
+                            <td>
+                               
+                                <input type="text" id="nameId" value=" <%=admin.name || 'Admin' %>" class="form-control" placeholder="" disabled required>
+
+                            </td>
+    
+                            <td><button id="name" class="edit-button">Edit</button></td>
+                        </tr>
+                        <tr>
+                            <td>Email address</td>
+                            <td>
+                              <input type="email" id="emailId" value=" <%=admin.email%>" class="form-control" placeholder="" disabled required>
+
+                               
+                            </td>
+                            <td><button id="email" class="edit-button">Edit</button></td>
+
+                        </tr>         
+                        <tr>
+                            <tr>
+                              <td>Password</td>
+                              <td>
+                                <input type="password" id="passwordId" value="<%=  '●●●●●●●●' %>" class="form-control" placeholder="" disabled required>
+
+                                
+                              </td>
+                              <td><button id="password" class="edit-button">Edit</button></td>              
+                </div>   
                 
-            }
-        
-            h3 {
-                color: #333;
-            }
-        
-            table {
-                font-size: smaller;
-                width: 110%;
-                margin: 2px auto;
-                border-collapse: collapse;
-            }
-        
-            th, td {
-               
-                text-align: center;
-            }
-        
-            th {
-                background-color: #f2f2f2;
-            }
-        
-            tr:nth-child(even) {
-                background-color: #f2f2f2;
-            }
-        
-            tr:hover {
-                background-color: #ddd;
-            }
-        </style>
-        
-        
-           
-        <div class="form-group">
-        </div>
-        </form>
-      </div>
-    </div>
-  </div>
+                <script>
+                  document.addEventListener('DOMContentLoaded',()=>{
+                    const nameButton = document.getElementById('name')
+                    const emailButton = document.getElementById('email')
+                    const passwordButton = document.getElementById('password')
+
+                          nameButton.addEventListener('click',(event)=>{
+                             const input = document.getElementById('nameId')
+                             input.disabled = false
+                          })
+
+                          emailButton.addEventListener('click',(event)=>{
+                            const input = document.getElementById('emailId')
+                             input.disabled = false
+                          })
+                          passwordButton.addEventListener('click',(event)=>{
+                            const input = document.getElementById('passwordId')
+                             input.disabled = false
+                          })
 
 
+                  })
+                </script>
 
-  <div class="col-lg-12 grid-margin stretch-card">
-    <!-- <div class="card">
-      <div class="card-body">
-        <h4 class="card-title">Coupon Lists</h4>
-        <h1  class="text-success"><%= msg %></h1>
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              
-              <th>Sl No.</th>
-              <th>Coupon name</th>
-              <th>Discount Price</th>
-              <th>Starting Date</th>
-              <th>Expiry</th>
-              <th> </th>
-              <th> </th>
-             
-            </tr>
-          </thead>
-          <tbody>         
-            <% coupons.forEach((coupon,index) => { %>   
-            <tr>
-                <td><%= index+1 %></td>
-                <td><%= coupon.name %></td>
-                <td>Rs<%= coupon.discount %>/-</td>
-                <td><%= coupon.startingDate %></td>
-                <td><%= coupon.expiry %></td>
-                <td><button class=""></button></td>
-                <td><button class="">Deactivate</button></td>
-            </tr>
 
-            <% }) %>                
-          </tbody>
-        </table>
-      </div>
-    </div> -->
-            
-          <footer class="footer">
-          
-          </footer>
           <!-- partial -->
         </div>
         <!-- main-panel ends -->

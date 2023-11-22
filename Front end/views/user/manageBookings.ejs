@@ -63,28 +63,7 @@
     </nav>
   </header>
 
-  <!-- 
-<nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
-    <div class="container-fluid">
-        <a class="navbar-brand text-light">Travel Nest</a>
-        <form class="d-flex">
-            <a href="" class=" me-2 text-light"></a>
-        </form>
-        <div class="dropdown">
-          
-          <a class="btn  dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-          </a>
-        
-          <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-            <li><a class="dropdown-item" href="/userManagement">Profile Management</a></li>
-            <li><a class="dropdown-item" href="#">Bookings</a></li>
-            <li><a class="dropdown-item" href="#">Something else here</a></li>
-          </ul>
-        </div>
-        
-    </div>
-    
-</nav> -->
+
 
   <style>
     .booking-history {
@@ -165,16 +144,19 @@
               <a href="/generate_invoice/<%= booking.bookingId %>"> <button class="btn-primary px-2">Download
                   Invoice</button>
                 <% } %>
+
                   <% if (booking.status==="pending" ) { %>
                     <span class="px-2"><button class="btn-primary" data-toggle="modal"
                         data-target="#exampleModalCenter-cancel<%= index %>">Cancel Booking</button></span>
                     <% } %>
+
                       <% if (booking.status==="pending" ) { %>
                         <span>
                           <h6 class="text-success px-2">
                             <%= booking.status %>
                           </h6>
                         </span>
+
                         <% } else { %>
                           <span>
                             <h6 class="text-danger px-2">

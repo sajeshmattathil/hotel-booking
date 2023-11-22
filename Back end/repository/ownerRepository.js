@@ -37,10 +37,9 @@ const FindHotelByName = async (hotel_name) => {
         console.log(error);
     }
 }
-const findHotelsWithIncompleteDetails = async () => {
+const findHotelsWithIncompleteDetails = async (id) => {
     try {
-        return await hotel.find({ status: "inactive" ,isApproved:true}).lean()
-
+        return await hotel.find({ status: "inactive" ,isApproved:true,owner_id:id}).lean()
     } catch (error) {
         console.log(error);
     }
