@@ -120,6 +120,28 @@ const requestApprove = async (req, res) => {
   } catch (error) { console.log(error); }
 
 }
+
+const rejectRequest = async (req,res)=>{
+  try{
+    const response = await adminService.rejectApprovalRequest(req)
+    if (response.status === 200) res.redirect(`/admin/aproveHotelList?msg=${response.msg}`)
+    if (response.status === 400) res.redirect(`/admin/aproveHotelList?msg=${response.msg}`)
+  }catch(err){console.log(err.message);}
+}
+
+const hotelIncompleteDetails = (req,res)=>{
+req.session.hotel_incomplete  =req.params.email
+  res.redirect('/admin/hotelIncompleteDetailsPage')
+}
+
+const hotelIncompleteDetailsPage = async (req,res)=>{
+  try{
+     const hotel = await adminService.findHotelWithIncomplete(req.session.hotel_incomplete)
+     console.log(hotel,'hotel_data')
+     res.render('admin-hotelDetailsIncomplete',{item:hotel})
+  }catch(err){console.log(err);}
+}
+
 const ownerManagement = (req, res) => {
   res.redirect('/admin/ownerMangementPage')
 }
@@ -345,6 +367,9 @@ module.exports = {
   hotelRequests,
   hotelRequestView,
   requestApprove,
+  rejectRequest,
+  hotelIncompleteDetails,
+  hotelIncompleteDetailsPage,
   ownerManagement,
   ownerMangementPage,
   addNewOwner,

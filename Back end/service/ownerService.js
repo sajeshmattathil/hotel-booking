@@ -129,7 +129,7 @@ const authHotel = async (req) => {
                     cancellationPolicy
                })
                newHotel.save()
-               let msg = 'Hotel saved successfully'
+               let msg = 'Request send to admin for approve'
                return { status: 200, msg: msg }
           }
      }

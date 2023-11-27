@@ -205,104 +205,26 @@
                 </ol>
               </nav>
             </div>
- <!-- New hotel form        -->
-  <!-- New hotel form        -->
-   <!-- New hotel form        -->
-    <!-- New hotel form        -->
-     <!-- New hotel form        -->
-      <!-- New hotel form        -->
-       <!-- New hotel form        -->
-     <!-- New hotel form        -->
+ 
             <div class="row">
               <div class="col-md-6 grid-margin stretch-card">
                 <div class="card">
                   <div class="card-body">
-                    <h1 id="msg" class="text-success"><%= msg %></h1>
-                    <h4 class="card-title">Add your Hotel</h4>
-                    <p class="card-description"> Add your Hotel</p>
-                    <form class="forms-sample" action="/owner/add-hotel" method="post" enctype="multipart/form-data">
+                   
+                                      <img style="width: 150px; height: 100px;" src=" /static/himages/<%=item.imagesOfHotel[0]%>" alt="">
+                                      <p>Hotel : <%= item.hotel_name %></p>
+                                      <p>Hotel email: <%= item.email %> </p>
+                                      <p>City: <%= item.city %></p>
+                                      <p>Address: <%= item.address %></p>
+                                      <p>No. of Rooms: <%= item.totalRoomsAvailable %></p>
+                                      <p>Nearest Tourist Place: <%= item.nearTouristDestination %></p>
 
-                      <!-- <div class="form-group">
-                        <label for="exampleInputEmail2">Owner id</label>
-                        <input type="email" class="form-control" name="owner_id" id="exampleInputEmail2" placeholder="Owner id">
-                      </div> -->
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Hotel Name</label>
-                        <input type="text" class="form-control" name="hotel_name" id="exampleInputUsername1" placeholder="Hotel Name">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Star</label>
-                        <input type="tel" class="form-control" name="star_rating" id="exampleInputUsername1" placeholder="Star">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputUsername1">Description</label>
-                        <input type="text" class="form-control" name="description" id="exampleInputUsername1" placeholder="Description">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputPassword1">Email</label>
-                        <input type="text" class="form-control" name="email" id="exampleInputPassword1" placeholder="Email">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputPassword1">Address</label>
-                        <input type="text" class="form-control" name="address" id="exampleInputPassword1" placeholder="Address">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputPassword1">City</label>
-                        <input type="text" class="form-control" name="city" id="exampleInputPassword1" placeholder="City">
-                      </div>
-                     
-                      <div class="form-group">
-                        <label for="exampleInputPassword1">PIN CODE</label>
-                        <input type="tel" class="form-control" name="pincode" id="exampleInputPassword1" placeholder="PIN CODE" required minlength="6">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputPassword1">Amenities (Use comma to add more)</label>
-                        <input type="text" class="form-control" name="amenities" id="exampleInputPassword1" placeholder="amenities" required minlength="">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputPassword1">Total Rooms</label>
-                        <input type="number" class="form-control" name="totalRoomsAvailable" id="exampleInputPassword1" placeholder="Total Rooms" required minlength="6">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputConfirmPassword1">Tourist destination nearby</label>
-                        <input type="text" class="form-control" name="nearTouristDestination" id="exampleInputConfirmPassword1" placeholder="Tourist destination nearby">
-                      </div>
-                      <div class="form-group">
-                        <label for="exampleInputConfirmPassword1">Cancellation Policy</label>
-                        <input type="text" class="form-control" name="cancellationPolicy" id="exampleInputConfirmPassword1" placeholder="Cancellation Policy">
-                      </div>
-                      <div  class="form-group   d-flex align-items-center">
-                        <input type="file" name="images" id="images" accept="image/*" multiple>
-                        <!-- <button type="submit"  class="btn btn-gradient-primary me-2">Upload</button> -->
-                      </div>
-                     
-                      <button type="submit" class="btn btn-gradient-primary me-2">Submit</button>
-                    </form>
-                    
-                    <div class="form-group">
-                    </div>
-
-      
-              </form>
-              
-
-
-
+                                      <p>Cancellation Policy: <%= item.cancellationPolicy %></p>
                   </div>
                 </div>
-              </div>
-
-  
-
-
-
-              
-            
+              </div>    
           <footer class="footer">
-            <div class="container-fluid d-flex justify-content-between">
-              <span class="text-muted d-block text-center text-sm-start d-sm-inline-block">Copyright © bootstrapdash.com 2021</span>
-              <span class="float-none float-sm-end mt-1 mt-sm-0 text-end"> Free <a href="https://www.bootstrapdash.com/bootstrap-admin-template/" target="_blank">Bootstrap admin template</a> from Bootstrapdash.com</span>
-            </div>
+           
           </footer>
           <!-- partial -->
         </div>

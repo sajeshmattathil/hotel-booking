@@ -129,6 +129,27 @@ const approve = async (req) => {
      } catch (error) { console.log(error); }
 }
 
+const rejectApprovalRequest = async (req)=>{
+     try {
+          const email = req.params.email
+          const requestDatas = await adminRepository.findHotelAndReject(email)
+          if (requestDatas) {
+               const msg = "Request rejected"
+               return { status: 200, msg: msg }
+          }
+          else {
+               const msg = 'Something went wrong'
+               return { status: 400, msg: msg }
+          }
+     } catch (error) { console.log(error); }
+}
+
+const findHotelWithIncomplete = async (email)=>{
+     try{
+        const data = await adminRepository.findHotelWithIncomplete(email)
+        if(data) return data
+     }catch(err){console.log(err.message);}
+}
 const authenticateOwner = async (req) => {
 
      try {
@@ -255,6 +276,8 @@ module.exports = {
      saveNewSubCategory,
      findRequests,
      approve,
+     rejectApprovalRequest,
+     findHotelWithIncomplete,
      authenticateOwner,
      existingCoupons,
      addCoupon,

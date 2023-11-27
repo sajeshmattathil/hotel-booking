@@ -66,8 +66,8 @@ const hotelSchema=new mongoose.Schema({
         default:true
     },
     isApproved:{
-        type:Boolean,
-        default:false
+        type:String,
+        default:'false'
     },
     status:{
         type:String,

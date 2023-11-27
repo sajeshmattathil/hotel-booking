@@ -25,7 +25,7 @@ const findAdminNameByEmail = async (email) => {
 
 const findHotelApprovalRequests = async () => {
     try {
-        return await hotels.find({ isApproved: false }, { hotel_name: 1, owner_id: 1, email: 1 })
+        return await hotels.find({ isApproved: 'false' }, { hotel_name: 1, owner_id: 1, email: 1 })
     } catch (error) {
         console.log(error);
     }
@@ -38,6 +38,21 @@ const findHotelAndApprove = async (email) => {
     } catch (error) {
         console.log(error);
     }
+}
+
+const findHotelAndReject = async(email)=>{
+    try {
+        console.log(email);
+        return await hotels.updateOne({ email: email }, { $set: { isApproved: 'rejected' } })
+    } catch (error) {
+        console.log(error);
+    }
+}
+const findHotelWithIncomplete = async (email)=>{
+    try{
+        console.log(email,'email')
+        return await hotels.findOne({email:email,isApproved: false})
+    }catch(err){console.log(err.message);}
 }
 const findCategoryByName = async (name) => {
     try {
@@ -170,6 +185,8 @@ module.exports = {
     findAdminByEmail,
     findAdminNameByEmail,
     findHotelApprovalRequests,
+    findHotelAndReject,
+    findHotelWithIncomplete,
     findHotelAndApprove,
     findCategoryByName,
     findSubCategoryByName,

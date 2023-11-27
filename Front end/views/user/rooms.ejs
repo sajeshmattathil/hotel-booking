@@ -11,27 +11,6 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.0/css/all.min.css">
 
 
-    <!-- <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
-        <div class="container-fluid">
-            <a class="navbar-brand text-light">TravelNest</a>
-            <form class="d-flex">
-                <a href="" class=" me-2 text-light"></a>
-            </form>
-            <div class="dropdown">
-              
-              <a class="btn  dropdown-toggle" href="#" role="button" id="dropdownMenuLink" data-bs-toggle="dropdown" aria-expanded="false">
-              </a>
-            
-              <ul class="dropdown-menu" aria-labelledby="dropdownMenuLink">
-                <li><a class="dropdown-item" href="/userManagement">Profile Management</a></li>
-                <li><a class="dropdown-item" href="#">Bookings</a></li>
-                <li><a class="dropdown-item" href="#">Something else here</a></li>
-              </ul>
-            </div>
-            
-        </div>
-        
-    </nav> -->
     <header class="site-header js-site-header " style="background-color: #003b95; height: 15%;">
         <nav class="navbar navbar-light " style="background-color: #003b95; height: 50%;">
             <div class="container-fluid">
@@ -55,20 +34,7 @@
 
 
     <style>
-        /* .sections-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        } */
-
-        /* .section {
-            flex: 0 0 calc(50% - 20px);
-            margin: 10px;
-            border: 1px solid #ccc;
-            padding: 20px;
-            box-sizing: border-box;
-        } */
-
+       
         .carousel-container {
             max-width: 800px;
             /* Adjusted maximum width for the carousel */
@@ -103,15 +69,6 @@
         }
 
 
-
-        /* .sections-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-        } */
-
-       
-
         .check-in-out,
         .amenities {
             font-size: 18px;
@@ -145,7 +102,6 @@
     </style>
 </head>
 <style>
-    /* Default styles for larger screens */
     .sections-container {
         display: flex;
         justify-content: space-between;
@@ -154,33 +110,31 @@
 
     .section {
         flex: 1;
-        max-width: 33%; /* Adjust as needed */
+        max-width: 33%; 
         box-sizing: border-box;
         margin-right: 20px;
         flex: 0 0 calc(33.33% - 20px);
             margin: 10px;
             border: 1px solid #ccc;
             padding: 20px;
-            box-sizing: border-box; /* Add margin for spacing between sections */
+            box-sizing: border-box; 
     }
 
-    /* Responsive styles for medium-sized screens */
     @media screen and (max-width: 768px) {
         .sections-container {
             flex-direction: column;
         }
 
         .section {
-            max-width: 100%; /* Take up full width on medium screens */
-            margin-right: 0; /* Remove margin on smaller screens */
+            max-width: 100%; 
+            margin-right: 0; 
         }
     }
 
-    /* Responsive styles for small screens */
     @media screen and (max-width: 576px) {
         .section {
-            max-width: 100%; /* Take up full width on small screens */
-            margin-right: 0; /* Remove margin on smaller screens */
+            max-width: 100%; 
+            margin-right: 0; 
         }
     }
 </style>
@@ -248,25 +202,16 @@
         <div class="card section">
             <div class="card-body">
             
-                <!-- <div class="d-flex " style="flex-direction: row;">
-                    <p class="px-3">
-                        <%=checkin_date %>
-                    </p>
-                    <p class="px-3">
-                        <%=checkout_date %>
-                    </p>
-                </div> -->
+              
                 <form action="/checkInDate-checkOutDate" class=" align-items-center" method="post">
                     <div class="d-flex align-items-center">
                         <div class="field-icon-wrap d-flex align-items-center mr-3">
-                            <!-- <label for="checkin_date" class="font-weight-bold text-dark mr-2">&nbsp;&nbsp;&nbsp;Check In</label> -->
                             <div class="icon"><span class="icon-calendar"></span></div>
                             <input type="date" id="checkin" name="checkin_date" class="control small-input"
                                value="<%=checkin_date%>" placeholder="<%=checkin_date || 'Check In'%>" required>
                         </div>
                     
                         <div class="field-icon-wrap d-flex align-items-center mr-3">
-                            <!-- <label for="checkout_date" class="font-weight-bold text-dark mr-2">Check Out</label> -->
                             <div class="icon"><span class="icon-calendar"></span></div>
                             <input type="date" id="checkout" name="checkout_date" class="control small-input"
                                 value="<%=checkout_date%>" placeholder="<%=checkout_date || 'Check Out'%>" required>

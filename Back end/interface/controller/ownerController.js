@@ -1,4 +1,5 @@
 const ownerService = require('../../service/ownerService')
+const upload = require('../../middleware/uploadImages')
 
 
 const ownerlogin = (req, res) => {
@@ -39,7 +40,9 @@ const hotelsManagement = async (req, res) => {
         res.redirect('/owner/hotelsManagementPage')
     }
     else {
-        if (response.status === 400) res.redirect(`/owner/hotelsManagementPage?msg=${response.message}`)
+        res.redirect('/owner/hotelsManagementPage')
+
+       // if (response.status === 400) res.redirect(`/owner/hotelsManagementPage?msg=${response.message}`)
     }
 
 }
@@ -71,9 +74,10 @@ const roomForm = async (req, res) => {
 }
 
 const roomAuthentication = async (req, res) => {
+  console.log(req.body,"sddsdsfd")
     const response = await ownerService.authenticateRoomDetails(req)
-    if (response.status === 200) res.redirect(`/owner/roomForm?msg=${response.message}`);
-    if (response.status === 400) res.redirect(`/owner/roomForm?msg=${response.message}`);
+    if (response.status === 200) res.json({message:response.message})
+   // if (response.status === 400) res.redirect(`/owner/roomForm?msg=${response.message}`);
 
 }
 
@@ -113,7 +117,7 @@ const offerManagementPage = async (req,res)=>{
               discount:offer.discount,
               name:offer.name,
               roomType:offer.roomType,
-              isActive: isActive
+              isActive: offer.isActive
             };
           });
        }
