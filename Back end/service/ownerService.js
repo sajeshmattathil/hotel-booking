@@ -247,8 +247,41 @@ const updateOfferStatus = async (status,id)=>{
          console.log(data,"data")
      }catch(err){console.log(err.message);}
 }
+
+const findhotels = async (email)=>{
+     try{
+          const owner = await ownerRepository.findOwnerByEmail(email)
+          
+       const data = await ownerRepository.findHotels(owner._id)
+       if(data) return data
+
+     }catch(err){console.log(err.message);}
+}
+
+const findhotel = async (id)=>{
+     try{
+       const data = await ownerRepository.findHotel(id)
+       if(data) return data
+     }catch(err){console.log(err.message);}
+}
+
+const updateHotelData = async (FormData)=>{
+     try{
+        const save = await ownerRepository.saveUpdatedData(FormData)
+      if(save) {
+        const msg = 'Hotel data updated'
+        return {status:200,msg}
+      } 
+      else {
+          const msg = 'Something went wrong,try again'
+        return {status:400,msg} 
+      }
+     }catch(err){console.log(err.message);}
+}
 module.exports = {
      auth,
+     findhotels,
+     findhotel,
      findTotalSales,
      ownerUsername,
      findTotalHotels,
@@ -260,7 +293,8 @@ module.exports = {
      addCategoryOffer,
      findOffers,
      updateOfferStatus,
-     findOwner
+     findOwner,
+     updateHotelData
 
 }
 

@@ -1,0 +1,339 @@
+<%-include('ownerFormHeader')-%>
+
+
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+               Travel Nest
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-stretch">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+                <div class="search-field d-none d-md-block">
+                    <form class="d-flex align-items-center h-100" action="#">
+                     
+                    </form>
+                </div>
+                <ul class="navbar-nav navbar-nav-right">
+                   
+                    <li class="nav-item d-none d-lg-block full-screen-link">
+                        <a class="nav-link">
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                            aria-labelledby="messageDropdown">
+                           
+                            <div class="dropdown-divider"></div>
+                            
+                            <div class="dropdown-divider"></div>
+                            
+                            <div class="dropdown-divider"></div>
+                        </div>
+                    </li>
+                  
+                   
+                   
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                    data-toggle="offcanvas">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+            </div>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_sidebar.html -->
+            <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                 
+                     
+                      <div class="nav-profile-text d-flex flex-column">
+                        <span class="font-weight-bold mb-2"><%=  %></span>
+                        <span class="text-secondary text-small"></span>
+                      </div>
+                      <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/owner/home">
+                      <span class="menu-title">Dashboard</span>
+                      <i class="mdi mdi-home menu-icon"></i>
+                    </a>
+                  </li>
+                
+                  <li class="nav-item">
+                    <!-- <a class="nav-link" href="/static/pages/forms/ownerForms.html">/owner/forms -->
+                      <a class="nav-link" href="/owner/forms">
+                      <span class="menu-title">Add New Hotel</span>
+                      <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+                    </a>
+                  </li>
+                
+                  <li class="nav-item">
+                    <a class="nav-link" href="/owner/hotelsManagement">
+                      <span class="menu-title">Hotels Management</span>
+                      <i class="mdi mdi-table-large menu-icon"></i>
+                    </a>
+                  </li>
+                  
+
+                 
+                </ul>
+              </nav>
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="page-header">
+                        <h3 class="page-title">
+                            <h1 id="msg" class="text-success">
+                              <%=msg%>
+                            </h1>
+                        </h3>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#"></a></li>
+                                <li class="breadcrumb-item active" aria-current="page"></li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <style>
+                        .form-group {
+                            margin-bottom: 15px;
+                        }
+
+                        label {
+                            display: block;
+                            font-weight: bold;
+                            margin-bottom: 5px;
+                        }
+
+                        select {
+                            width: 100%;
+                            padding: 10px;
+                            border: 1px solid #ccc;
+                            border-radius: 5px;
+                            font-size: 16px;
+                            background-color: #fff;
+                            color: #333;
+                        }
+
+                        select option:checked {
+                            background-color: #007bff;
+                            color: #fff;
+                        }
+
+                        select option {
+                            background-color: #fff;
+                            color: #333;
+                        }
+
+                        select {
+                            appearance: none;
+                            background-image: url('path-to-your-arrow-icon.svg');
+                            background-size: 20px;
+                            background-position: right 10px center;
+                            background-repeat: no-repeat;
+                            padding-right: 30px;
+                        }
+                    </style>
+                    <div class="row">
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h4 class="card-title">Hotel Details</h4>
+                                    <p class="card-description"> </p>
+                                    <form class="forms-sample" id="room_form" action="/owner/update_hotel" method="post">
+                                        
+                                     
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Star Rating</label> 
+
+                                            <input type="text" class="form-control" name="star_rating" oninput="validateRating()"
+                                                id="" placeholder="<%= hotel.star_rating[0]%>" value="<%= hotel.star_rating[0]%>" maxlength="50" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="text-danger" id="error"></div>
+
+                                            <label for="exampleInputPassword1">Hotel Name</label>
+
+                                            <input type="text" class="form-control" name="hotel_name" oninput="validateSymbol()"
+                                                id="" placeholder="<%= hotel.hotel_name%>" value="<%= hotel.hotel_name%>" maxlength="50" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="text-danger" id="error"></div>
+
+                                            <label for="exampleInputPassword1">Description</label>
+
+                                            <input type="text" class="form-control" name="description" oninput="validateSymbol()"
+                                                id="" placeholder="<%= hotel.description%>" value="<%= hotel.description%>" maxlength="50" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div id="emailError"></div>
+                                            <label for="exampleInputPassword1">Email</label>
+
+                                            <input type="text" class="form-control" name="email" oninput="validateEmail()"
+                                                id="" placeholder="<%= hotel.email%>" value="<%= hotel.email%>" maxlength="50" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="text-danger" id="error"></div>
+
+                                            <label for="exampleInputPassword1">Address</label>
+
+                                            <input type="text" class="form-control" name="address" oninput="validateSymbol()"
+                                                id="" placeholder="<%= hotel.address%>" value="<%= hotel.address%>" maxlength="50" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="text-danger" id="error"></div>
+
+                                            <label for="exampleInputPassword1">City</label>
+
+                                            <input type="text" class="form-control" name="city" oninput="validateSymbol()"
+                                                id="" placeholder="<%= hotel.city%>" value="<%= hotel.city%>" maxlength="10 " required disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <label for="exampleInputPassword1">Total Rooms</label>
+
+                                            <input type="text" class="form-control" name="totalRoomsAvailable"
+                                                id="" placeholder="<%= hotel.totalRoomsAvailable%>" value="<%= hotel.totalRoomsAvailable%>" maxlength="50" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="text-danger" id="error"></div>
+
+                                            <label for="exampleInputPassword1">Nearest Tourist Destination</label>
+
+                                            <input type="text" class="form-control" name="nearTouristDestination" oninput="validateSymbol()"
+                                                id="" placeholder="<%= hotel.nearTouristDestination%>" value="<%= hotel.nearTouristDestination%>" maxlength="50" disabled>
+                                        </div>
+
+                                        <div class="form-group">
+                                            <div class="text-danger" id="error"></div>
+                                            <label for="exampleInputPassword1">Cancellation Policy</label>
+
+                                            <input type="text" class="form-control" name="cancellationPolicy" oninput="validateSymbol()"
+                                                id="" placeholder="<%= hotel.cancellationPolicy%>" value="<%= hotel.cancellationPolicy%>" maxlength="50" disabled>
+                                        </div>
+                                           
+                                        <input type="hidden" id="hotelId" name="id" value="<%= hotel._id%>">
+
+
+
+                                        <button type="submit" id="hotel_form" style="display: none;" class="btn btn-gradient-primary me-2">Update</button>
+                                    </form>
+                                    <button type="submit" id="edit_hotel" class="btn btn-gradient-primary me-2">Edit</button>
+
+                                    <div class="form-group">
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="footer">
+                            
+                        </footer>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                function validateRating(){
+                    let rating = document.getElementById('rating').value
+                }
+
+
+                function validateSymbol() {
+                  var string = document.getElementById('mobile').value;
+                  var error = document.getElementById('error');
+                  const symboRegx = /[^\w\s]/;
+            
+            
+                  if (!numberRegex.test(string)) {
+                    error.textContent = 'Please enter a valid mobile number.';
+                  } else {
+                    error.textContent = '';
+                  }
+              }
+             function validateEmail() {
+                var email = document.getElementById('email').value;
+                var emailError = document.getElementById('emailError');
+            
+                var emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(email)) {
+                    emailError.textContent = 'Please enter a valid email address.';
+                } else {
+                    emailError.textContent = '';
+                }
+            }</script>
+
+           <script>
+            document.addEventListener('DOMContentLoaded',()=>{
+                const edit_button = document.getElementById('edit_hotel')
+                const submit = document.getElementById('hotel_form')
+                const inputs = document.getElementsByClassName('form-control')
+                const hotelId = document.getElementById('hotelId').value
+                const msg = document.getElementById('msg')
+           
+                edit_button.addEventListener('click',(event)=>{
+                    for(let i = 0 ; i<inputs.length;i++){
+                        inputs[i].disabled = false
+                    }
+                    submit.style.display = 'inline-block'
+                    edit_button.style.display = 'none'
+                     
+                })
+            })
+            </script>
+            <!-- <script>
+
+                   document.getElementById('room_form').addEventListener('submit',(event)=>{
+                    event.preventDefault()
+                  
+                    const submitForm = document.getElementById('room_form');
+                    const formData = new FormData(submitForm)
+                        
+                        console.log(formData,'form,,,,')
+
+                        fetch('/owner/update_hotel',{
+                            method:'POST',
+                            body:formData
+                        }).then(response=>response.json()).then((data)=>{
+                            msg.textContent = data.message
+                        }).catch(error=>console.log(error))
+                    
+                    })   
+           </script> -->
+
+            <script>
+                document.addEventListener('DOMContentLoaded',function(){
+                   setTimeout(()=>{
+                       let msg = document.getElementById('msg')
+                       msg.textContent = ''
+                   },3000)
+                  
+                 })
+             </script>
+            <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+        
+            <script src="../../assets/js/off-canvas.js"></script>
+            <script src="../../assets/js/hoverable-collapse.js"></script>
+            <script src="../../assets/js/misc.js"></script>
+          
+            <script src="../../assets/js/file-upload.js"></script>
+
+          
+            <%-include('ownerFormFooter')-%>

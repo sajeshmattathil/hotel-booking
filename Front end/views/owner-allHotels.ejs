@@ -1,0 +1,191 @@
+<%-include('ownerFormHeader')-%>
+
+
+    <div class="container-scroller">
+        <!-- partial:../../partials/_navbar.html -->
+        <nav class="navbar default-layout-navbar col-lg-12 col-12 p-0 fixed-top d-flex flex-row">
+            <div class="text-center navbar-brand-wrapper d-flex align-items-center justify-content-center">
+               Travel Nest
+            </div>
+            <div class="navbar-menu-wrapper d-flex align-items-stretch">
+                <button class="navbar-toggler navbar-toggler align-self-center" type="button" data-toggle="minimize">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+                <div class="search-field d-none d-md-block">
+                    <form class="d-flex align-items-center h-100" action="#">
+                     
+                    </form>
+                </div>
+                <ul class="navbar-nav navbar-nav-right">
+                   
+                    <li class="nav-item d-none d-lg-block full-screen-link">
+                        <a class="nav-link">
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        
+                        <div class="dropdown-menu dropdown-menu-right navbar-dropdown preview-list"
+                            aria-labelledby="messageDropdown">
+                           
+                            <div class="dropdown-divider"></div>
+                            
+                            <div class="dropdown-divider"></div>
+                            
+                            <div class="dropdown-divider"></div>
+                        </div>
+                    </li>
+                  
+                   
+                   
+                </ul>
+                <button class="navbar-toggler navbar-toggler-right d-lg-none align-self-center" type="button"
+                    data-toggle="offcanvas">
+                    <span class="mdi mdi-menu"></span>
+                </button>
+            </div>
+        </nav>
+        <!-- partial -->
+        <div class="container-fluid page-body-wrapper">
+            <!-- partial:../../partials/_sidebar.html -->
+            <nav class="sidebar sidebar-offcanvas" id="sidebar">
+                <ul class="nav">
+                 
+                     
+                      <div class="nav-profile-text d-flex flex-column">
+                        <span class="font-weight-bold mb-2"><%=  %></span>
+                        <span class="text-secondary text-small"></span>
+                      </div>
+                      <i class="mdi mdi-bookmark-check text-success nav-profile-badge"></i>
+                    </a>
+                  </li>
+                  <li class="nav-item">
+                    <a class="nav-link" href="/owner/home">
+                      <span class="menu-title">Dashboard</span>
+                      <i class="mdi mdi-home menu-icon"></i>
+                    </a>
+                  </li>
+                
+                  <li class="nav-item">
+                    <!-- <a class="nav-link" href="/static/pages/forms/ownerForms.html">/owner/forms -->
+                      <a class="nav-link" href="/owner/forms">
+                      <span class="menu-title">Add New Hotel</span>
+                      <i class="mdi mdi-format-list-bulleted menu-icon"></i>
+                    </a>
+                  </li>
+                
+                  <li class="nav-item">
+                    <a class="nav-link" href="/owner/hotelsManagement">
+                      <span class="menu-title">Hotels Management</span>
+                      <i class="mdi mdi-table-large menu-icon"></i>
+                    </a>
+                  </li>
+                  
+
+                 
+                </ul>
+              </nav>
+            <div class="main-panel">
+                <div class="content-wrapper">
+                    <div class="page-header">
+                        <h3 class="page-title">
+                            <h1 id="msg" class="text-success">
+                               
+                            </h1>
+                        </h3>
+                        <nav aria-label="breadcrumb">
+                            <ol class="breadcrumb">
+                                <li class="breadcrumb-item"><a href="#"></a></li>
+                                <li class="breadcrumb-item active" aria-current="page"></li>
+                            </ol>
+                        </nav>
+                    </div>
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <!-- New room form        -->
+                    <style>
+                        .form-group {
+                            margin-bottom: 15px;
+                        }
+
+                        label {
+                            display: block;
+                            font-weight: bold;
+                            margin-bottom: 5px;
+                        }
+
+                        select {
+                            width: 100%;
+                            padding: 10px;
+                            border: 1px solid #ccc;
+                            border-radius: 5px;
+                            font-size: 16px;
+                            background-color: #fff;
+                            color: #333;
+                        }
+
+                        select option:checked {
+                            background-color: #007bff;
+                            color: #fff;
+                        }
+
+                        select option {
+                            background-color: #fff;
+                            color: #333;
+                        }
+
+                        select {
+                            appearance: none;
+                            background-image: url('path-to-your-arrow-icon.svg');
+                            background-size: 20px;
+                            background-position: right 10px center;
+                            background-repeat: no-repeat;
+                            padding-right: 30px;
+                        }
+                    </style>
+                    <div class="row">
+                        <div class="col-md-6 grid-margin stretch-card">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h3>All hotels</h3>
+                                    <div class="form-group">
+                                        <% hotels.forEach((hotel)=>{%>
+
+                                            <p><a href="/owner/view_hotel_details/<%= hotel._id %>"><%= hotel.hotel_name %></a></p>
+
+                                       <% }) %>
+
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                        <footer class="footer">
+                            
+                        </footer>
+                    </div>
+                </div>
+            </div>
+
+            
+            <script>
+                document.addEventListener('DOMContentLoaded',function(){
+                   setTimeout(()=>{
+                       let msg = document.getElementById('msg')
+                       msg.textContent = ''
+                   },3000)
+                   console.log(msg,"msg")
+                 })
+             </script>
+            <script src="../../assets/vendors/js/vendor.bundle.base.js"></script>
+        
+            <script src="../../assets/js/off-canvas.js"></script>
+            <script src="../../assets/js/hoverable-collapse.js"></script>
+            <script src="../../assets/js/misc.js"></script>
+          
+            <script src="../../assets/js/file-upload.js"></script>
+
+          
+            <%-include('ownerFormFooter')-%>

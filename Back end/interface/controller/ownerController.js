@@ -13,10 +13,10 @@ const ownerAuthCheck = async (req, res) => {
     if (response.status === 400) res.redirect(`/owner?msg=${response.msg}`)
 
 }
-const ownerHomePage =(req,res)=>{
-    try{
-   res.redirect('/owner/home_page')
-    }catch(err){console.log(err.message);}
+const ownerHomePage = (req, res) => {
+    try {
+        res.redirect('/owner/home_page')
+    } catch (err) { console.log(err.message); }
 }
 
 
@@ -30,7 +30,7 @@ const ownerHome = async (req, res) => {
     const totalHotels = await ownerService.findTotalHotels(email)
 
 
-    res.render('ownerHome', { username: name,totalHotels,owner })
+    res.render('ownerHome', { username: name, totalHotels, owner })
 }
 
 const hotelsManagement = async (req, res) => {
@@ -42,7 +42,7 @@ const hotelsManagement = async (req, res) => {
     else {
         res.redirect('/owner/hotelsManagementPage')
 
-       // if (response.status === 400) res.redirect(`/owner/hotelsManagementPage?msg=${response.message}`)
+        // if (response.status === 400) res.redirect(`/owner/hotelsManagementPage?msg=${response.message}`)
     }
 
 }
@@ -74,10 +74,10 @@ const roomForm = async (req, res) => {
 }
 
 const roomAuthentication = async (req, res) => {
-  console.log(req.body,"sddsdsfd")
+    console.log(req.body, "sddsdsfd")
     const response = await ownerService.authenticateRoomDetails(req)
-    if (response.status === 200) res.json({message:response.message})
-   // if (response.status === 400) res.redirect(`/owner/roomForm?msg=${response.message}`);
+    if (response.status === 200) res.json({ message: response.message })
+    // if (response.status === 400) res.redirect(`/owner/roomForm?msg=${response.message}`);
 
 }
 
@@ -88,73 +88,115 @@ const addNewHotel = async (req, res) => {
     if (response.status === 400) res.redirect(`/owner/forms?msg=${response.msg}`);
 }
 
+const editHotels = (req, res) => {
+    try {
+        res.redirect('editHotelsPage')
+    } catch (err) { console.log(err.message); }
+}
+const editHotelsPage = async (req, res) => {
+    try {
+        const email = req.session.owner
+        const hotels = await ownerService.findhotels(email)
+        console.log(hotels, 'hotel')
+
+        res.render('owner-allHotels', { hotels })
+    } catch (err) { console.log(err.message); }
+}
+
+const viewHotelDetails =(req,res)=>{
+    try{
+      req.session.hotelId_details = req.params.id
+      res.redirect('/owner/viewHotelDetailsPage')
+    }catch(err){console.log(err.message);}
+}
+
+const viewHotelDetailsPage =async (req,res)=>{
+    try{
+        const msg = req.query.msg
+      const hotel = await ownerService.findhotel(req.session.hotelId_details)
+      res.render('owner-hotel-details',{hotel,msg})
+    }catch(err){console.log(err.message);}
+}
+
+const updateHotel = async (req,res)=>{
+    try{
+      console.log(req.body,'req.body')
+      
+
+      const response = await ownerService.updateHotelData(req.body)
+      if(response.status === 200) res.redirect(`/owner/viewHotelDetailsPage?msg=${response.msg}`)
+      if(response.status === 400) res.redirect(`/owner/viewHotelDetailsPage?msg=${response.msg}`)
+
+    }catch(err){console.log(err.message);}
+}
+
 const ownerForms = (req, res) => {
     let msg = req.query.msg
     res.render('ownerForms', { msg })
 }
 
-const offerManagement = (req,res)=>{
-    try{
-        req.session.hotel_id=req.params.id
+const offerManagement = (req, res) => {
+    try {
+        req.session.hotel_id = req.params.id
         console.log(req.session.hotel_id);
-      res.redirect('/owner/offerManagementPage')
-    }catch(err){console.log(err);}
+        res.redirect('/owner/offerManagementPage')
+    } catch (err) { console.log(err); }
 }
 
-const offerManagementPage = async (req,res)=>{
-    try{
+const offerManagementPage = async (req, res) => {
+    try {
         console.log(req.session.hotel_id);
         let modifiedOffers
-        const category= await ownerService.findCategories() 
-       const offers = await ownerService.findOffers(req)  
-       console.log(offers);
-       if(!offers.msg){
-         modifiedOffers = offers.map(offer => {
-            return {
-              ...offer,
-              startingDate: offer.startingDate.toISOString().split('T')[0],
-              expiry:offer.expiry.toISOString().split('T')[0],
-              discount:offer.discount,
-              name:offer.name,
-              roomType:offer.roomType,
-              isActive: offer.isActive
-            };
-          });
-       }
-       
-        console.log(offers,'777777');  
+        const category = await ownerService.findCategories()
+        const offers = await ownerService.findOffers(req)
+        console.log(offers);
+        if (!offers.msg) {
+            modifiedOffers = offers.map(offer => {
+                return {
+                    ...offer,
+                    startingDate: offer.startingDate.toISOString().split('T')[0],
+                    expiry: offer.expiry.toISOString().split('T')[0],
+                    discount: offer.discount,
+                    name: offer.name,
+                    roomType: offer.roomType,
+                    isActive: offer.isActive
+                };
+            });
+        }
+
+        console.log(offers, '777777');
         const no_data = offers.msg
         const msg = req.query.msg
-        res.render('ownerOfferManagement',{offers:modifiedOffers,msg,category,no_data})
+        res.render('ownerOfferManagement', { offers: modifiedOffers, msg, category, no_data })
         req.query.msg = ''
-      }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
 
-const addCategoryOffer = async (req,res)=>{
-    try{
+const addCategoryOffer = async (req, res) => {
+    try {
         const response = await ownerService.addCategoryOffer(req)
         if (response.status === 200) res.redirect(`/owner/offerManagementPage?msg=${response.msg}`);
         if (response.status === 201) res.redirect(`/owner/offerManagementPage?msg=${response.msg}`);
 
-    }catch(err){console.log(err);}
+    } catch (err) { console.log(err); }
 }
 
-  const signOut = (req,res)=>{
-    try{
+const signOut = (req, res) => {
+    try {
         res.redirect('/owner')
         delete req.session.owner
-    }catch(err){console.log(err.message);}
-  }  
+    } catch (err) { console.log(err.message); }
+}
 
-  const changeOfferStatus = async (req,res)=>{
-    try{
-        console.log(req.body,"req.body")
+const changeOfferStatus = async (req, res) => {
+    try {
+        console.log(req.body, "req.body")
         const id = req.body.offerId
         const status = req.body.status
-       await ownerService.updateOfferStatus(status,id)
-       res.json({})
-    }catch(err){console.log(err.message);}
-  }
+        await ownerService.updateOfferStatus(status, id)
+        res.json({})
+    } catch (err) { console.log(err.message); }
+}
 module.exports = {
     ownerlogin,
     ownerAuthCheck,
@@ -166,6 +208,11 @@ module.exports = {
     addRoomDetails,
     roomForm,
     addNewHotel,
+    editHotels,
+    editHotelsPage,
+    viewHotelDetails,
+    viewHotelDetailsPage,
+    updateHotel,
     ownerForms,
     offerManagement,
     offerManagementPage,

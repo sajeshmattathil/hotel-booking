@@ -133,6 +133,48 @@ const findTotalSales = async (id)=>{
         
     }catch(err){console.log(err.message);}
 }
+
+const findHotels = async (id)=>{
+    try{
+        return await hotel.find({owner_id:id,isApproved:{$ne:'rejected'}})
+    }catch(err){console.log(err.message);}
+}
+
+const findHotel = async (id)=>{
+    try{
+      return await hotel.findOne({_id:id})
+    }catch(err){console.log(err.message);}
+}
+
+const saveUpdatedData = async (FormData)=>{
+    try{
+const {
+    star_rating,
+    hotel_name,
+    description,
+    email,
+    address,
+    city,totalRoomsAvailable,
+    nearTouristDestination,
+    cancellationPolicy,
+    id
+                           } = FormData
+      return await hotel.updateOne(
+        {_id:id},
+        {$set:
+            {[star_rating[0]]:star_rating,
+                hotel_name:hotel_name,
+                description:description,
+                email:email,
+                address:address,
+                city:city,
+                totalRoomsAvailable:totalRoomsAvailable,
+                nearTouristDestination:nearTouristDestination,
+                cancellationPolicy:cancellationPolicy
+            }})
+
+    }catch(err){log.message}
+}
 module.exports = {
     findOwnerHotels,
     findTotalSales,
@@ -146,6 +188,9 @@ module.exports = {
     addRoomNumbers,
     findOffers,
     updateOwnerWallet,
-    updateOfferStatus
+    updateOfferStatus,
+    findHotels,
+    findHotel,
+    saveUpdatedData
 
 }
